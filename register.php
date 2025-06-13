@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
+    $username = trim($_POST['username']);
     
     // Validation
     if (empty($email) || empty($password) || empty($confirm_password)) {
@@ -28,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = 'Cet email est déjà utilisé.';
         } else {
             // Créer le compte (mot de passe non chiffré comme demandé)
-            $stmt = $pdo->prepare("INSERT INTO users (email, password, credits) VALUES (?, ?, 500)");
-            if ($stmt->execute([$email, $password])) {
+            $stmt = $pdo->prepare("INSERT INTO users (email, password, username, credits) VALUES (?, ?, ?, 500)");
+            if ($stmt->execute([$email, $password, $username])) {
                 $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
             } else {
                 $error = 'Erreur lors de la création du compte.';
@@ -71,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-bottom: 5px;
             color: #555;
         }
-        input[type="email"], input[type="password"] {
+        input[type="email"], input[type="password"], input[type="text"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -127,6 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
         
         <form method="POST">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur :</label>
+                <input type="text" name="username" id="username" value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>" required>
+            </div>
+
             <div class="form-group">
                 <label for="email">Email :</label>
                 <input type="email" name="email" id="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
