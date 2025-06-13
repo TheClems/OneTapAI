@@ -24,9 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pdo = getDBConnection();
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        
+        $stmt2 = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt2->execute([$username]);
+
+
         if ($stmt->fetch()) {
             $error = 'Cet email est déjà utilisé.';
+        } elseif ($stmt2->fetch()) {
+            $error = 'Ce nom d\'utilisateur est déjà utilisé.';
         } else {
             // Créer le compte (mot de passe non chiffré comme demandé)
             $stmt = $pdo->prepare("INSERT INTO users (email, password, username, credits) VALUES (?, ?, ?, 500)");
