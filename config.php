@@ -1,8 +1,8 @@
 <?php
 // Configuration de la base de données
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'ai_credits_site');
-define('DB_USER', 'root');
+define('DB_NAME', '');
+define('DB_USER', '');
 define('DB_PASS', ''); // Mot de passe vide par défaut pour XAMPP
 
 // Connexion à la base de données
