@@ -103,7 +103,7 @@ $user = getCurrentUser();
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="welcome">Bienvenue, <?php echo htmlspecialchars($user['email']); ?></h1>
+            <h1 class="welcome">Bienvenue, <?php echo htmlspecialchars($user['username']); ?></h1>
             <a href="logout.php" class="logout">Déconnexion</a>
         </div>
         
