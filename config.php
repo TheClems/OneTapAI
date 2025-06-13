@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', '');
 define('DB_USER', '');
-define('DB_PASS', ''); // Mot de passe vide par défaut pour XAMPP
+define('DB_PASS', '');
 
 // Connexion à la base de données
 function getDBConnection() {
