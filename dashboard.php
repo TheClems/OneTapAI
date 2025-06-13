@@ -103,8 +103,11 @@ $user = getCurrentUser();
 <body>
     <div class="container">
         <div class="header">
-            <h1 class="welcome">Bienvenue, <?php echo htmlspecialchars($user['username']); ?></h1>
-            <a href="logout.php" class="logout">Déconnexion</a>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <h1 class="welcome">Bienvenue, <?php echo htmlspecialchars($user['username']); ?></h1>
+                <a href="edit_profile.php" class="btn btn-success">Modifier le profil</a>
+                <a href="logout.php" class="logout">Déconnexion</a>
+            </div>
         </div>
         
         <div class="credits-box">
