@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     
     // Validation
-    if (empty($email) || empty($password) || empty($confirm_password)) {
+    if (empty($email) || empty($password) || empty($confirm_password) || empty($username)) {
         $error = 'Tous les champs sont obligatoires.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Email invalide.';
