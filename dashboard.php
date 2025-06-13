@@ -120,6 +120,7 @@ $user = getCurrentUser();
         
         <div class="section">
             <h3>Informations du compte</h3>
+            <p><strong>Nom d'utilisateur :</strong> <?php echo htmlspecialchars($user['username']); ?></p>
             <p><strong>Email :</strong> <?php echo htmlspecialchars($user['email']); ?></p>
             <p><strong>Date d'inscription :</strong> <?php echo date('d/m/Y à H:i', strtotime($user['date_inscription'])); ?></p>
             <p><strong>Crédits :</strong> <?php echo number_format($user['credits']); ?></p>
