@@ -131,6 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($stmt->execute([$name, $email, $password, $username])) {
                     $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
                     $mode_panel = "container"; // Retour au panel de connexion après succès
+                    header('Location: auth2.php?mode=login');
                 } else {
                     $error = 'Erreur lors de la création du compte.';
                 }
