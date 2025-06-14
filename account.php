@@ -194,7 +194,7 @@ $user = getCurrentUser();
             color: #2d3748;
         }
 
-        .dark-mode .info-label {
+        .info-label.white-mode {
             color: white;
         }
 
