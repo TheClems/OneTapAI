@@ -372,3 +372,12 @@ body.light-mode .particle {
         opacity: 0;
     }
 }
+
+
+.welcome.light-mode {
+    color: #334155;
+}
+
+.welccome.dark-mode {
+    color: #e2e8f0;
+}
