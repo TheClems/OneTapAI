@@ -143,11 +143,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <link rel="stylesheet" href="css/auth.css" />
 
 <?php if ($error): ?>
-    <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+    <div class="alert alert-error" style="color: red; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"><?php echo htmlspecialchars($error); ?></div>
 <?php endif; ?>
 
 <?php if ($success): ?>
-    <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+    <div class="alert alert-success" style="color: green; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"><?php echo htmlspecialchars($success); ?></div>
 <?php endif; ?>
 
 <div class="<?php echo $mode_panel; ?>" id="container">
