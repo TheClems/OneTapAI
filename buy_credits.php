@@ -2,6 +2,8 @@
 require_once 'config.php';
 requireLogin();
 
+$user = getCurrentUser();
+
 $success = '';
 $error = '';
 
@@ -45,7 +47,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR"></script>
 
     <title>Acheter des crédits - AI Credits</title>
     <style>
@@ -197,8 +199,13 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </body>
 </html>
+<?php
+$pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du_78"
+?>
 
 <script>
+    var pseudoPHP = <?php echo json_encode($pseudo); ?>;
+
 paypal.Buttons({
     createOrder: function (data, actions) {
         return actions.order.create({
