@@ -653,3 +653,15 @@ $user = getCurrentUser();
 </html>
 
 <script type="text/javascript" src="assets/js/nav.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Test des liens de navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            console.log('Lien cliqué:', this.href);
+            // Décommentez la ligne suivante pour empêcher la navigation pendant les tests
+            // e.preventDefault();
+        });
+    });
+});
+</script>
