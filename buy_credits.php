@@ -204,34 +204,35 @@ $pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du
 ?>
 
 <script>
-
+var pseudoPHP = <?php echo json_encode($pseudo); ?>;
 document.getElementById("acheter-btn").addEventListener("click", function() {
     // Empêche plusieurs rendus du bouton
     document.getElementById("acheter-btn").disabled = true;
 
-    var pseudoPHP = <?php echo json_encode($pseudo); ?>;
-paypal.Buttons({
-    createOrder: function (data, actions) {
-        return actions.order.create({
-            purchase_units: [{
-                description: "Paiement pour l'utilisateur " + pseudoPHP,
-                custom_id: pseudoPHP,
-                invoice_id: "FACTURE-" + pseudoPHP,
-                amount: {
-                    value: '10.00',
-                    currency_code: 'EUR'
+    // Affiche le bouton PayPal
+    paypal.Buttons({
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    description: "Paiement pour l'utilisateur " + pseudoPHP,
+                    custom_id: pseudoPHP,
+                    invoice_id: "FACTURE-" + pseudoPHP,
+                    amount: {
+                        value: '10.00',
+                        currency_code: 'EUR'
+                    }
+                }],
+                application_context: {
+                    shipping_preference: "NO_SHIPPING"
                 }
-            }],
-            application_context: {
-                shipping_preference: "NO_SHIPPING" // ✅ Aucune adresse demandée
-            }
-        });
-    },
-    onApprove: function (data, actions) {
-        return actions.order.capture().then(function (details) {
-            alert("Paiement effectué par " + details.payer.name.given_name + " !");
-            console.log("Détails complets :", details);
-        });
-    }
-}).render("#paypal-boutons");
+            });
+        },
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (details) {
+                alert("Paiement effectué par " + details.payer.name.given_name + " !");
+                console.log("Transaction complète :", details);
+            });
+        }
+    }).render("#paypal-boutons");
+});
 </script>
