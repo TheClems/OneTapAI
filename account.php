@@ -517,7 +517,6 @@
     <div class="container">
         <div class="header">
             <h1>Mon Compte</h1>
-            <p>Gérez vos informations personnelles et suivez votre activité</p>
         </div>
 
         <div class="profile-section">
