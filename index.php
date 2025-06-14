@@ -1307,11 +1307,12 @@
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
+                        <span>What's OneTapAI playground?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        Gemini, etc.
+                        OneTapAI playground is an integrated webapp to seamlessly test different LLM models such as GPT4, Claude, Gemini, etc.
                     </div>
                 </div>
                 <hr>
@@ -1341,7 +1342,7 @@
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        GPT4, Claude, Perplexity and more. 
+                        You can use OneTapAI's AI Playground to test different models, including GPT4, Claude, Perplexity and more.
                     </div>
                 </div>
                 <hr>
@@ -1349,13 +1350,12 @@
                 <div
                     class="faq tw-w-full"
                 >
-                    <h4
-                        class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
-                    >
-                        <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
-                                    tw-ml-auto tw-font-semibold"></i>
+                    <h4 class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg">
+                        <span>Is OneTapAI free to use?</span>
+                        <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
+                        You can start using OneTapAI for free, and later upgrade your plan to access all its features.
                     </div>
                 </div>
                 <hr>
