@@ -51,4 +51,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="assets/js/nav.js"></script>
+<script type="text/javascript" src="scripts/auth.js"></script>
