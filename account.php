@@ -518,7 +518,7 @@ $user = getCurrentUser();
         <div class="profile-section">
             <div class="profile-card">
                 <div class="avatar">
-                    JD
+                    <?php echo htmlspecialchars($user['full_name'][0]); ?>
                 </div>
                 <h2><?php echo htmlspecialchars($user['full_name']); ?></h2>
                 <p style="color: #718096; margin-top: 0.5rem;">Membre Premium</p>
