@@ -25,14 +25,34 @@ toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
 });
 
-// Gestion des liens actifs
+// Gestion des liens actifs - VERSION CORRIGÉE
 const navLinks = document.querySelectorAll('.nav-link');
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-        e.preventDefault();
+        // NE PAS empêcher la navigation
+        // e.preventDefault(); // ← Ligne supprimée
+        
+        // Mettre à jour les classes actives
         navLinks.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
+        
+        // Sauvegarder l'état actif dans localStorage (optionnel)
+        localStorage.setItem('activeNavLink', link.getAttribute('href'));
+        
+        // Laisser la navigation se faire normalement
+        console.log('Navigation vers:', link.getAttribute('href'));
     });
+});
+
+// Restaurer le lien actif au chargement de la page (optionnel)
+window.addEventListener('DOMContentLoaded', () => {
+    const currentPage = window.location.pathname;
+    const activeLink = document.querySelector(`.nav-link[href*="${currentPage.split('/').pop()}"]`);
+    
+    if (activeLink) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        activeLink.classList.add('active');
+    }
 });
 
 // Création des particules flottantes
