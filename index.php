@@ -552,7 +552,7 @@
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                Pixa supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
+                                OneTapAI supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
