@@ -281,7 +281,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: center;
+            text-align: left;
             flex-grow: 1;
         }
 
@@ -539,7 +539,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <button class="toggle-btn" id="toggleBtn"></button>
         
         <div class="nav-header">
-            <div class="logo">MODERN NAV</div>
+            <div class="logo">OneTapAI</div>
             <button class="theme-toggle" id="themeToggle">
                 <svg class="theme-icon" id="themeIcon" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
