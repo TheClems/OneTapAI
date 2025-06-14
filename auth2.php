@@ -19,7 +19,6 @@ if ($mode == 'register' || $mode == 'edit_profile') {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'login') {
         $mode_panel = "container"; // garder le panel de gauche
-        $passwd_required="required";
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
