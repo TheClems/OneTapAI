@@ -193,6 +193,11 @@ $user = getCurrentUser();
         .info-value {
             font-weight: 700;
             font-size: 1.1rem;
+            color: white;
+        }
+        .info-value.light-mode {
+            font-weight: 700;
+            font-size: 1.1rem;
             color: #2d3748;
         }
 
