@@ -187,11 +187,11 @@ $user = getCurrentUser();
             align-items: center;
             gap: 0.75rem;
             font-weight: 600;
-            color: #4a5568;
+            color: white;
             font-size: 0.95rem;
         }
         .info-label.light-mode {
-            color: white;
+            color: #4a5568;
         }
 
 
@@ -342,7 +342,13 @@ $user = getCurrentUser();
         }
 
 
+        h2 {
+            color: white;
+        }
 
+        h2.light-mode {
+            color: #4a5568;
+        }
 
         @keyframes fadeInUp {
             from {
