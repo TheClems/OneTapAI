@@ -178,17 +178,14 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
         
         <div class="packages">
-            <?php foreach ($packages as $package): ?>
+            <?php foreach ($packages as $i => $package): ?>
                 <div class="package">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
-                    <form method="POST" style="margin: 0;">
-                        <input type="hidden" name="package" value="<?php echo strtolower($package['nom']); ?>">
-                        <button type="submit" class="btn" id="acheter-btn">>Acheter maintenant</button>
-                        <div id="paypal-boutons"></div>
 
-                    </form>
+                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">Acheter avec PayPal</button>
+                    <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -202,37 +199,46 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php
 $pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du_78"
 ?>
-
 <script>
-var pseudoPHP = <?php echo json_encode($pseudo); ?>;
-document.getElementById("acheter-btn").addEventListener("click", function() {
-    // Empêche plusieurs rendus du bouton
-    document.getElementById("acheter-btn").disabled = true;
+    const pseudoPHP = <?= json_encode($user['username']) ?>;
 
-    // Affiche le bouton PayPal
-    paypal.Buttons({
-        createOrder: function (data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    description: "Paiement pour l'utilisateur " + pseudoPHP,
-                    custom_id: pseudoPHP,
-                    invoice_id: "FACTURE-" + pseudoPHP,
-                    amount: {
-                        value: '10.00',
-                        currency_code: 'EUR'
-                    }
-                }],
-                application_context: {
-                    shipping_preference: "NO_SHIPPING"
+    document.querySelectorAll('.acheter-btn').forEach(function(button) {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const nom = this.getAttribute('data-nom');
+            const prix = this.getAttribute('data-prix');
+            const credits = this.getAttribute('data-credits');
+
+            // Empêche le double affichage
+            this.disabled = true;
+
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: nom + " - " + credits + " crédits",
+                            custom_id: pseudoPHP + "-" + nom,
+                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                            amount: {
+                                value: prix,
+                                currency_code: 'EUR'
+                            }
+                        }],
+                        application_context: {
+                            shipping_preference: "NO_SHIPPING"
+                        }
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                        console.log("Détails : ", details);
+
+                        // Optionnel : envoie AJAX pour créditer automatiquement l’utilisateur
+                        // fetch('crediter.php', { method: 'POST', body: JSON.stringify({ ... }) })
+                    });
                 }
-            });
-        },
-        onApprove: function (data, actions) {
-            return actions.order.capture().then(function (details) {
-                alert("Paiement effectué par " + details.payer.name.given_name + " !");
-                console.log("Transaction complète :", details);
-            });
-        }
-    }).render("#paypal-boutons");
-});
+            }).render("#paypal-boutons-" + id);
+        });
+    });
 </script>
