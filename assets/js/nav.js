@@ -7,13 +7,17 @@ const body = document.body;
 const welcome = document.querySelector('.welcome');
 const infoValues = document.querySelectorAll('.info-value');
 const infoCards = document.querySelectorAll('.info-card');
+const profileCard = document.querySelector('.profile-card');
+const infoLabels = document.querySelectorAll('.info-label');
 // Gestion du thème
 // Gestion du thème
 let isDarkMode = true;
 const elementsToToggle = [
     ...infoValues,
     ...infoCards,
-    welcome
+    welcome,
+    profileCard,
+    ...infoLabels
 ];
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
