@@ -191,12 +191,10 @@ $user = getCurrentUser();
             font-size: 0.95rem;
         }
         .info-label.light-mode {
-            color: #2d3748;
-        }
-
-        .info-label.white-mode {
             color: white;
         }
+
+
 
         .info-value {
             font-weight: 700;
