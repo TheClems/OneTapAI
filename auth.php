@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         echo 'Se connecter';
                     } elseif ($mode == 'register') {
                         echo 'S\'inscrire';
-                    } else {
+                    } elseif ($mode == 'edit_profile') {
                         echo 'Modifier';
                     }
                 ?>
