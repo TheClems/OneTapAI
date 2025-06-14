@@ -12,6 +12,8 @@ $user = getCurrentUser();
     <title>Dashboard - AI Credits</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV"></script>
+
 </head>
 <body>
     <div class="container">
@@ -70,3 +72,50 @@ $user = getCurrentUser();
     </div>
 </body>
 </html>
+
+<script>
+	// 2. Afficher le bouton PayPal
+	paypal.Buttons().render("#paypal-boutons");
+    paypal.Buttons({
+
+// Configurer la transaction
+createOrder : function (data, actions) {
+
+    // Les produits à payer avec leurs details
+    var produits = [
+        {
+            name : "Produit 1",
+            description : "Description du produit 1",
+            quantity : 1,
+            unit_amount : { value : 9.9, currency_code : "USD" }
+        },
+        {
+            name : "Produit 2",
+            description : "Description du produit 2",
+            quantity : 1,
+            unit_amount : { value : 8.0, currency_code : "USD" }
+        }
+    ];
+
+    // Le total des produits
+    var total_amount = produits.reduce(function (total, product) {
+        return total + product.unit_amount.value * product.quantity;
+    }, 0);
+
+    // La transaction
+    return actions.order.create({
+        purchase_units : [{
+            items : produits,
+            amount : {
+                value : total_amount,
+                currency_code : "USD",
+                breakdown : {
+                    item_total : { value : total_amount, currency_code : "USD" }
+                }
+            }
+        }]
+    });
+}
+
+}).render("#paypal-boutons");
+</script>
