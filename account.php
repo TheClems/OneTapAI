@@ -91,9 +91,9 @@ $user = getCurrentUser();
             justify-content: center;
         }
 
-        .dark-mode .profile-card {
+        .profile-card.light-mode {
             background: rgba(45, 55, 72, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
         }
 
         .profile-card:hover {
