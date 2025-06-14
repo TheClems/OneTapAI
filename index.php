@@ -306,7 +306,6 @@
                                     </div>
 
                                     <div class="tw-mt-3 tw-text-lg">
-                                        Join Ben and 20,000+ users using Pixa
                                     </div>
 
                                     <a href="#" class="btn">
@@ -318,7 +317,6 @@
                                 <div class="tw-min-w-[250px] max-lg:tw-hidden tw-p-2 tw-gap-2 tw-flex tw-flex-col tw-bg-gray-100 
                                             dark:tw-bg-[#171717] tw-h-full">
                                     <!-- <h3 class="tw-text-xl tw-uppercase">
-                                        Pixa
                                     </h3> -->
                                     <div class="tw-h-[30px] tw-w-fit tw-max-w-[100px]">
                                         <img
@@ -364,11 +362,11 @@
 
                                 </div>
 
-                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="OneTapAI-playground">
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="OneTapAI-playground">
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
                                             <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
-                                                alt="Pixa logo">
                                         </div>
                                         <div class="prompt-container tw-overflow-y-auto tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
                                                     max-lg:tw-mt-12 tw-w-full tw-h-full tw-z-10 tw-flex tw-flex-col" id="prompt-container">
