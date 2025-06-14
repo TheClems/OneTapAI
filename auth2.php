@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } 
     else if ($mode == 'edit_profile') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-        $passwd_required="required";
+        $passwd_required="";
     
         // Vérifier si l'utilisateur existe
         if (!$user) {
