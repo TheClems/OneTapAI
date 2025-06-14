@@ -139,13 +139,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php if ($mode == 'register'): ?>
                     <div class="form-group">
                         <label for="username">Nom d'utilisateur</label>
-                        <input type="text" id="username" name="username" required>
+                        <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
                     </div>
                 <?php endif; ?>
                 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
                 </div>
 
                 <div class="form-group">
