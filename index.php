@@ -62,6 +62,7 @@
                         class="tw-object-contain tw-h-full tw-w-full dark:tw-invert"
                     />
                 </div>
+                <span class="tw-text-base tw-font-medium">OneTapAI</span>
             </a>
             <div
                 class="collapsible-header animated-collapse max-lg:tw-shadow-md"
