@@ -91,9 +91,9 @@ $user = getCurrentUser();
             justify-content: center;
         }
 
-        .dark-mode .profile-card {
+        .profile-card.light-mode {
             background: rgba(45, 55, 72, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
         }
 
         .profile-card:hover {
@@ -190,9 +190,12 @@ $user = getCurrentUser();
             color: #4a5568;
             font-size: 0.95rem;
         }
+        .info-label.light-mode {
+            color: #2d3748;
+        }
 
-        .dark-mode .info-label {
-            color: #a0aec0;
+        .info-label.white-mode {
+            color: white;
         }
 
         .info-value {
