@@ -12,9 +12,9 @@ chokidar.watch('.', {
   try {
     await git.add('.');
     await git.commit(`Auto commit: modification sur ${path}`);
-    await git.pull('origin', 'dev'); // <-- le pull AVANT le push
-    await git.push('origin', 'dev');
-    console.log('[auto-push] Push réussi sur dev');
+    await git.pull('origin', 'main'); // <-- le pull AVANT le push
+    await git.push('origin', 'main');
+    console.log('[auto-push] Push réussi sur main');
   } catch (err) {
     console.error('[auto-push] Erreur :', err.message || err);
   }
