@@ -1519,5 +1519,4 @@
     <script src="./scripts/components.js"></script>
     <script src="./scripts/index.js"></script>
 
-    <!-- By Paul: https://github.com/PaulleDemon -->
 </html>
