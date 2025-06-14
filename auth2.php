@@ -7,7 +7,7 @@ $success = '';
 $user = getCurrentUser();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'login') {
-        $mode_panel="container"
+        $mode_panel="container";
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } 
     else if ($mode == 'edit_profile') {
-        $mode_panel="container right-panel-active"
+        $mode_panel="container right-panel-active";
 
         $error = '';
         $success = '';
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     }
     else { // register
-        $mode_panel="container right-panel-active"
+        $mode_panel="container right-panel-active";
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
