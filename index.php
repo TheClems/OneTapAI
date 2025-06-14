@@ -42,7 +42,7 @@ if (isLoggedIn()) {
             margin: 10px;
         }
         .btn:hover {
-            background: #0056b3;
+            background:rgb(179, 0, 0);
         }
         .text-center {
             text-align: center;
