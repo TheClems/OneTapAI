@@ -160,12 +160,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
-			<input type="text" id="name" name="name" placeholder="Name" value="<?php echo htmlspecialchars($user['full_name']); ?>" required/>
-			<input type="text" id="username" name="username" placeholder="Username" value="<?php echo htmlspecialchars($user['username']); ?>" required />
-			<input type="email" id="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($user['email']); ?>" required/>
-			<input type="password" id="password" name="password" required placeholder="Password" />
-			<input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm password" />
-			<button type="submit">Sign Up</button>
+            <input type="text" id="name" name="name" placeholder="Name" 
+                value="<?php echo isset($user) ? htmlspecialchars($user['full_name']) : ''; ?>" required />
+
+            <input type="text" id="username" name="username" placeholder="Username" 
+                value="<?php echo isset($user) ? htmlspecialchars($user['username']) : ''; ?>" required />
+
+            <input type="email" id="email" name="email" placeholder="Email" 
+                value="<?php echo isset($user) ? htmlspecialchars($user['email']) : ''; ?>" required />
+
+            <input type="password" id="password" name="password" required placeholder="Password" />
+
+            <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm password" />
+
+            <button type="submit">Sign Up</button>
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
