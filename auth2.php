@@ -58,9 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
         $username = trim($_POST['username']);
+        $name = trim($_POST['name']);
         
         // Validation
-        if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username)) {
+        if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username) || empty($name)) {
             $error = 'Tous les champs obligatoires doivent être remplis.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Email invalide.';
@@ -77,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
             } else {
                 // Update user information
-                $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
-                $params = [$email, $username, $user['id']];
+                $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
+                $params = [$email, $username, $name, $user['id']];
                 
                 if (!empty($password)) {
                     array_splice($params, 2, 0, $password);
@@ -91,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Mettre à jour les données de session
                     $_SESSION['user_email'] = $email;
                     $_SESSION['user_username'] = $username;
+                    $_SESSION['user_full_name'] = $name;
                 } else {
                     $error = 'Erreur lors de la mise à jour du profil.';
                 }
