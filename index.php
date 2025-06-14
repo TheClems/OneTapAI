@@ -12,7 +12,7 @@
         />
 
         <!-- Open Graph / Facebook -->
-        <meta property="og:title" content="All your AI models in one place - Try Pixa Playground" />
+        <meta property="og:title" content="All your AI models in one place - Try OneTapAI Playground" />
         <meta property="og:description" content="Get all your AI models and tools in one place" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="" />
@@ -311,7 +311,7 @@
                                     </div>
 
                                     <div class="tw-mt-3 tw-text-lg">
-                                        Join Ben and 20,000+ users using Pixa
+                                        Join Ben and 20,000+ users using OneTapAI
                                     </div>
 
                                     <a href="#" class="btn">
@@ -323,7 +323,7 @@
                                 <div class="tw-min-w-[250px] max-lg:tw-hidden tw-p-2 tw-gap-2 tw-flex tw-flex-col tw-bg-gray-100 
                                             dark:tw-bg-[#171717] tw-h-full">
                                     <!-- <h3 class="tw-text-xl tw-uppercase">
-                                        Pixa
+                                        OneTapAI
                                     </h3> -->
                                     <div class="tw-h-[30px] tw-w-fit tw-max-w-[100px]">
                                         <img
@@ -369,11 +369,11 @@
 
                                 </div>
 
-                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="one-tap-playground">
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
                                             <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
-                                                alt="Pixa logo">
+                                                alt="OneTapAI logo">
                                         </div>
                                         <div class="prompt-container tw-overflow-y-auto tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
                                                     max-lg:tw-mt-12 tw-w-full tw-h-full tw-z-10 tw-flex tw-flex-col" id="prompt-container">
@@ -517,7 +517,7 @@
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">API Access</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Pixa's LLM API offers advanced summarization, text generation, and question-answering. Easily integrate with support for JSON, HTML, Markdown, and plain text, enhancing your applications with powerful language tools.
+                                    OneTapAI's LLM API offers advanced summarization, text generation, and question-answering. Easily integrate with support for JSON, HTML, Markdown, and plain text, enhancing your applications with powerful language tools.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
