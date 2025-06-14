@@ -153,15 +153,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="password" id="password" name="password" required>
                 </div>
 
-                <?php if ($mode == 'register'): ?>
+                <?php if ($mode == 'register' || $mode == 'edit_profile'): ?>
                     <div class="form-group">
                         <label for="confirm_password">Confirmer le mot de passe</label>
                         <input type="password" id="confirm_password" name="confirm_password" required>
                     </div>
                 <?php endif; ?>
 
-                <button type="submit" class="btn <?php echo $mode == 'login' ? 'btn-primary' : 'btn-success'; ?>">
-                    <?php echo $mode == 'login' ? 'Se connecter' : 'S\'inscrire'; ?>
+                <button type="submit" class="btn <?php echo $mode == 'login' || $mode == 'edit_profile' ? 'btn-primary' : 'btn-success'; ?>">
+                    <?php echo $mode == 'login' || $mode == 'edit_profile' ? 'Se connecter' : 'S\'inscrire'; ?>
                 </button>
             </form>
         </div>
