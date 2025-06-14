@@ -136,10 +136,6 @@ $user = getCurrentUser();
         <div class="header">
             <div class="user-info">
                 <h1 class="welcome">Bienvenue, <?php echo htmlspecialchars($user['username']); ?></h1>
-                <div class="actions-header">
-                    <a href="auth.php?mode=edit_profile" class="btn btn-success">Modifier le profil</a>
-                    <a href="logout.php" class="logout">Déconnexion</a>
-                </div>
             </div>
         </div>
         
