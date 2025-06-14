@@ -76,7 +76,7 @@ $user = getCurrentUser();
         }
 
         .profile-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(45, 55, 72, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 24px;
             display: flex;
@@ -92,7 +92,7 @@ $user = getCurrentUser();
         }
 
         .profile-card.light-mode {
-            background: rgba(45, 55, 72, 0.95);
+            background: rgba(255, 255, 255, 0.95);
 
         }
 
@@ -191,12 +191,10 @@ $user = getCurrentUser();
             font-size: 0.95rem;
         }
         .info-label.light-mode {
-            color: #2d3748;
-        }
-
-        .info-label.white-mode {
             color: white;
         }
+
+
 
         .info-value {
             font-weight: 700;
