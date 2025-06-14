@@ -134,7 +134,7 @@ $user = getCurrentUser();
         }
 
         .info-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(45, 55, 72, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 2rem;
@@ -144,6 +144,11 @@ $user = getCurrentUser();
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        
+        .info-card.light-mode {
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .dark-mode .info-card {
