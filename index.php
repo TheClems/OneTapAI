@@ -368,7 +368,7 @@
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
                                             <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
-                                                alt="OneTapAI logo">
+                                                alt="Pixa logo">
                                         </div>
                                         <div class="prompt-container tw-overflow-y-auto tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
                                                     max-lg:tw-mt-12 tw-w-full tw-h-full tw-z-10 tw-flex tw-flex-col" id="prompt-container">
