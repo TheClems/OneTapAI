@@ -4,13 +4,14 @@ const toggleBtn = document.getElementById('toggleBtn');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 const body = document.body;
-
+const welcome = document.querySelector('.welcome');
 // Gestion du thème
 let isDarkMode = true;
 
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     body.classList.toggle('light-mode');
+    welcome.classList.toggle('light-mode');
     
     if (isDarkMode) {
         // Icône lune pour le mode sombre
