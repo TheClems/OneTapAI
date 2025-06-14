@@ -35,6 +35,8 @@ $user = getCurrentUser();
         
         <div class="actions">
             <a href="buy_credits.php" class="btn btn-success">Acheter des crédits</a>
+            <div id="paypal-boutons"></div>
+
             <a href="new_chat.php" class="btn btn-primary">Créer un nouveau chat</a>
         </div>
         
