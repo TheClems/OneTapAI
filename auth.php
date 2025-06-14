@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endif; ?>
 
             <form method="POST" class="auth-form">
-                <?php if ($mode == 'register'): ?>
+                <?php if ($mode == 'register' || $mode == 'edit_profile'): ?>
                     <div class="form-group">
                         <label for="username">Nom d'utilisateur</label>
                         <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
