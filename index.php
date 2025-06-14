@@ -3,7 +3,6 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>OneTapAI</title>
         <meta name="description" content="Get all your AI models and tools in one place" />
         <link
             rel="shortcut icon"
@@ -12,7 +11,6 @@
         />
 
         <!-- Open Graph / Facebook -->
-        <meta property="og:title" content="All your AI models in one place - Try OneTapAI Playground" />
         <meta property="og:description" content="Get all your AI models and tools in one place" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="" />
@@ -64,7 +62,6 @@
                         class="tw-object-contain tw-h-full tw-w-full dark:tw-invert"
                     />
                 </div>
-                <span class="tw-text-base tw-font-medium">OneTapAI</span>
             </a>
             <div
                 class="collapsible-header animated-collapse max-lg:tw-shadow-md"
@@ -171,7 +168,6 @@
                     </button>
                     <a
                         href="#"
-                        aria-label="Try OneTapAI Playground"
                         class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform 
                                     tw-duration-[0.3s] hover:tw-translate-x-2"
                     >
@@ -238,7 +234,6 @@
                         class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center
                          tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full"
                     >
-                        Your all in one AI companion. generate Images, videos, codes, docs, debug your web apps all with OneTapAI's interface.
                     </div>
 
                     <div
@@ -311,7 +306,7 @@
                                     </div>
 
                                     <div class="tw-mt-3 tw-text-lg">
-                                        Join Ben and 20,000+ users using OneTapAI
+                                        Join Ben and 20,000+ users using Pixa
                                     </div>
 
                                     <a href="#" class="btn">
@@ -323,7 +318,7 @@
                                 <div class="tw-min-w-[250px] max-lg:tw-hidden tw-p-2 tw-gap-2 tw-flex tw-flex-col tw-bg-gray-100 
                                             dark:tw-bg-[#171717] tw-h-full">
                                     <!-- <h3 class="tw-text-xl tw-uppercase">
-                                        OneTapAI
+                                        Pixa
                                     </h3> -->
                                     <div class="tw-h-[30px] tw-w-fit tw-max-w-[100px]">
                                         <img
@@ -369,7 +364,7 @@
 
                                 </div>
 
-                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="one-tap-playground">
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
                                             <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
@@ -517,7 +512,7 @@
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">API Access</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    OneTapAI's LLM API offers advanced summarization, text generation, and question-answering. Easily integrate with support for JSON, HTML, Markdown, and plain text, enhancing your applications with powerful language tools.
+                                 OneTapAI's LLM API offers advanced summarization, text generation, and question-answering. Easily integrate with support for JSON, HTML, Markdown, and plain text, enhancing your applications with powerful language tools.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -559,7 +554,7 @@
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    OneTapAI supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
+                                Pixa supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -960,7 +955,6 @@
             <h3
                 class="reveal-up tw-text-4xl tw-font-medium tw-text-center max-md:tw-text-2xl"
             >
-                Join the professionals using OneTapAI
             </h3>
             <!-- Testimonials -->
             <div
@@ -1323,8 +1317,7 @@
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        OneTapAI's playground is an integrated webapp to seamlessly test different LLM models such as GPT4, Claude,
-                        Gemini, etc.
+                        OneTapAI playground is an integrated webapp to seamlessly test different LLM models such as GPT4, Claude, Gemini, etc.
                     </div>
                 </div>
                 <hr>
@@ -1354,8 +1347,7 @@
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        You can use OneTapAI's AI Playground to test different models, including
-                        GPT4, Claude, Perplexity and more. 
+                        You can use OneTapAI's AI Playground to test different models, including GPT4, Claude, Perplexity and more.
                     </div>
                 </div>
                 <hr>
@@ -1363,12 +1355,9 @@
                 <div
                     class="faq tw-w-full"
                 >
-                    <h4
-                        class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
-                    >
-                        <span>Is OneTapAI Free to use?</span>
-                        <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
-                                    tw-ml-auto tw-font-semibold"></i>
+                    <h4 class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg">
+                        <span>Is OneTapAI free to use?</span>
+                        <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
                         You can start using OneTapAI for free, and later upgrade your plan to access all its features.
@@ -1403,6 +1392,7 @@
             </div>
         </section>
 
+
         <footer
             class="tw-mt-auto tw-flex tw-flex-col tw-w-full tw-gap-4 tw-text-sm tw-pt-[5%] tw-pb-10 tw-px-[10%] 
                     tw-text-black dark:tw-text-white max-md:tw-flex-col"
@@ -1419,26 +1409,22 @@
                             class="tw-max-w-[120px] dark:tw-invert"
                         />
                         <div class="tw-max-w-[120px] tw-text-center tw-text-3xl tw-h-fit">
-                            OneTapAI
                         </div>
                     </a>
                     <!-- <div class="tw-mt-3 tw-text-lg tw-font-semibold">Follow us</div> -->
                     <div class="tw-flex tw-gap-4 tw-text-lg">
                         <a
-                            href="https://github.com/TheClems/"
                             aria-label="Github"
                         >
                             <i class="bi bi-github"></i>
                         </a>
                         <a
-                            href=""
                             aria-label="Twitter"
                         >
                             <i class="bi bi-twitter"></i>
                         </a>
                       
                         <a
-                            href="https://www.linkedin.com/company/107694730/"
                             aria-label="Linkedin"
                         >
                             <i class="bi bi-linkedin"></i>
@@ -1465,8 +1451,6 @@
                         <div class="tw-flex tw-flex-col tw-gap-3">
                             <a href="#" class="footer-link">Support channels</a>
                             <a href="#" class="footer-link">Systems</a>
-                            <a href="https://twitter.com/" class="footer-link">Twitter</a>
-                            <a href="https://github.com/TheClems" class="footer-link">Github</a>
                         </div>
                     </div>
 
@@ -1484,7 +1468,6 @@
             <hr class="tw-mt-8">
             <div class="tw-mt-2 tw-flex tw-gap-2 tw-flex-col tw-text-gray-700 dark:tw-text-gray-300 tw-place-items-center 
                     tw-text-[12px] tw-w-full tw-text-center tw-place-content-around">
-                <span>Copyright &#169; 2025</span>
                 <span>All trademarks and copyrights belong to their respective owners.</span>
             </div>
 
@@ -1509,5 +1492,4 @@
     <script src="./scripts/components.js"></script>
     <script src="./scripts/index.js"></script>
 
-    <!-- By Paul: https://github.com/PaulleDemon -->
 </html>
