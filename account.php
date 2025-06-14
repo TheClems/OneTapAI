@@ -1,3 +1,10 @@
+<?php
+require_once 'config.php';
+requireLogin();
+
+$user = getCurrentUser();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -72,6 +79,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 24px;
+            display: flex;
             padding: 2.5rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -79,6 +87,8 @@
             transition: all 0.3s ease;
             opacity: 0;
             animation: fadeInLeft 1s ease 0.2s forwards;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .dark-mode .profile-card {
@@ -512,14 +522,14 @@
                             <i data-lucide="user"></i>
                             Nom d'utilisateur
                         </div>
-                        <div class="info-value">jean.dupont</div>
+                        <div class="info-value"><?php echo htmlspecialchars($user['username']); ?></div>
                     </div>
                     <div class="info-row">
                         <div class="info-label">
                             <i data-lucide="mail"></i>
                             Email
                         </div>
-                        <div class="info-value">jean.dupont@email.com</div>
+                        <div class="info-value"><?php echo htmlspecialchars($user['email']); ?></div>
                     </div>
                 </div>
 
@@ -529,14 +539,7 @@
                             <i data-lucide="coins"></i>
                             Crédits actuels
                         </div>
-                        <div class="info-value">2,450</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">
-                            <i data-lucide="trending-up"></i>
-                            Points XP
-                        </div>
-                        <div class="info-value">15,820</div>
+                        <div class="info-value"><?php echo number_format($user['credits']); ?></div>
                     </div>
                 </div>
 
@@ -546,7 +549,7 @@
                             <i data-lucide="calendar"></i>
                             Date d'inscription
                         </div>
-                        <div class="info-value">15/03/2023</div>
+                        <div class="info-value"><?php echo date('d/m/Y à H:i', strtotime($user['date_inscription'])); ?></div>
                     </div>
                     <div class="info-row">
                         <div class="info-label">
