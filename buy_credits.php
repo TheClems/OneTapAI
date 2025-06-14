@@ -362,7 +362,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: #e2e8f0;
             background: rgba(124, 58, 237, 0.1);
             transform: translateX(8px);
-            max-width: 98%;
+            max-width: 97%;
         }
 
         body.light-mode .nav-link:hover {
