@@ -180,9 +180,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="email" id="email" name="email" placeholder="Email" 
                 value="<?php echo isset($user) ? htmlspecialchars($user['email']) : ''; ?>" required />
 
-            <input type="password" id="password" name="password" required placeholder="Password" <?php echo $passwd_required; ?>/>
+            <input type="password" id="password" name="password"  placeholder="Password" <?php echo $passwd_required; ?>/>
 
-            <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm password" <?php echo $passwd_required; ?>/>
+            <input type="password" id="confirm_password" name="confirm_password"  placeholder="Confirm password" <?php echo $passwd_required; ?>/>
 
             <button type="submit">Sign Up</button>
 		</form>
