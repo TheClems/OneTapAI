@@ -185,7 +185,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
                     <form method="POST" style="margin: 0;">
                         <input type="hidden" name="package" value="<?php echo strtolower($package['nom']); ?>">
-                        <button type="submit" class="btn">Acheter maintenant</button>
+                        <button type="submit" class="btn" id="acheter-btn">>Acheter maintenant</button>
                         <div id="paypal-boutons"></div>
 
                     </form>
@@ -204,29 +204,34 @@ $pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du
 ?>
 
 <script>
+
+document.getElementById("acheter-btn").addEventListener("click", function() {
+    // Empêche plusieurs rendus du bouton
+    document.getElementById("acheter-btn").disabled = true;
+
     var pseudoPHP = <?php echo json_encode($pseudo); ?>;
-    console.log("Pseudo PHP :", pseudoPHP);
-    paypal.Buttons({
+paypal.Buttons({
     createOrder: function (data, actions) {
         return actions.order.create({
             purchase_units: [{
                 description: "Paiement pour l'utilisateur " + pseudoPHP,
                 custom_id: pseudoPHP,
                 invoice_id: "FACTURE-" + pseudoPHP,
-                reference_id: "CMD-2025-001",
                 amount: {
                     value: '10.00',
                     currency_code: 'EUR'
                 }
-            }]
+            }],
+            application_context: {
+                shipping_preference: "NO_SHIPPING" // ✅ Aucune adresse demandée
+            }
         });
     },
     onApprove: function (data, actions) {
         return actions.order.capture().then(function (details) {
-            alert("Paiement effectué !");
-            console.log("🧾 Détails complets :", details);
+            alert("Paiement effectué par " + details.payer.name.given_name + " !");
+            console.log("Détails complets :", details);
         });
     }
 }).render("#paypal-boutons");
-
 </script>
