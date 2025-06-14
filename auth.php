@@ -28,7 +28,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = 'Email ou mot de passe incorrect.';
             }
         }
-    } else { // register
+    } 
+    else if ($mode == 'edit_profile') {
+        requireLogin();
+        $user = getCurrentUser();
+        $error = '';
+        $success = '';
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = trim($_POST['email']);
+            $password = trim($_POST['password']);
+            $confirm_password = trim($_POST['confirm_password']);
+            $username = trim($_POST['username']);
+            
+            // Validation
+            if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username)) {
+                $error = 'Tous les champs obligatoires doivent être remplis.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $error = 'Email invalide.';
+            } elseif (!empty($password) && $password !== $confirm_password) {
+                $error = 'Les mots de passe ne correspondent pas.';
+            } else {
+                $pdo = getDBConnection();
+                
+                // Update user information
+                $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
+                $params = [$email, $username, $user['id']];
+                
+                if (!empty($password)) {
+                    array_splice($params, 2, 0, $password);
+                }
+                
+                if ($stmt->execute($params)) {
+                    $success = 'Informations mises à jour avec succès !';
+                    // Refresh user data
+                    $user = getCurrentUser();
+                } else {
+                    $error = 'Erreur lors de la mise à jour du profil.';
+                }
+            }
+        }
+    
+    }
+    else { // register
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
