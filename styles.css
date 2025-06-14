@@ -46,6 +46,10 @@ body {
     color: var(--text-primary);
 }
 
+.welcome.light-mode {
+    color: #334155;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
