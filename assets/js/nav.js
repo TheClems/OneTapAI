@@ -5,13 +5,16 @@ const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 const body = document.body;
 const welcome = document.querySelector('.welcome');
-const infovalue = document.querySelector('.info-value');
-const infoCard = document.querySelector('.info-card');
+const infoValues = document.querySelectorAll('.info-value');
+const infoCards = document.querySelectorAll('.info-card');
 // Gestion du thème
 // Gestion du thème
 let isDarkMode = true;
-const elementsToToggle = [infovalue, infoCard, welcome];
-
+const elementsToToggle = [
+    ...infoValues,
+    ...infoCards,
+    welcome
+];
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     body.classList.toggle('light-mode');
