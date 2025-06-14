@@ -44,24 +44,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } 
     else if ($mode == 'edit_profile') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-
+    
         requireLogin();
-
+    
         // Vérifier si l'utilisateur existe
         if (!$user) {
             $error = 'Utilisateur non trouvé.';
             header('Location: dashboard.php');
             exit();
         }
-
+    
+        // Récupérer et nettoyer les données
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
         $username = trim($_POST['username']);
         $name = trim($_POST['name']);
-        
+    
         // Validation
-        if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username) || empty($name)) {
+        if (empty($email) || empty($username) || empty($name) || (!empty($confirm_password) && empty($password))) {
             $error = 'Tous les champs obligatoires doivent être remplis.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Email invalide.';
@@ -69,27 +70,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = 'Les mots de passe ne correspondent pas.';
         } else {
             $pdo = getDBConnection();
-            
-            // Vérifier si l'email ou le username sont déjà utilisés par un autre utilisateur
+    
+            // Vérifier l'unicité de l'email ou du username (hors cet utilisateur)
             $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR username = ?) AND id != ?");
             $stmt->execute([$email, $username, $user['id']]);
-            
+    
             if ($stmt->fetch()) {
                 $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
             } else {
-                // Update user information
-                $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
-                $params = [$email, $username, $name, $user['id']];
-                
+                // Préparer la requête selon que le mot de passe soit modifié ou non
                 if (!empty($password)) {
-                    array_splice($params, 2, 0, $password);
+                    $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ?, password = ? WHERE id = ?");
+                    $params = [
+                        $email,
+                        $username,
+                        $name,
+                        password_hash($password, PASSWORD_DEFAULT),
+                        $user['id']
+                    ];
+                } else {
+                    $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ? WHERE id = ?");
+                    $params = [
+                        $email,
+                        $username,
+                        $name,
+                        $user['id']
+                    ];
                 }
-                
+    
                 if ($stmt->execute($params)) {
                     $success = 'Informations mises à jour avec succès !';
-                    // Refresh user data
+    
+                    // Rafraîchir les données utilisateur
                     $user = getCurrentUser();
-                    // Mettre à jour les données de session
+    
+                    // Mettre à jour la session
                     $_SESSION['user_email'] = $email;
                     $_SESSION['user_username'] = $username;
                     $_SESSION['user_full_name'] = $name;
@@ -99,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
+    
     else if ($mode == 'register') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
 
