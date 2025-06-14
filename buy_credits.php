@@ -205,13 +205,15 @@ $pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du
 
 <script>
     var pseudoPHP = <?php echo json_encode($pseudo); ?>;
-
-paypal.Buttons({
+    console.log("Pseudo PHP :", pseudoPHP);
+    paypal.Buttons({
     createOrder: function (data, actions) {
         return actions.order.create({
             purchase_units: [{
-                custom_id: pseudoPHP, // ✅ Pseudo visible pour toi dans les logs
-                description: "Paiement de " + pseudoPHP, // Peut s'afficher chez le client
+                description: "Paiement pour l'utilisateur " + pseudoPHP,
+                custom_id: pseudoPHP,
+                invoice_id: "FACTURE-" + pseudoPHP,
+                reference_id: "CMD-2025-001",
                 amount: {
                     value: '10.00',
                     currency_code: 'EUR'
@@ -221,9 +223,10 @@ paypal.Buttons({
     },
     onApprove: function (data, actions) {
         return actions.order.capture().then(function (details) {
-            alert("Paiement effectué par " + details.payer.name.given_name);
-            console.log("Pseudo de session :", pseudoPHP);
+            alert("Paiement effectué !");
+            console.log("🧾 Détails complets :", details);
         });
     }
 }).render("#paypal-boutons");
+
 </script>
