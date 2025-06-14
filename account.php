@@ -190,9 +190,12 @@ $user = getCurrentUser();
             color: #4a5568;
             font-size: 0.95rem;
         }
+        .info-label.light-mode {
+            color: #2d3748;
+        }
 
         .dark-mode .info-label {
-            color: #a0aec0;
+            color: white;
         }
 
         .info-value {
