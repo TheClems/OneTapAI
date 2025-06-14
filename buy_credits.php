@@ -180,7 +180,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             top: 0;
             width: 280px;
             height: 100vh;
-            background: rgba(13, 13, 25, 0.95);
+            background: rgb(12 12 12 / 92%);
             backdrop-filter: blur(20px);
             border-right: 1px solid rgba(124, 58, 237, 0.2);
             transform: translateX(0);
@@ -206,10 +206,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(180deg, 
-                rgba(124, 58, 237, 0.1) 0%, 
-                rgba(168, 85, 247, 0.1) 50%,
-                rgba(147, 51, 234, 0.1) 100%);
+
             pointer-events: none;
         }
 
@@ -365,6 +362,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             color: #e2e8f0;
             background: rgba(124, 58, 237, 0.1);
             transform: translateX(8px);
+            max-width: 98%;
         }
 
         body.light-mode .nav-link:hover {
