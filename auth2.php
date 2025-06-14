@@ -3,6 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once 'config.php';
+$passwd_required="required";
 
 $mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
 $error = '';
@@ -45,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } 
     else if ($mode == 'edit_profile') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-        requireLogin();
+        $passwd_required="required";
     
         // Vérifier si l'utilisateur existe
         if (!$user) {
