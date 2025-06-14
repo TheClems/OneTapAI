@@ -45,6 +45,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV"></script>
+
     <title>Acheter des crédits - AI Credits</title>
     <style>
         body {
@@ -182,6 +184,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <form method="POST" style="margin: 0;">
                         <input type="hidden" name="package" value="<?php echo strtolower($package['nom']); ?>">
                         <button type="submit" class="btn">Acheter maintenant</button>
+                        <div id="paypal-boutons"></div>
+
                     </form>
                 </div>
             <?php endforeach; ?>
@@ -193,3 +197,26 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </body>
 </html>
+
+<script>
+paypal.Buttons({
+    createOrder: function (data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                custom_id: pseudoPHP, // ✅ Pseudo visible pour toi dans les logs
+                description: "Paiement de " + pseudoPHP, // Peut s'afficher chez le client
+                amount: {
+                    value: '10.00',
+                    currency_code: 'EUR'
+                }
+            }]
+        });
+    },
+    onApprove: function (data, actions) {
+        return actions.order.capture().then(function (details) {
+            alert("Paiement effectué par " + details.payer.name.given_name);
+            console.log("Pseudo de session :", pseudoPHP);
+        });
+    }
+}).render("#paypal-boutons");
+</script>
