@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $email,
                         $username,
                         $name,
-                        password_hash($password, PASSWORD_DEFAULT),
+                        $password,
                         $user['id']
                     ];
                 } else {
