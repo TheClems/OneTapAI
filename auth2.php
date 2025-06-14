@@ -3,15 +3,22 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once 'config.php';
-$mode_panel = 'container'; // valeur par défaut
 
 $mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
 $error = '';
 $success = '';
 $user = getCurrentUser();
+
+// Définir le mode du panel en fonction du mode ou des actions POST
+$mode_panel = 'container'; // défaut pour login
+
+if ($mode == 'register' || $mode == 'edit_profile') {
+    $mode_panel = 'container right-panel-active';
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'login') {
-        $mode_panel="container";
+        $mode_panel = "container"; // garder le panel de gauche
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
@@ -36,10 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } 
     else if ($mode == 'edit_profile') {
-        $mode_panel="container right-panel-active";
+        $mode_panel = "container right-panel-active"; // garder le panel de droite
 
-        $error = '';
-        $success = '';
         requireLogin();
 
         // Vérifier si l'utilisateur existe
@@ -49,54 +54,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $email = trim($_POST['email']);
-            $password = trim($_POST['password']);
-            $confirm_password = trim($_POST['confirm_password']);
-            $username = trim($_POST['username']);
+        $email = trim($_POST['email']);
+        $password = trim($_POST['password']);
+        $confirm_password = trim($_POST['confirm_password']);
+        $username = trim($_POST['username']);
+        
+        // Validation
+        if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username)) {
+            $error = 'Tous les champs obligatoires doivent être remplis.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Email invalide.';
+        } elseif (!empty($password) && $password !== $confirm_password) {
+            $error = 'Les mots de passe ne correspondent pas.';
+        } else {
+            $pdo = getDBConnection();
             
-            // Validation
-            if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username)) {
-                $error = 'Tous les champs obligatoires doivent être remplis.';
-            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $error = 'Email invalide.';
-            } elseif (!empty($password) && $password !== $confirm_password) {
-                $error = 'Les mots de passe ne correspondent pas.';
+            // Vérifier si l'email ou le username sont déjà utilisés par un autre utilisateur
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR username = ?) AND id != ?");
+            $stmt->execute([$email, $username, $user['id']]);
+            
+            if ($stmt->fetch()) {
+                $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
             } else {
-                $pdo = getDBConnection();
+                // Update user information
+                $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
+                $params = [$email, $username, $user['id']];
                 
-                // Vérifier si l'email ou le username sont déjà utilisés par un autre utilisateur
-                $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR username = ?) AND id != ?");
-                $stmt->execute([$email, $username, $user['id']]);
+                if (!empty($password)) {
+                    array_splice($params, 2, 0, $password);
+                }
                 
-                if ($stmt->fetch()) {
-                    $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
+                if ($stmt->execute($params)) {
+                    $success = 'Informations mises à jour avec succès !';
+                    // Refresh user data
+                    $user = getCurrentUser();
+                    // Mettre à jour les données de session
+                    $_SESSION['user_email'] = $email;
+                    $_SESSION['user_username'] = $username;
                 } else {
-                    // Update user information
-                    $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
-                    $params = [$email, $username, $user['id']];
-                    
-                    if (!empty($password)) {
-                        array_splice($params, 2, 0, $password);
-                    }
-                    
-                    if ($stmt->execute($params)) {
-                        $success = 'Informations mises à jour avec succès !';
-                        // Refresh user data
-                        $user = getCurrentUser();
-                        // Mettre à jour les données de session
-                        $_SESSION['user_email'] = $email;
-                        $_SESSION['user_username'] = $username;
-                    } else {
-                        $error = 'Erreur lors de la mise à jour du profil.';
-                    }
+                    $error = 'Erreur lors de la mise à jour du profil.';
                 }
             }
         }
-    
     }
-    else { // register
-        $mode_panel="container right-panel-active";
+    else if ($mode == 'register') {
+        $mode_panel = "container right-panel-active"; // garder le panel de droite
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
@@ -126,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt = $pdo->prepare("INSERT INTO users (email, password, username, credits) VALUES (?, ?, ?, 500)");
                 if ($stmt->execute([$email, $password, $username])) {
                     $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
+                    $mode_panel = "container"; // Retour au panel de connexion après succès
                 } else {
                     $error = 'Erreur lors de la création du compte.';
                 }
@@ -136,6 +139,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <link rel="stylesheet" href="css/auth.css" />
 
+<?php if ($error): ?>
+    <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
+<?php endif; ?>
+
+<?php if ($success): ?>
+    <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+<?php endif; ?>
 
 <div class="<?php echo $mode_panel; ?>" id="container">
 	<div class="form-container sign-up-container">
@@ -147,11 +157,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
-			<input type="text" id="name" name="name"placeholder="Name" required />
+			<input type="text" id="name" name="name" placeholder="Name" />
 			<input type="text" id="username" name="username" placeholder="Username" required />
 			<input type="email" id="email" name="email" placeholder="Email" required/>
 			<input type="password" id="password" name="password" required placeholder="Password" />
-			<input type="password" id="confirm_password" name="password" required placeholder="Confirm password" />
+			<input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm password" />
 			<button type="submit">Sign Up</button>
 		</form>
 	</div>
