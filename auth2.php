@@ -19,6 +19,7 @@ if ($mode == 'register' || $mode == 'edit_profile') {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'login') {
         $mode_panel = "container"; // garder le panel de gauche
+        $passwd_required="required";
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
@@ -44,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } 
     else if ($mode == 'edit_profile') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-    
         requireLogin();
     
         // Vérifier si l'utilisateur existe
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = trim($_POST['name']);
     
         // Validation
-        if (empty($email) || empty($username) || empty($name) || (!empty($confirm_password) && empty($password))) {
+        if (empty($email) || empty($username) || empty($name)) {
             $error = 'Tous les champs obligatoires doivent être remplis.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Email invalide.';
@@ -71,33 +71,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $pdo = getDBConnection();
     
-            // Vérifier l'unicité de l'email ou du username (hors cet utilisateur)
+            // Vérifier si email ou username sont déjà utilisés par un autre utilisateur
             $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR username = ?) AND id != ?");
             $stmt->execute([$email, $username, $user['id']]);
     
             if ($stmt->fetch()) {
                 $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
             } else {
-                // Préparer la requête selon que le mot de passe soit modifié ou non
+                // Construire la requête SQL en fonction du mot de passe
                 if (!empty($password)) {
+                    // Nouveau mot de passe, on le hash
                     $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ?, password = ? WHERE id = ?");
-                    $params = [
-                        $email,
-                        $username,
-                        $name,
-                        $password,
-                        $user['id']
-                    ];
+                    $params = [$email, $username, $name, $password, $user['id']];
                 } else {
+                    // Pas de mot de passe modifié
                     $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ? WHERE id = ?");
-                    $params = [
-                        $email,
-                        $username,
-                        $name,
-                        $user['id']
-                    ];
+                    $params = [$email, $username, $name, $user['id']];
                 }
     
+                // Exécution
                 if ($stmt->execute($params)) {
                     $success = 'Informations mises à jour avec succès !';
     
@@ -113,10 +105,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
-    }
-    
+    }    
     else if ($mode == 'register') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
+        $passwd_required="required";
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
@@ -187,9 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="email" id="email" name="email" placeholder="Email" 
                 value="<?php echo isset($user) ? htmlspecialchars($user['email']) : ''; ?>" required />
 
-            <input type="password" id="password" name="password" required placeholder="Password" />
+            <input type="password" id="password" name="password" required placeholder="Password" <?php echo $passwd_required; ?>/>
 
-            <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm password" />
+            <input type="password" id="confirm_password" name="confirm_password" required placeholder="Confirm password" <?php echo $passwd_required; ?>/>
 
             <button type="submit">Sign Up</button>
 		</form>
