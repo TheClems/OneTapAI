@@ -1,6 +1,5 @@
 <?php
 require 'config.php';
-require 'functions.php';
 
 // Vérifier si l'utilisateur est connecté
 requireLogin();
@@ -8,24 +7,7 @@ requireLogin();
 // Récupérer les informations de l'utilisateur
 $user = getCurrentUser();
 
-// Récupérer l'historique des achats
-$pdo = getDBConnection();
-$stmt = $pdo->prepare("
-    SELECT 
-        a.nom as package_nom,
-        a.prix as package_prix,
-        a.credits_offerts,
-        p.date_achat,
-        p.montant,
-        p.statut
-    FROM paiements p
-    LEFT JOIN abonnements a ON p.package_id = a.id
-    WHERE p.user_id = ?
-    ORDER BY p.date_achat DESC
-    LIMIT 5
-");
-$stmt->execute([$user['id']]);
-$historique = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
