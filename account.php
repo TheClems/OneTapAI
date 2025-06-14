@@ -528,15 +528,6 @@
                 <h2>Jean Dupont</h2>
                 <p style="color: #718096; margin-top: 0.5rem;">Membre Premium</p>
                 
-                <div style="margin-top: 2rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                        <span style="color: #718096;">Niveau</span>
-                        <span style="font-weight: 600;">Expert</span>
-                    </div>
-                    <div style="background: #e2e8f0; border-radius: 10px; height: 8px;">
-                        <div style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 85%; border-radius: 10px;"></div>
-                    </div>
-                </div>
             </div>
 
             <div class="info-cards">
