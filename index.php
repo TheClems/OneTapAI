@@ -510,6 +510,7 @@
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">API Access</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
+                                 OneTapAI's LLM API offers advanced summarization, text generation, and question-answering. Easily integrate with support for JSON, HTML, Markdown, and plain text, enhancing your applications with powerful language tools.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -529,6 +530,7 @@
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Pre-built Tools</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
+                                    OneTapAI offers pre-built AI integrations for diverse creative tasks including image, video, music, and PDF generation, simplifying advanced feature integration into your apps.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -550,6 +552,7 @@
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
+                                Pixa supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
