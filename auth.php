@@ -140,8 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="auth-header">
                 <h1>AI Credits</h1>
                 <div class="auth-mode-switch">
-                    <button class="mode-btn <?php echo $mode == 'login' ? 'active' : ''; ?>" onclick="window.location.href='auth.php?mode=login'">Connexion</button>
-                    <button class="mode-btn <?php echo $mode == 'register' ? 'active' : ''; ?>" onclick="window.location.href='auth.php?mode=register'">Inscription</button>
+                <?php if ($mode != 'edit_profile') {
+                    echo "<button class="mode-btn <?php echo $mode == 'login' ? 'active' : ''; ?>" onclick="window.location.href='auth.php?mode=login'">Connexion</button>"
+                    echo "<button class="mode-btn <?php echo $mode == 'register' ? 'active' : ''; ?>" onclick="window.location.href='auth.php?mode=register'">Inscription</button>"
+                }
+                ?>
+
                 </div>
             </div>
 
