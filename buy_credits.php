@@ -311,5 +311,5 @@ $pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du
         });
     });
 </script>
-<script type="text/javascript" src="js/nav.js"></script>
+<script type="text/javascript" src="assets/js/nav.js"></script>
 
