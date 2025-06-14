@@ -5,6 +5,8 @@ const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 const body = document.body;
 const welcome = document.querySelector('.welcome');
+const infovalue = document.querySelector('.info-value');
+
 // Gestion du thème
 let isDarkMode = true;
 
@@ -12,7 +14,8 @@ themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     body.classList.toggle('light-mode');
     welcome.classList.toggle('light-mode');
-    
+    infovalue.classList.toggle('light-mode');
+
     if (isDarkMode) {
         // Icône lune pour le mode sombre
         themeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
