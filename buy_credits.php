@@ -42,99 +42,129 @@ $pdo = getDBConnection();
 $stmt = $pdo->query("SELECT * FROM abonnements ORDER BY prix ASC");
 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<!doctype html>
-<html lang="en" class="tw-dark">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Acheter des crédits - AI Credits</title>
-    <link rel="stylesheet" href="css/tailwind-build.css">
-    <link rel="stylesheet" href="css/index.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR"></script>
+
+    <title>Acheter des crédits - AI Credits</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .current-credits {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .packages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .package {
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        .package:hover {
+            border-color: #007bff;
+        }
+        .package h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        .credits {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .success {
+            color: green;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 5px;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .demo-notice {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #856404;
+        }
+    </style>
 </head>
-<body class="tw-flex tw-min-h-[100vh] tw-flex-col tw-bg-[#fcfcfc] tw-text-black dark:tw-bg-black dark:tw-text-white">
-    <!-- Header -->
-    <header class="lg:tw-px-4 tw-max-w-[100vw] tw-max-w-lg:tw-mr-auto max-lg:tw-top-0 tw-fixed tw-top-4 lg:tw-left-1/2 lg:tw--translate-x-1/2 tw-z-20 tw-flex tw-h-[60px] tw-w-full tw-text-gray-700 tw-bg-white dark:tw-text-gray-200 dark:tw-bg-[#17181b] tw-px-[3%] tw-rounded-md lg:tw-max-w-5xl tw-shadow-md dark:tw-shadow-gray-700 lg:tw-justify-around lg:!tw-backdrop-blur-lg lg:tw-opacity-[0.99]">
-        <a class="tw-flex tw-p-[4px] tw-gap-2 tw-place-items-center" href="#">
-            <div class="tw-h-[30px] tw-max-w-[100px]">
-                <img src="./assets/logo/logo.png" alt="logo" class="tw-object-contain tw-h-full tw-w-full dark:tw-invert" />
-            </div>
-            <span class="tw-text-base tw-font-medium">AI Credits</span>
-        </a>
-        <div class="tw-relative tw-flex tw-flex-col tw-place-items-center">
-            <div id="nav-dropdown-toggle-0" class="max-lg:tw-max-w-fit tw-flex header-links tw-gap-1 tw-place-items-center">
-                <span class="">Features</span>
-                <i class="tw-text-sm bi bi-chevron-down"></i>
-            </div>
-            <nav id="nav-dropdown-list-0" data-open="false" class="tw-scale-0 tw-opacity-0 lg:tw-fixed tw-flex lg:tw-top-[80px] lg:tw-left-1/2 lg:tw--translate-x-1/2 tw-w-[90%] tw-rounded-lg max-lg:tw-h-0 max-lg:tw-w-0 lg:tw-h-[450px] tw-overflow-hidden tw-bg-white dark:tw-bg-[#17181B] tw-duration-300 tw-transition-opacity tw-transition-height tw-shadow-lg tw-p-4">
-                <div class="tw-grid max-xl:tw-flex max-xl:tw-flex-col tw-justify-around tw-grid-cols-2 tw-w-full">
-                    <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="#">
-                        <div class="tw-font-semibold tw-text-3xl">
-                            <i class="bi bi-list-columns-reverse"></i>
-                        </div>
-                        <div class="tw-flex tw-flex-col tw-gap-2">
-                            <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Prompt library</div>
-                            <p>Comes packed with pre-made prompt templates</p>
-                        </div> 
-                    </a>
-                    <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="#">
-                        <div class="tw-font-semibold tw-text-3xl">
-                            <i class="bi bi-grid-1x2-fill"></i>
-                        </div>
-                        <div class="tw-flex tw-flex-col tw-gap-2">
-                            <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Unified Interface</div>
-                            <p class="">Test multiple AI models in one interface</p>
-                        </div> 
-                    </a>
-                    <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="#">
-                        <div class="tw-font-semibold tw-text-3xl">
-                            <i class="bi bi-globe"></i>
-                        </div>
-                        <div class="tw-flex tw-flex-col tw-gap-2">
-                            <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Realtime web search</div>
-                            <p class="">Search the internet in realtime</p>
-                        </div> 
-                    </a>
-                    <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="#">
-                        <div class="tw-font-semibold tw-text-3xl">
-                            <i class="bi bi-image-fill"></i>
-                        </div>
-                        <div class="tw-flex tw-flex-col tw-gap-2">
-                            <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Image generation</div>
-                            <p class="">Generate images from prompts</p>
-                        </div> 
-                    </a>
-                    <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="#">
-                        <div class="tw-font-semibold tw-text-3xl">
-                            <i class="bi bi-calendar-range"></i>
-                        </div>
-                        <div class="tw-flex tw-flex-col tw-gap-2">
-                            <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">History</div>
-                            <p class="">Continue from where you left off</p>
-                        </div> 
-                    </a>
-                    <a class="header-links tw-flex tw-text-left tw-gap-4 !tw-p-4" href="#">
-                        <div class="tw-font-semibold tw-text-3xl">
-                            <i class="bi bi-translate"></i>
-                        </div>
-                        <div class="tw-flex tw-flex-col tw-gap-2">
-                            <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Multilingual</div>
-                            <p class="">Converse in multiple languages</p>
-                        </div> 
-                    </a>
-                </div>           
-            </nav>
+<body>
+    <div class="container">
+        <h1>Acheter des crédits</h1>
+        
+        <div class="demo-notice">
+            <strong>Mode démo :</strong> Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
         </div>
-        <div class="lg:tw-mx-4 tw-flex tw-place-items-center tw-gap-[20px] tw-text-base max-md:tw-w-full max-md:tw-flex-col max-md:tw-place-content-center">
-            <button type="button" onclick="toggleMode()" class="header-links tw-text-gray-600 dark:tw-text-gray-300" title="toggle-theme" id="theme-toggle">
-                <i class="bi bi-sun" id="toggle-mode-icon"></i>
-            </button>
-            <a href="#" aria-label="Dashboard" class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform tw-duration-[0.3s] hover:tw-translate-x-2">
-                <span>Dashboard</span>
-                <i class="bi bi-arrow-right"></i>
-            </a>
+        
         <div class="current-credits">
             <strong>Vos crédits actuels : <?php echo number_format($user['credits']); ?></strong>
         </div>
