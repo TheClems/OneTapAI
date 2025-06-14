@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>All your AI models in one place - Try Pixa Playground</title>
+        <title>OneTapAI</title>
         <meta name="description" content="Get all your AI models and tools in one place" />
         <link
             rel="shortcut icon"
@@ -15,7 +15,6 @@
         <meta property="og:title" content="All your AI models in one place - Try Pixa Playground" />
         <meta property="og:description" content="Get all your AI models and tools in one place" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://github.com/PaulleDemon" />
         <meta property="og:image" content="" />
 
         <!-- <link rel="stylesheet" href="css/tailwind-runtime.css" /> -->
@@ -65,7 +64,7 @@
                         class="tw-object-contain tw-h-full tw-w-full dark:tw-invert"
                     />
                 </div>
-                <span class="tw-uppercase tw-text-base tw-font-medium">Pixa</span>
+                <span class="tw-uppercase tw-text-base tw-font-medium">OneTapAI</span>
             </a>
             <div
                 class="collapsible-header animated-collapse max-lg:tw-shadow-md"
@@ -76,7 +75,6 @@
                                 max-lg:tw-gap-5 lg:tw-mx-auto tw-place-items-center"
                 >
                     <a class="header-links" href="#"> API </a>
-                    <a class="header-links" href="#"> Blog </a>
                     <a class="header-links" href="#"> Solutions </a>
                    
                     <div class="tw-relative tw-flex tw-flex-col tw-place-items-center">
@@ -173,7 +171,7 @@
                     </button>
                     <a
                         href="#"
-                        aria-label="Try Pixa Playground"
+                        aria-label="Try OneTapAI Playground"
                         class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform 
                                     tw-duration-[0.3s] hover:tw-translate-x-2"
                     >
@@ -211,7 +209,6 @@
                     <div class="tw-flex tw-w-full  tw-rounded-xl tw-px-[5%] max-md:tw-px-2 tw-min-h-[300px] tw-max-h-[90%] tw-h-full">
 
                         <div class="tw-relative tw-bg-black tw-min-w-full tw-min-h-full tw-overflow-clip tw-rounded-md">
-                            <!-- add your youtube video link here -->
                             <iframe class="tw-absolute tw-top-[50%] tw--translate-y-[50%] tw-left-[50%] tw--translate-x-[50%] tw-w-full tw-h-full" 
                                 src="https://www.youtube.com/embed/6j4fPVkA3EA?si=llcTrXPRM-MRXDZB&amp;controls=0&rel=0&showinfo=0&autoplay=1&loop=1&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                         </div>
@@ -241,8 +238,7 @@
                         class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center
                          tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full"
                     >
-                        <!-- Test, Develop and Deploy all your AI models in one place, with Pixa seamless playground interface -->
-                        Your all in one AI companion. generate Images, videos, codes, docs, debug your web apps all with Pixa's interface.
+                        Your all in one AI companion. generate Images, videos, codes, docs, debug your web apps all with OneTapAI's interface.
                     </div>
 
                     <div
@@ -468,104 +464,8 @@
         </section>
 
         <section
-            class="tw-relative tw-flex tw-w-full tw-max-w-[100vw] tw-flex-col tw-place-content-center tw-place-items-center tw-overflow-hidden tw-p-8"
-        >
-            <h2 class="reveal-up tw-text-3xl max-md:tw-text-xl">
-                Trusted by brands you love
-            </h2>
-
-            <div class="reveal-up carousel-container">
-                <div
-                    class="carousel lg:w-place-content-center tw-mt-10 tw-flex tw-w-full tw-gap-5 max-md:tw-gap-2"
-                >
-                    <!-- add the brands using your app  -->
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/google.svg"
-                            alt="Google"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/microsoft.svg"
-                            alt="Microsoft"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/adobe.svg"
-                            alt="Adobe"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/airbnb.svg"
-                            alt="Airbnb"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/stripe.svg"
-                            alt="Stripe"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/reddit.svg"
-                            alt="Reddit"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                </div>
-            </div>
-        </section>
-
-            
-        <section
-            class="tw-relative tw-flex  tw-w-full tw-min-h-[100vh] max-lg:tw-min-h-[80vh] tw-flex-col tw-place-content-center tw-place-items-center tw-overflow-hidden"
-        >   
-             <div class="tw-w-full  tw-place-content-center tw-items-center 
-                        tw-flex tw-flex-col tw-max-w-[900px] tw-gap-4 tw-p-4">
-               <div class="purple-bg-grad  reveal-up tw-absolute tw-right-[20%] tw-top-[20%] tw-h-[200px] tw-w-[200px]"
-                ></div>
-                <h2 class="reveal-up tw-text-6xl max-lg:tw-text-4xl tw-text-center tw-leading-normal tw-uppercase">
-                    
-                    <span class="tw-font-semibold">Build your own AI Apps </span>
-                    <br>
-                    <span class="tw-font-serif">on top of Pixa APIs</span>
-                </h2>
-                <p class="reveal-up tw-mt-8 tw-max-w-[650px] tw-text-gray-900 dark:tw-text-gray-200 tw-text-center max-md:tw-text-sm">   
-                    Pixa's Playground is powered by Pixa's cutting-edge LLM API endpoints. Our powerful models simplify task automation, offering 
-                    advanced capabilities in summarization, text generation, and Q&A handling. 
-                </p>
-                <div class="reveal-up tw-flex tw-mt-8">
-                    <a href="#" 
-                        target="_blank"
-                        rel="noopener"
-                        class="tw-shadow-md hover:tw-shadow-xl dark:tw-shadow-gray-800 tw-transition-all tw-duration-300 
-                                        tw-border-[1px] tw-p-3 tw-px-4 tw-border-black dark:tw-border-white tw-rounded-md">
-                        Check Pixa APIs
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section
             class="tw-relative tw-flex tw-max-w-[100vw] tw-flex-col tw-place-content-center tw-place-items-center tw-overflow-hidden"
         >   
-
-
             <div
                 class="tw-mt-8 tw-flex tw-flex-col tw-w-full tw-h-full tw-place-items-center tw-gap-5"
             >
@@ -637,7 +537,7 @@
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Pre-built Tools</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Pixa offers pre-built AI integrations for diverse creative tasks including image, video, music, and PDF generation, simplifying advanced feature integration into your apps.
+                                    OneTapAI offers pre-built AI integrations for diverse creative tasks including image, video, music, and PDF generation, simplifying advanced feature integration into your apps.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -659,7 +559,7 @@
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Pixa supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
+                                    OneTapAI supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -1060,7 +960,7 @@
             <h3
                 class="reveal-up tw-text-4xl tw-font-medium tw-text-center max-md:tw-text-2xl"
             >
-                Join the professionals using Pixa
+                Join the professionals using OneTapAI
             </h3>
             <!-- Testimonials -->
             <div
@@ -1398,114 +1298,6 @@
             </div>
         </section>
 
-        <section
-            class="tw-mt-5 tw-flex tw-min-h-[80vh] tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-p-[2%] max-lg:tw-p-3"
-        >
-            <h3
-                class="reveal-up tw-text-4xl tw-font-medium max-md:tw-text-2xl"
-            >
-                Read resources by experts ✨
-            </h3>
-            <!-- articles -->
-        
-            <div
-                class="reveal-up tw-mt-10 tw-flex tw-flex-wrap tw-place-content-center tw-gap-10 max-lg:tw-flex-col"
-            >
-                <a
-                    href="#"
-                    class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
-                >
-                    <div
-                        class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
-                    >
-                        <img
-                            src="./assets/images/home/article1.png"
-                            alt="article image"
-                            class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
-                            srcset=""
-                        />
-                    </div>
-
-                    <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
-                        <div class="tw-text-gray-800 dark:tw-text-gray-200">
-                            Machine learning
-                        </div>
-                        <div class="tw-text-gray-600 dark:tw-text-gray-400">
-                            Jul, 17, 2024
-                        </div>
-                    </div>
-                    <h3
-                        class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
-                    >
-                        Latest AI tools
-                    </h3>
-                    
-                </a>
-                
-                <a
-                    href="#"
-                    class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
-                >
-                    <div
-                        class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
-                    >
-                        <img
-                            src="./assets/images/home/article2.jpg"
-                            alt="article image"
-                            class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
-                            srcset=""
-                        />
-                    </div>
-
-                    <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
-                        <div class="tw-text-gray-800 dark:tw-text-gray-200">
-                            Announcement
-                        </div>
-                        <div class="tw-text-gray-600 dark:tw-text-gray-400">
-                            June, 22, 2024
-                        </div>
-                    </div>
-                    <h3
-                        class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
-                    >
-                        Pixa Unveils new technology
-                    </h3>
-                    
-                </a>
-
-                <a
-                    href="#"
-                    class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
-                >
-                    <div
-                        class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
-                    >
-                        <img
-                            src="./assets/images/home/article3.png"
-                            alt="article image"
-                            class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
-                            srcset=""
-                        />
-                    </div>
-
-                    <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
-                        <div class="tw-text-gray-800 dark:tw-text-gray-200">
-                            Announcement
-                        </div>
-                        <div class="tw-text-gray-600 dark:tw-text-gray-400">
-                            Apr, 27, 2024
-                        </div>
-                    </div>
-                    <h3
-                        class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
-                    >
-                        Launching Pixa playground
-                    </h3>
-                    
-                </a>
-
-            </div>
-        </section>
 
         <section
             class="tw-relative tw-flex tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-gap-[10%] tw-p-[5%] tw-px-[10%]"
@@ -1526,12 +1318,12 @@
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
-                        <span>What's Pixa playground?</span>
+                        <span>What's OneTapAI playground?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        Pixa's playground is an integrated webapp to seamlessly test different LLM models such as GPT4, Claude,
+                        OneTapAI's playground is an integrated webapp to seamlessly test different LLM models such as GPT4, Claude,
                         Gemini, etc.
                     </div>
                 </div>
@@ -1562,7 +1354,7 @@
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        You can use Pixa's AI Playground to test different models, including
+                        You can use OneTapAI's AI Playground to test different models, including
                         GPT4, Claude, Perplexity and more. 
                     </div>
                 </div>
@@ -1574,12 +1366,12 @@
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
-                        <span>Is Pixa Free to use?</span>
+                        <span>Is OneTapAI Free to use?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        You can start using Pixa for free, and later upgrade your plan to access all its features.
+                        You can start using OneTapAI for free, and later upgrade your plan to access all its features.
                     </div>
                 </div>
                 <hr>
@@ -1611,39 +1403,6 @@
             </div>
         </section>
 
-        <section
-            class="tw-flex tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-gap-[10%] tw-p-[5%] tw-px-[10%] max-md:tw-px-2"
-        >
-            <div
-                class="tw-flex tw-w-full tw-max-w-[80%] tw-place-content-center tw-place-items-center tw-justify-between tw-gap-3 
-                        tw-rounded-lg tw-bg-[#F6F7FB] dark:tw-bg-[#171717] tw-p-6 max-md:tw-max-w-full max-md:tw-flex-col"
-            >
-                <div class="tw-flex tw-flex-col max-lg:tw-text-center tw-gap-1">
-                    <h2 class="tw-text-2xl tw-text-gray-800 dark:tw-text-gray-200 max-md:tw-text-xl">
-                        Join our newsletter
-                    </h2>
-                    <div class="tw-text-gray-700 dark:tw-text-gray-300">Get product insights and updates.</div>
-                </div>
-
-                <div
-                    class="tw-flex tw-h-[60px] tw-place-items-center tw-gap-2 tw-overflow-hidden tw-p-2"
-                >
-                    <input
-                        type="email"
-                        class="input tw-h-full tw-w-full !tw-border-gray-600 tw-p-2 tw-outline-none"
-                        placeholder="email"
-                    />
-                    <a
-                        class="btn !tw-rounded-full !tw-border-[1px] !tw-text-black !tw-border-solid !tw-border-black  dark:!tw-text-white
-                            dark:!tw-border-gray-300 !tw-bg-transparent tw-transition-colors tw-duration-[0.3s]"
-                        href=""
-                    >
-                        Signup
-                    </a>
-                </div>
-            </div>
-        </section>
-
         <footer
             class="tw-mt-auto tw-flex tw-flex-col tw-w-full tw-gap-4 tw-text-sm tw-pt-[5%] tw-pb-10 tw-px-[10%] 
                     tw-text-black dark:tw-text-white max-md:tw-flex-col"
@@ -1660,26 +1419,26 @@
                             class="tw-max-w-[120px] dark:tw-invert"
                         />
                         <div class="tw-max-w-[120px] tw-text-center tw-text-3xl tw-h-fit">
-                            PIXA
+                            OneTapAI
                         </div>
                     </a>
                     <!-- <div class="tw-mt-3 tw-text-lg tw-font-semibold">Follow us</div> -->
                     <div class="tw-flex tw-gap-4 tw-text-lg">
                         <a
-                            href="https://github.com/PaulleDemon/"
+                            href="https://github.com/TheClems/"
                             aria-label="Github"
                         >
                             <i class="bi bi-github"></i>
                         </a>
                         <a
-                            href="https://twitter.com/pauls_freeman"
+                            href=""
                             aria-label="Twitter"
                         >
                             <i class="bi bi-twitter"></i>
                         </a>
                       
                         <a
-                            href="https://www.linkedin.com/"
+                            href="https://www.linkedin.com/company/107694730/"
                             aria-label="Linkedin"
                         >
                             <i class="bi bi-linkedin"></i>
@@ -1706,9 +1465,8 @@
                         <div class="tw-flex tw-flex-col tw-gap-3">
                             <a href="#" class="footer-link">Support channels</a>
                             <a href="#" class="footer-link">Systems</a>
-                            <a href="#" class="footer-link">Blog</a>
-                            <a href="https://twitter.com/pauls_freeman" class="footer-link">Twitter</a>
-                            <a href="https://github.com/PaulleDemon" class="footer-link">Github</a>
+                            <a href="https://twitter.com/" class="footer-link">Twitter</a>
+                            <a href="https://github.com/TheClems" class="footer-link">Github</a>
                         </div>
                     </div>
 
@@ -1726,7 +1484,7 @@
             <hr class="tw-mt-8">
             <div class="tw-mt-2 tw-flex tw-gap-2 tw-flex-col tw-text-gray-700 dark:tw-text-gray-300 tw-place-items-center 
                     tw-text-[12px] tw-w-full tw-text-center tw-place-content-around">
-                <span>Copyright &#169; 2023-2025</span>
+                <span>Copyright &#169; 2025</span>
                 <span>All trademarks and copyrights belong to their respective owners.</span>
             </div>
 
