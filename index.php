@@ -35,7 +35,7 @@ if (isLoggedIn()) {
         .btn {
             display: inline-block;
             padding: 12px 24px;
-            background: #007bff;
+            background:rgb(255, 0, 0);
             color: white;
             text-decoration: none;
             border-radius: 5px;
