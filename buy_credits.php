@@ -589,3 +589,68 @@ $pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du
         });
     });
 </script>
+
+<script>
+        // Gestion du toggle de la sidebar
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        // Gestion des liens actifs
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        // Création des particules flottantes
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                    particlesContainer.appendChild(particle);
+                    
+                    // Supprimer la particule après l'animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 8000);
+                }, i * 400);
+            }
+        }
+
+        // Lancer les particules
+        createParticles();
+        setInterval(createParticles, 6000);
+
+        // Gestion responsive
+        function handleResize() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('mobile');
+            } else {
+                sidebar.classList.remove('mobile');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        // Animation au chargement
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+    </script>
