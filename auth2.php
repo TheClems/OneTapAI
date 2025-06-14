@@ -104,8 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
         $username = trim($_POST['username']);
+        $name = trim($_POST['name']);
+
         
-        if (empty($email) || empty($password) || empty($confirm_password) || empty($username)) {
+        if (empty($email) || empty($password) || empty($confirm_password) || empty($username) || empty($name)) {
             $error = 'Tous les champs sont obligatoires.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $error = 'Email invalide.';
@@ -125,8 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($stmt2->fetch()) {
                 $error = 'Ce nom d\'utilisateur est déjà utilisé.';
             } else {
-                $stmt = $pdo->prepare("INSERT INTO users (email, password, username, credits) VALUES (?, ?, ?, 500)");
-                if ($stmt->execute([$email, $password, $username])) {
+                $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, username, credits) VALUES (?, ?, ?, ?, 500)");
+                if ($stmt->execute([$name, $email, $password, $username])) {
                     $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
                     $mode_panel = "container"; // Retour au panel de connexion après succès
                 } else {
