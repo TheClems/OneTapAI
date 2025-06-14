@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
 
                 <button type="submit" class="btn <?php echo $mode == 'login' || $mode == 'edit_profile' ? 'btn-primary' : 'btn-success'; ?>">
-                    <?php echo $mode == 'login' || $mode == 'edit_profile' ? 'Se connecter' : 'S\'inscrire'; ?>
+                    <?php echo $mode == 'login' || $mode == 'edit_profile' || $mode == 'register' ? 'Se connecter' : 'S\'inscrire' : 'Modifier'; ?>
                 </button>
             </form>
         </div>
