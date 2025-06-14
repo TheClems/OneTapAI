@@ -6,7 +6,7 @@ const themeIcon = document.getElementById('themeIcon');
 const body = document.body;
 const welcome = document.querySelector('.welcome');
 const infovalue = document.querySelector('.info-value');
-
+const infoCard = document.querySelector('.info-card');
 // Gestion du thème
 let isDarkMode = true;
 
@@ -15,6 +15,7 @@ themeToggle.addEventListener('click', () => {
     body.classList.toggle('light-mode');
     welcome.classList.toggle('light-mode');
     infovalue.classList.toggle('light-mode');
+    infoCard.classList.toggle('light-mode');
 
     if (isDarkMode) {
         // Icône lune pour le mode sombre
