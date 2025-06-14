@@ -9,6 +9,7 @@ const infoValues = document.querySelectorAll('.info-value');
 const infoCards = document.querySelectorAll('.info-card');
 const profileCard = document.querySelector('.profile-card');
 const infoLabels = document.querySelectorAll('.info-label');
+const h2 = document.querySelectorAll('h2');
 // Gestion du thème
 // Gestion du thème
 let isDarkMode = true;
@@ -17,7 +18,8 @@ const elementsToToggle = [
     ...infoCards,
     welcome,
     profileCard,
-    ...infoLabels
+    ...infoLabels,
+    ...h2
 ];
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
