@@ -35,14 +35,14 @@ if (isLoggedIn()) {
         .btn {
             display: inline-block;
             padding: 12px 24px;
-            background:rgb(255, 0, 0);
+            background: #007bff;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             margin: 10px;
         }
         .btn:hover {
-            background:rgb(111, 0, 255);
+            background:rgb(72, 179, 0);
         }
         .text-center {
             text-align: center;
