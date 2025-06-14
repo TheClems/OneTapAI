@@ -4,7 +4,8 @@ require_once 'config.php';
 $mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
 $error = '';
 $success = '';
-
+requireLogin();
+$user = getCurrentUser();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'login') {
         $email = trim($_POST['email']);
@@ -30,8 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } 
     else if ($mode == 'edit_profile') {
-        requireLogin();
-        $user = getCurrentUser();
+
         $error = '';
         $success = '';
 
