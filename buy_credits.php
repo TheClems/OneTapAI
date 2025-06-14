@@ -2,6 +2,8 @@
 require_once 'config.php';
 requireLogin();
 
+$user = getCurrentUser();
+
 $success = '';
 $error = '';
 
@@ -197,8 +199,13 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </body>
 </html>
+<?php
+$pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du_78"
+?>
 
 <script>
+    var pseudoPHP = <?php echo json_encode($pseudo); ?>;
+
 paypal.Buttons({
     createOrder: function (data, actions) {
         return actions.order.create({
