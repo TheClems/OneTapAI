@@ -1,9 +1,9 @@
 <?php
 // Configuration de la base de données
 define('DB_HOST', 'localhost');
-define('DB_NAME', '');
-define('DB_USER', '');
-define('DB_PASS', '');
+define('DB_NAME', 'u804247293_OneTapAI');
+define('DB_USER', 'u804247293_root');
+define('DB_PASS', 'OcYYYC:3tM$'); // Mot de passe vide par défaut pour XAMPP
 
 // Connexion à la base de données
 function getDBConnection() {
