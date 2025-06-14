@@ -13,9 +13,10 @@ let isDarkMode = true;
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     body.classList.toggle('light-mode');
-    welcome.classList.toggle('light-mode');
     infovalue.classList.toggle('light-mode');
     infoCard.classList.toggle('light-mode');
+    welcome.classList.toggle('light-mode');
+
 
     if (isDarkMode) {
         // Icône lune pour le mode sombre
