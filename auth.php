@@ -35,6 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = '';
         $success = '';
 
+        // Vérifier si l'utilisateur existe
+        if (!$user) {
+            $error = 'Utilisateur non trouvé.';
+            header('Location: dashboard.php');
+            exit();
+        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = trim($_POST['email']);
             $password = trim($_POST['password']);
@@ -51,20 +58,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $pdo = getDBConnection();
                 
-                // Update user information
-                $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
-                $params = [$email, $username, $user['id']];
+                // Vérifier si l'email ou le username sont déjà utilisés par un autre utilisateur
+                $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR username = ?) AND id != ?");
+                $stmt->execute([$email, $username, $user['id']]);
                 
-                if (!empty($password)) {
-                    array_splice($params, 2, 0, $password);
-                }
-                
-                if ($stmt->execute($params)) {
-                    $success = 'Informations mises à jour avec succès !';
-                    // Refresh user data
-                    $user = getCurrentUser();
+                if ($stmt->fetch()) {
+                    $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
                 } else {
-                    $error = 'Erreur lors de la mise à jour du profil.';
+                    // Update user information
+                    $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
+                    $params = [$email, $username, $user['id']];
+                    
+                    if (!empty($password)) {
+                        array_splice($params, 2, 0, $password);
+                    }
+                    
+                    if ($stmt->execute($params)) {
+                        $success = 'Informations mises à jour avec succès !';
+                        // Refresh user data
+                        $user = getCurrentUser();
+                        // Mettre à jour les données de session
+                        $_SESSION['user_email'] = $email;
+                        $_SESSION['user_username'] = $username;
+                    } else {
+                        $error = 'Erreur lors de la mise à jour du profil.';
+                    }
                 }
             }
         }
