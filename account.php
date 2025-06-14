@@ -520,7 +520,7 @@ $user = getCurrentUser();
                 <div class="avatar">
                     JD
                 </div>
-                <h2>Jean Dupont</h2>
+                <h2><?php echo htmlspecialchars($user['full_name']); ?></h2>
                 <p style="color: #718096; margin-top: 0.5rem;">Membre Premium</p>
                 
             </div>
