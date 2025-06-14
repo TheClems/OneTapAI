@@ -27,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = 'Tous les champs sont obligatoires.';
         } else {
             $pdo = getDBConnection();
-            $stmt = $pdo->prepare("SELECT id, email, password, username FROM users WHERE email = ?");
-            $stmt->execute([$email]);
+            $stmt = $pdo->prepare("SELECT id, email, password, username FROM users WHERE email = ? OR username = ?");
+            $stmt->execute([$email, $email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($user && $user['password'] === $password) {
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your account</span>
-			<input type="email" id="email" name="email" placeholder="Email" required/>
+			<input id="email" name="email" placeholder="Email" required/>
 			<input type="password" id="password" name="password" placeholder="Password" required/>
 			<a href="#">Forgot your password?</a>
 			<button>Sign In</button>
