@@ -363,7 +363,7 @@
                                 </div>
 
                                 <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="OneTapAI-playground">
-                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="OneTapAI-playground">
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
                                             <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
