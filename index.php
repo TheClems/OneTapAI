@@ -206,6 +206,7 @@
                     <div class="tw-flex tw-w-full  tw-rounded-xl tw-px-[5%] max-md:tw-px-2 tw-min-h-[300px] tw-max-h-[90%] tw-h-full">
 
                         <div class="tw-relative tw-bg-black tw-min-w-full tw-min-h-full tw-overflow-clip tw-rounded-md">
+                            <!-- add your youtube video link here -->
                             <iframe class="tw-absolute tw-top-[50%] tw--translate-y-[50%] tw-left-[50%] tw--translate-x-[50%] tw-w-full tw-h-full" 
                                 src="https://www.youtube.com/embed/6j4fPVkA3EA?si=llcTrXPRM-MRXDZB&amp;controls=0&rel=0&showinfo=0&autoplay=1&loop=1&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                         </div>
@@ -235,6 +236,7 @@
                         class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center
                          tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full"
                     >
+                        <!-- Test, Develop and Deploy all your AI models in one place, with Pixa seamless playground interface -->
                         Your all in one AI companion. generate Images, videos, codes, docs, debug your web apps all with Pixa's interface.
                     </div>
 
@@ -366,12 +368,12 @@
 
                                 </div>
 
+                                <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
                                             <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
                                                 alt="Pixa logo">
                                         </div>
-                                        <div class="prompt-container tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
                                         <div class="prompt-container tw-overflow-y-auto tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
                                                     max-lg:tw-mt-12 tw-w-full tw-h-full tw-z-10 tw-flex tw-flex-col" id="prompt-container">
                                             <div class="tw-w-full tw-flex tw-text-center tw-flex-col tw-place-content-center">
