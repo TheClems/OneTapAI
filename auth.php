@@ -4,7 +4,6 @@ require_once 'config.php';
 $mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
 $error = '';
 $success = '';
-requireLogin();
 $user = getCurrentUser();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'login') {
@@ -34,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $error = '';
         $success = '';
+        requireLogin();
 
         // Vérifier si l'utilisateur existe
         if (!$user) {
