@@ -593,44 +593,6 @@
             </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i data-lucide="activity"></i>
-                </div>
-                <div class="stat-value">127</div>
-                <div class="stat-label">Sessions actives</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i data-lucide="award"></i>
-                </div>
-                <div class="stat-value">23</div>
-                <div class="stat-label">Réalisations</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i data-lucide="users"></i>
-                </div>
-                <div class="stat-value">89</div>
-                <div class="stat-label">Connexions</div>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button class="btn btn-primary">
-                <i data-lucide="edit"></i>
-                Modifier le profil
-            </button>
-            <button class="btn btn-secondary">
-                <i data-lucide="settings"></i>
-                Paramètres
-            </button>
-            <button class="btn btn-secondary">
-                <i data-lucide="shield"></i>
-                Sécurité
-            </button>
-        </div>
     </div>
 
     <script>
