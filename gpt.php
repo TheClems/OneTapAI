@@ -4,6 +4,18 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once 'config.php';
+
+session_start();  // Toujours démarrer la session en début de script
+
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+    // Tu peux maintenant utiliser $userId
+} else {
+    // Pas d'utilisateur connecté ou ID non stocké en session
+    $userId = null;
+}
+
+
 if (!isset($_GET['id_channel'])) {
     // Le paramètre `post` est manquant dans l'URL
     // Par exemple, on redirige ou on affiche un message
@@ -12,9 +24,10 @@ if (!isset($_GET['id_channel'])) {
     $createdAt = date('Y-m-d H:i:s'); // Date actuelle
     $pdo = getDBConnection();
 
-    $stmt = $pdo->prepare("INSERT INTO chat_channels (id, created_at) VALUES (:id, :created_at)");
+    $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at) VALUES (:id, :id_user, :created_at)");
     $stmt->execute([
         ':id' => $id,
+        ':id_user' => $userId,
         ':created_at' => $createdAt
     ]);
     header("Location: ?id_channel=" . $id);
