@@ -57,7 +57,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
             color: #e0e0e0;
             height: 100vh;
             overflow: hidden;
