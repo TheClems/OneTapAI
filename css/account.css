@@ -57,6 +57,7 @@
     .profile-section {
         grid-template-columns: 1fr;
         gap: 2rem;
+        flex-direction: column;
     }
 
     .info-value {
