@@ -622,7 +622,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <div class="current-credits">
             <div class="current-credits-content">
-                <h2>Vos crédits actuels</h2>
+                <p>Vos crédits actuels</p>
                 <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
             </div>
         </div>
