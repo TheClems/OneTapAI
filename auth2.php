@@ -8,6 +8,7 @@ $mode = isset($_GET['mode']) ? $_GET['mode'] : 'login';
 $error = '';
 $success = '';
 $user = getCurrentUser();
+$passwd_required = ($mode === 'register') ? 'required' : '';
 
 // Définir le mode du panel en fonction du mode ou des actions POST
 $mode_panel = 'container'; // défaut pour login
@@ -44,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } 
     else if ($mode == 'edit_profile') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-        $passwd_required="";
     
         // Vérifier si l'utilisateur existe
         if (!$user) {
@@ -107,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }    
     else if ($mode == 'register') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-        $passwd_required="required";
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
