@@ -25,13 +25,11 @@
 
 
 .body_buy_credits.mobile {
-
+  margin-left: 0rem;
 }
 
 
-.body_buy_credits.mobile.collapsed {
 
-}
 /* Animated background */
 .animated-bg {
   position: fixed;
