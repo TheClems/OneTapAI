@@ -30,6 +30,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         ':id_user' => $userId,
         ':created_at' => $createdAt
     ]);
+    $_SESSION['id_channel'] = $id;
+
     header("Location: ?id_channel=" . $id);
     exit;
 }
