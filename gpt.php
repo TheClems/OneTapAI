@@ -66,11 +66,11 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            max-width: 1200px;
             margin: 0 auto;
             background: rgba(15, 15, 25, 0.8);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 17rem;
         }
 
         .header {
