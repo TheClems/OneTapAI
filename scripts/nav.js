@@ -19,6 +19,7 @@ const currentCredits = document.querySelector('.current-credits');
 const demoNotice = document.querySelector('.demo-notice');
 const chatContainer = document.querySelector('.chat-container');
 const body_buy_credits = document.querySelector('.body_buy_credits');
+const body_account = document.querySelector('.body_account');
 // Gestion du thème
 let isDarkMode = true;
 
@@ -94,6 +95,7 @@ if (toggleBtn) {
         if (sidebar) sidebar.classList.toggle('collapsed');
         if (chatContainer) chatContainer.classList.toggle('collapsed');
         if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
+        if (body_account) body_account.classList.toggle('collapsed');
     });
 }
 
