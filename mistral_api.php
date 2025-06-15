@@ -9,12 +9,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once 'config.php';
-if (!isset($_GET['post'])) {
-    // Le paramètre `post` est manquant dans l'URL
-    // Par exemple, on redirige ou on affiche un message
-    header("Location: ?post=default_value");
-    exit;
-}
+
 // Clé API Mistral
 $apiKey = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey';
 
