@@ -16,7 +16,7 @@ $user = getCurrentUser();
     <link rel="stylesheet" href="css/account.css" />
 
 </head>
-<body>
+<body class="body_account">
 <?php require_once 'nav.php'; ?>
 
     <div class="floating-elements">
