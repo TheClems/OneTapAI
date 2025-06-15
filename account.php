@@ -156,7 +156,6 @@ $user = getCurrentUser();
                 </div>
             </div>
             <div class="logout-container">
-            <div class="demo-label">Style Dégradé</div>
             <button class="logout-btn logout-btn-alt" id="logoutBtnAlt">
                 <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
