@@ -143,3 +143,4 @@ $user = getCurrentUser();
         });
     });
 </script>
+<script type="text/javascript" src="scripts/nav.js"></script>
