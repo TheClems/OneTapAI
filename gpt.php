@@ -566,4 +566,5 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
 </html>
 
+<script type="text/javascript" src="scripts/nav.js"></script>
 <script type="text/javascript" src="scripts/account.js"></script>
