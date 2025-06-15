@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    background: black;
     min-height: 100vh;
     color: #ffffff;
     overflow-x: hidden;
@@ -65,7 +65,7 @@ body {
 .header h1 {
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 700;
-    background: linear-gradient(135deg, #64ffda 0%, #1de9b6 50%, #00bcd4 100%);
+    background: #fff;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -335,7 +335,7 @@ body {
 }
 
 .back-link a {
-    color: #64ffda;
+    color: #ffffff;
     text-decoration: none;
     font-weight: 500;
     font-size: 1.1rem;
