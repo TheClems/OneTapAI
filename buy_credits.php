@@ -281,7 +281,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         `;
         document.head.appendChild(style);
     </script>
-    <script type="text/javascript" src="/js/nav.js"></script>
 </body>
 
-</html>
+</html><script type="text/javascript" src="scripts/nav.js"></script>
