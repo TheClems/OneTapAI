@@ -17,7 +17,6 @@ $user = getCurrentUser();
     <link rel="stylesheet" href="css/account.css" />
 
 </head>
-
 <body>
 
     <nav class="sidebar" id="sidebar">
