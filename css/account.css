@@ -622,5 +622,8 @@ h2.light-mode {
     .profile-card {
         width: 100%;
     }
+    .container {
+        width: 98vw;
 
+    }
 }
