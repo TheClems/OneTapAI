@@ -4,14 +4,41 @@ const toggleBtn = document.getElementById('toggleBtn');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 const body = document.body;
-
+const welcome = document.querySelector('.welcome');
+const infoValues = document.querySelectorAll('.info-value');
+const infoCards = document.querySelectorAll('.info-card');
+const profileCard = document.querySelector('.profile-card');
+const infoLabels = document.querySelectorAll('.info-label');
+const h2 = document.querySelectorAll('h2');
+const backLink = document.querySelector('.back-link a');
+const packages = document.querySelectorAll('.package');
+const featuredPackage = document.querySelector('.package.featured');
+const currentCredits = document.querySelector('.current-credits');
+const demoNotice = document.querySelector('.demo-notice');
+// Gestion du thème
 // Gestion du thème
 let isDarkMode = true;
-
+const elementsToToggle = [
+    ...infoValues,
+    ...infoCards,
+    welcome,
+    profileCard,
+    ...infoLabels,
+    ...h2,
+    backLink,
+    ...packages,
+    featuredPackage,
+    currentCredits,
+    demoNotice
+];
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     body.classList.toggle('light-mode');
-    
+
+    elementsToToggle.forEach(el => {
+        if (el) el.classList.toggle('light-mode');
+    });
+
     if (isDarkMode) {
         themeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
     } else {
@@ -22,118 +49,56 @@ themeToggle.addEventListener('click', () => {
 toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
 });
+const selectedTheme = isDarkMode ? 0 : 1;  // 0 = dark, 1 = light, ou selon ta convention
 
-// Gestion des liens actifs
+
+fetch('https://onetapai.ctts.fr/theme.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
+})
+.then(response => {
+    if (!response.ok) throw new Error('Erreur réseau');
+    return response.json();
+})
+.then(data => {
+    if (data.success) {
+        console.log('Thème mis à jour en base');
+    } else {
+        console.error('Erreur serveur:', data.error);
+    }
+})
+.catch(error => {
+    console.error('Fetch failed:', error);
+});
+
+
+// Gestion des liens actifs - VERSION CORRIGÉE
 const navLinks = document.querySelectorAll('.nav-link');
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
+        // NE PAS empêcher la navigation
+        // e.preventDefault(); // ← Ligne supprimée
+        
+        // Mettre à jour les classes actives
         navLinks.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
+        
+        // Sauvegarder l'état actif dans localStorage (optionnel)
+        localStorage.setItem('activeNavLink', link.getAttribute('href'));
+        
+        // Laisser la navigation se faire normalement
+        console.log('Navigation vers:', link.getAttribute('href'));
     });
 });
 
-// Restaurer le lien actif au chargement de la page
+// Restaurer le lien actif au chargement de la page (optionnel)
 window.addEventListener('DOMContentLoaded', () => {
     const currentPage = window.location.pathname;
     const activeLink = document.querySelector(`.nav-link[href*="${currentPage.split('/').pop()}"]`);
+    
     if (activeLink) {
-        activeLink.classList.add('active');
-    }
-});
-
-// Création des particules flottantes
-function createParticles() {
-    const particles = document.getElementById('particles');
-    const count = 10;
-    
-    for (let i = 0; i < count; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        // Position aléatoire
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        
-        // Taille aléatoire
-        const size = Math.random() * 5 + 2;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        
-        // Opacité aléatoire
-        particle.style.opacity = Math.random() * 0.5 + 0.3;
-        
-        // Animation aléatoire
-        const duration = Math.random() * 2 + 2;
-        particle.style.animationDuration = duration + 's';
-        
-        particles.appendChild(particle);
-    }
-}
-
-// Lancer les particules
-createParticles();
-setInterval(createParticles, 6000);
-
-// Gestion responsive
-function handleResize() {
-    const particles = document.querySelectorAll('.particle');
-    particles.forEach(particle => {
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-    });
-}
-
-window.addEventListener('resize', handleResize);
-handleResize();
-
-// Animation au chargement
-window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-});
-
-// Effet de parallaxe sur les éléments flottants
-document.addEventListener('mousemove', function(e) {
-    const floatingElements = document.querySelectorAll('.floating-element');
-    const x = (e.clientX / window.innerWidth) - 0.5;
-    const y = (e.clientY / window.innerHeight) - 0.5;
-    
-    floatingElements.forEach((element, index) => {
-        const speed = (index + 1) * 0.3;
-        const xPos = x * speed * 30;
-        const yPos = y * speed * 30;
-        
-        element.style.transform = `translate(${xPos}px, ${yPos}px) rotate(${x * speed * 10}deg)`;
-    });
-});
-
-// Animation des packages au chargement
-window.addEventListener('DOMContentLoaded', function() {
-    const packages = document.querySelectorAll('.package');
-    packages.forEach((pkg, index) => {
-        pkg.style.animationDelay = (index * 0.1) + 's';
-        pkg.style.animation = 'fadeInUp 0.6s ease forwards';
-    });
-});
-
-// Ajout de l'animation fadeInUp
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .package {
-        opacity: 0;
-    }
-`;
-document.head.appendChild(style);        navLinks.forEach(l => l.classList.remove('active'));
+        navLinks.forEach(l => l.classList.remove('active'));
         activeLink.classList.add('active');
     }
 });
