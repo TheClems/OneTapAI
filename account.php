@@ -341,143 +341,6 @@ $user = getCurrentUser();
             left: 100%;
         }
 
-        /* Styles pour les boutons d'action */
-        .action-buttons-section {
-            margin-top: 3rem;
-            opacity: 0;
-            animation: fadeInUp 1s ease 1.4s forwards;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .action-btn {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 2rem;
-            text-decoration: none;
-            color: #4a5568;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .dark-mode .action-btn {
-            background: rgba(45, 55, 72, 0.95);
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .action-btn:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-            color: #667eea;
-        }
-
-        .dark-mode .action-btn:hover {
-            color: #81e6d9;
-        }
-
-        .action-btn-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .action-btn-content {
-            flex: 1;
-        }
-
-        .action-btn-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .action-btn-description {
-            font-size: 0.95rem;
-            opacity: 0.7;
-            line-height: 1.4;
-        }
-
-        /* Boutons spécialisés */
-        .action-btn.edit-profile::before {
-            background: linear-gradient(90deg, #48bb78, #38a169);
-        }
-
-        .action-btn.edit-profile:hover {
-            color: #48bb78;
-        }
-
-        .action-btn.edit-profile .action-btn-icon {
-            background: linear-gradient(135deg, #48bb78, #38a169);
-        }
-
-        .action-btn.logout::before {
-            background: linear-gradient(90deg, #ed8936, #dd6b20);
-        }
-
-        .action-btn.logout:hover {
-            color: #ed8936;
-        }
-
-        .action-btn.logout .action-btn-icon {
-            background: linear-gradient(135deg, #ed8936, #dd6b20);
-        }
-
-        .action-btn.delete-account::before {
-            background: linear-gradient(90deg, #e53e3e, #c53030);
-        }
-
-        .action-btn.delete-account:hover {
-            color: #e53e3e;
-        }
-
-        .action-btn.delete-account .action-btn-icon {
-            background: linear-gradient(135deg, #e53e3e, #c53030);
-        }
-
-        /* Formulaires invisibles */
-        .action-form {
-            display: contents;
-        }
-
-        .action-form button {
-            background: none;
-            border: none;
-            padding: 0;
-            width: 100%;
-            cursor: pointer;
-        }
 
         h2 {
             color: white;
@@ -565,6 +428,113 @@ $user = getCurrentUser();
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .button {
+            position: relative;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .button:hover::before {
+            left: 100%;
+        }
+
+        .button:active {
+            transform: translateY(2px);
+        }
+
+        /* Bouton Modifier */
+        .modify-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .modify-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        /* Bouton Déconnexion */
+        .logout-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(33, 150, 243, 0.4);
+        }
+
+        /* Bouton Supprimer */
+        .delete-btn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(244, 67, 54, 0.4);
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) translateY(-3px); }
+            25% { transform: translateX(-2px) translateY(-3px); }
+            75% { transform: translateX(2px) translateY(-3px); }
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                min-width: auto;
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .button {
+                padding: 14px 24px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
@@ -707,54 +677,56 @@ $user = getCurrentUser();
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Section des boutons d'action -->
-        <div class="action-buttons-section">
-            <div class="action-buttons">
-                <!-- Modifier le profil -->
-                <a href="auth2.php?mode=edit_profile" class="action-btn edit-profile">
-                    <div class="action-btn-icon">
-                        <i data-lucide="edit-2"></i>
-                    </div>
-                    <div class="action-btn-content">
-                        <div class="action-btn-title">Modifier le profil</div>
-                        <div class="action-btn-description">Mettre à jour vos informations personnelles et préférences</div>
-                    </div>
-                </a>
-
-                <!-- Déconnexion -->
-                <form action="auth2.php" method="POST" class="action-form">
-                    <input type="hidden" name="action" value="logout">
-                    <button type="submit" class="action-btn logout">
-                        <div class="action-btn-icon">
-                            <i data-lucide="log-out"></i>
-                        </div>
-                        <div class="action-btn-content">
-                            <div class="action-btn-title">Déconnexion</div>
-                            <div class="action-btn-description">Se déconnecter de votre session actuelle</div>
-                        </div>
-                    </button>
-                </form>
-
-                <!-- Supprimer le compte -->
-                <form action="auth2.php" method="POST" class="action-form" onsubmit="return confirmDelete()">
-                    <input type="hidden" name="action" value="delete_account">
-                    <button type="submit" class="action-btn delete-account">
-                        <div class="action-btn-icon">
-                            <i data-lucide="trash-2"></i>
-                        </div>
-                        <div class="action-btn-content">
-                            <div class="action-btn-title">Supprimer le compte</div>
-                            <div class="action-btn-description">Supprimer définitivement votre compte et toutes vos données</div>
-                        </div>
-                    </button>
-                </form>
+            <div class="action-buttons mt-6">
+                <div class="flex flex-col gap-4">
+                    <!-- Modifier le profil -->
+                    <a href="auth2.php?mode=edit_profile" class="button w-full flex items-center justify-center gap-2">
+                        <i data-lucide="edit-2" class="w-5 h-5"></i>
+                        Modifier le profil
+                    </a>
+                    
+                    <!-- Déconnexion -->
+                    <form action="auth2.php" method="POST" class="w-full">
+                        <input type="hidden" name="action" value="logout">
+                        <button type="submit" class="button w-full flex items-center justify-center gap-2">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                            Déconnexion
+                        </button>
+                    </form>
+                    
+                    <!-- Supprimer le compte -->
+                    <form action="auth2.php" method="POST" class="w-full">
+                        <input type="hidden" name="action" value="delete_account">
+                        <button type="submit" class="button w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            Supprimer le compte
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
     </div>
-
+    <button class="button modify-btn" onclick="modifyAccount()">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+            </svg>
+            Modifier le compte
+        </button>
+        
+        <button class="button logout-btn" onclick="logout()">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+            </svg>
+            Se déconnecter
+        </button>
+        
+        <button class="button delete-btn" onclick="deleteAccount()">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+            </svg>
+            Supprimer le compte
+        </button>
     <script>
         // Initialiser Lucide icons
         lucide.createIcons();
@@ -773,11 +745,6 @@ $user = getCurrentUser();
             }
             
             lucide.createIcons();
-        }
-
-        // Confirmation pour la suppression du compte
-        function confirmDelete() {
-            return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.');
         }
 
         // Charger le thème sauvegardé
@@ -861,3 +828,59 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script>
+        function modifyAccount() {
+            // Animation de feedback
+            const btn = event.target.closest('.button');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+            
+            alert('Redirection vers la page de modification du compte...');
+            // Ici vous pouvez ajouter votre logique de redirection
+            // window.location.href = '/modify-account';
+        }
+
+        function logout() {
+            const btn = event.target.closest('.button');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+            
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                alert('Déconnexion en cours...');
+                // Ici vous pouvez ajouter votre logique de déconnexion
+                // window.location.href = '/logout';
+            }
+        }
+
+        function deleteAccount() {
+            const btn = event.target.closest('.button');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+            
+            if (confirm('⚠️ ATTENTION : Cette action est irréversible !\n\nÊtes-vous vraiment sûr de vouloir supprimer définitivement votre compte ?')) {
+                if (confirm('Dernière confirmation : Voulez-vous vraiment supprimer votre compte ? Toutes vos données seront perdues.')) {
+                    alert('Suppression du compte en cours...');
+                    // Ici vous pouvez ajouter votre logique de suppression
+                    // window.location.href = '/delete-account';
+                }
+            }
+        }
+
+        // Ajout d'effets sonores visuels au survol
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.filter = 'brightness(1.1)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.filter = 'brightness(1)';
+            });
+        });
+    </script>
