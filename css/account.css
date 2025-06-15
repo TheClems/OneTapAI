@@ -542,3 +542,10 @@ h2.light-mode {
 	margin-bottom: 10px;
 	text-align: center;
 }
+
+
+.logout-container {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
