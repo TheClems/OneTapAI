@@ -1,3 +1,44 @@
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require_once 'config.php';
+
+session_start();  // Toujours démarrer la session en début de script
+
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+    // Tu peux maintenant utiliser $userId
+} else {
+    // Pas d'utilisateur connecté ou ID non stocké en session
+    $userId = null;
+}
+
+
+if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
+    // Pas de paramètre id_channel ou id_channel vide => création d'un nouveau chat
+
+    $id = uniqid('chat_', true); // ID unique
+
+    $createdAt = date('Y-m-d H:i:s');
+    $pdo = getDBConnection();
+
+    $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at) VALUES (:id, :id_user, :created_at)");
+    $stmt->execute([
+        ':id' => $id,
+        ':id_user' => $userId,
+        ':created_at' => $createdAt
+    ]);
+    $_SESSION['id_channel'] = $id;
+
+    header("Location: ?id_channel=" . $id);
+    exit;
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>

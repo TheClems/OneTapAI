@@ -8,6 +8,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+require_once 'config.php';
+
 // Clé API Mistral
 $apiKey = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey';
 
@@ -25,7 +27,20 @@ if (!$input || !isset($input['messages'])) {
     exit;
 }
 
+$stmt = $pdo->prepare("INSERT INTO chat_channels (name) VALUES (?)");
+$stmt->execute(['Conversation du ' . date('Y-m-d H:i:s')]);
+$chatChannelId = $pdo->lastInsertId();
+
+
 $messages = $input['messages'];
+
+// Insertion des messages
+$stmt = $pdo->prepare("INSERT INTO chat_messages (chat_channel_id, role, content) VALUES (?, ?, ?)");
+
+foreach ($messages as $message) {
+    $stmt->execute([$chatChannelId, $message['role'], $message['content']]);
+}
+
 
 // Validation des messages
 foreach ($messages as $message) {
