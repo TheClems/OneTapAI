@@ -56,7 +56,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </head>
 
-<body>
+<body class="body_buy_credits">
 <?php require_once 'nav.php'; ?>
 
     <!-- Animated background -->
