@@ -39,6 +39,7 @@ themeToggle.addEventListener('click', () => {
 toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
 });
+const selectedTheme = isDarkMode ? 0 : 1;  // 0 = dark, 1 = light, ou selon ta convention
 
 
 fetch('https://onetapai.ctts.fr/theme.php', {
