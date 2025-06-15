@@ -163,8 +163,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($packages as $i => $package): ?>
                 <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
-                    <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                    <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
                         Acheter
                     </button>
