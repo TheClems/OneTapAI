@@ -74,35 +74,82 @@ fetch('https://onetapai.ctts.fr/theme.php', {
 });
 
 
-// Gestion des liens actifs - VERSION CORRIGÉE
-const navLinks = document.querySelectorAll('.nav-link');
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        // NE PAS empêcher la navigation
-        // e.preventDefault(); // ← Ligne supprimée
+
+// Gestion des liens actifs - VERSION ROBUSTE
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    function setActiveLink() {
+        // Récupérer l'URL actuelle de différentes façons pour être sûr
+        const currentPath = window.location.pathname;
+        const currentFile = currentPath.split('/').pop();
+        const fullURL = window.location.href;
         
-        // Mettre à jour les classes actives
-        navLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
+        console.log('=== DEBUG NAVIGATION ===');
+        console.log('Chemin complet:', currentPath);
+        console.log('Nom du fichier:', currentFile);
+        console.log('URL complète:', fullURL);
         
-        // Sauvegarder l'état actif dans localStorage (optionnel)
-        localStorage.setItem('activeNavLink', link.getAttribute('href'));
+        // Retirer toutes les classes active
+        navLinks.forEach(link => link.classList.remove('active'));
         
-        // Laisser la navigation se faire normalement
-        console.log('Navigation vers:', link.getAttribute('href'));
+        // Chercher le lien correspondant
+        let linkFound = false;
+        
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            console.log('Vérification du lien:', href);
+            
+            // Plusieurs méthodes de comparaison
+            const isMatch = (
+                href === currentFile ||                    // Correspondance exacte du fichier
+                href === currentPath ||                    // Correspondance du chemin complet
+                currentPath.endsWith('/' + href) ||       // Chemin se termine par le href
+                currentPath.endsWith(href) ||             // Chemin se termine par le href
+                fullURL.endsWith(href) ||                 // URL complète se termine par le href
+                (currentFile === '' && href === 'test.php') // Page d'accueil par défaut
+            );
+            
+            if (isMatch) {
+                link.classList.add('active');
+                console.log('✅ Lien activé:', href);
+                linkFound = true;
+            }
+        });
+        
+        if (!linkFound) {
+            console.log('❌ Aucun lien correspondant trouvé');
+            // Afficher tous les liens disponibles pour debug
+            navLinks.forEach(link => {
+                console.log('Lien disponible:', link.getAttribute('href'));
+            });
+        }
+        
+        console.log('======================');
+    }
+    
+    // Définir le lien actif au chargement
+    setActiveLink();
+    
+    // Gestion des clics
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Retirer toutes les classes active
+            navLinks.forEach(l => l.classList.remove('active'));
+            // Ajouter la classe active au lien cliqué
+            this.classList.add('active');
+            
+            console.log('Clic sur:', this.getAttribute('href'));
+        });
     });
 });
 
-// Restaurer le lien actif au chargement de la page (optionnel)
-window.addEventListener('DOMContentLoaded', () => {
-    const currentPage = window.location.pathname;
-    const activeLink = document.querySelector(`.nav-link[href*="${currentPage.split('/').pop()}"]`);
-    
-    if (activeLink) {
-        navLinks.forEach(l => l.classList.remove('active'));
-        activeLink.classList.add('active');
-    }
-});
+// Alternative si le DOM est déjà chargé
+if (document.readyState !== 'loading') {
+    // Le DOM est déjà prêt, exécuter immédiatement
+    const event = new Event('DOMContentLoaded');
+    document.dispatchEvent(event);
+}
 
 // Création des particules flottantes
 function createParticles() {
