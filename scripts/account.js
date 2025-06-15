@@ -153,6 +153,57 @@ document.getElementById('logoutBtnAlt').addEventListener('click', function() {
     handleLogout(this);
 });
 
+document.getElementById('profileBtn').addEventListener('click', function() {
+    handleProfileEdit(this);
+});
+
+document.getElementById('deleteBtn').addEventListener('click', function() {
+    handleAccountDelete(this);
+});
+
+function handleProfileEdit(button) {
+    button.classList.add('loading');
+    button.querySelector('.logout-text').textContent = 'Chargement...';
+    
+    createParticles(button);
+    
+    setTimeout(() => {
+        button.classList.remove('loading');
+        button.querySelector('.logout-text').textContent = 'Profil ouvert !';
+        button.style.background = 'linear-gradient(135deg, #48bb78, #38a169)';
+        
+        setTimeout(() => {
+            button.querySelector('.logout-text').textContent = 'Modifier profil';
+            button.style.background = '';
+        }, 2000);
+    }, 1000);
+}
+
+function handleAccountDelete(button) {
+    // Confirmation avant suppression
+    if (!confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) {
+        return;
+    }
+    
+    button.classList.add('loading');
+    button.querySelector('.logout-text').textContent = 'Suppression...';
+    
+    createParticles(button);
+    
+    setTimeout(() => {
+        button.classList.remove('loading');
+        button.querySelector('.logout-text').textContent = 'Compte supprimé';
+        button.style.background = 'linear-gradient(135deg, #e53e3e, #c53030)';
+        button.style.pointerEvents = 'none';
+        
+        setTimeout(() => {
+            button.querySelector('.logout-text').textContent = 'Supprimer compte';
+            button.style.background = '';
+            button.style.pointerEvents = '';
+        }, 3000);
+    }, 2000);
+}
+
 // Effet de survol avec son (optionnel)
 document.querySelectorAll('.logout-btn').forEach(btn => {
     btn.addEventListener('mouseenter', function() {
