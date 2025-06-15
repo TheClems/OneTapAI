@@ -133,48 +133,53 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <div class="container">
-        <div class="header">
-            <h1>Acheter des crédits</h1>
-            <p class="subtitle">Boostez votre créativité avec nos packs de crédits IA</p>
-        </div>
-        
-        <div class="demo-notice">
-            <strong>⚡ Mode démo</strong> : Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
-        </div>
-        
-        <div class="current-credits">
-            <div class="current-credits-content">
-                <p>Vos crédits actuels</p>
-                <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
-            </div>
-        </div>
-        
-        <?php if ($success): ?>
-            <div class="success">✅ <?php echo htmlspecialchars($success); ?></div>
-        <?php endif; ?>
-        
-        <?php if ($error): ?>
-            <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
-        <?php endif; ?>
-        
-        <div class="packages">
-            <?php foreach ($packages as $i => $package): ?>
-                <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
-                    <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
-                    <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
-                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
-                        Acheter
-                    </button>
-                    <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        
-        <div class="back-link">
-            <a href="dashboard.php">← Retour au tableau de bord</a>
+    <div class="header">
+        <h1>Acheter des crédits</h1>
+        <p class="subtitle">Boostez votre créativité avec nos packs de crédits IA</p>
+    </div>
+
+    <div class="demo-notice">
+        <strong>⚡ Mode démo</strong> : Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
+    </div>
+
+    <div class="current-credits">
+        <div class="current-credits-content">
+            <p>Vos crédits actuels</p>
+            <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
         </div>
     </div>
+
+    <?php if ($success): ?>
+        <div class="success">✅ <?php echo htmlspecialchars($success); ?></div>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+        <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
+    <?php endif; ?>
+
+    <div class="packages">
+        <?php foreach ($packages as $i => $package): ?>
+            <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
+                <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
+                <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
+                <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                    Acheter
+                </button>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- Conteneur pour l'interface de paiement -->
+    <div id="payment-interface" class="payment-interface">
+        <!-- Contenu de l'interface de paiement -->
+    </div>
+
+    <div class="back-link">
+        <a href="dashboard.php">← Retour au tableau de bord</a>
+    </div>
+</div>
+
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
     <script>
@@ -279,6 +284,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         `;
         document.head.appendChild(style);
     </script>
-    <script type="text/javascript" src="assets/js/nav.js"></script>
+    <script type="text/javascript" src="/js/nav.js"></script>
 </body>
 </html>
