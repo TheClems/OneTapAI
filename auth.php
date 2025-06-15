@@ -220,6 +220,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   function delayedRedirect(url) {
     setTimeout(function() {
       window.location.href = url;
-    }, 2000); // attend 2 secondes
+    }, 800);
   }
 </script>
