@@ -157,7 +157,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .demo-notice.light-mode {
             color: #0f0f23;
 
-        
+        }
 
         @keyframes pulse-border {
             0%, 100% {
