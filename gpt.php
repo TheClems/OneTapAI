@@ -6,6 +6,14 @@ if (!isset($_GET['id_channel'])) {
     $id = uniqid(bin2hex(random_bytes(4)), true);
 
     header("Location: ?id_channel=" . $id);
+    $id = uniqid('chat_', true); // ID unique, par exemple "chat_666d10e4512b18.12345678"
+    $createdAt = date('Y-m-d H:i:s'); // Date actuelle
+    
+    $stmt = $pdo->prepare("INSERT INTO chat_channels (id, created_at) VALUES (:id, :created_at)");
+    $stmt->execute([
+        ':id' => $id,
+        ':created_at' => $createdAt
+    ]);
     exit;
 }
 ?>
