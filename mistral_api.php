@@ -1,95 +1,108 @@
 <?php
-header('Content-Type: application/json');
+// Désactiver l'affichage des erreurs pour éviter de corrompre le JSON
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
+
+// Headers pour l'API JSON
+header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-session_start();
-require_once 'config.php';
-
-// Vérifier que l'utilisateur a un channel_id
-if (!isset($_SESSION['id_channel'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Channel ID manquant']);
+// Gérer les requêtes OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
     exit;
 }
 
-$channel_id = $_SESSION['id_channel'];
+// Fonction pour envoyer une réponse JSON et arrêter l'exécution
+function sendJsonResponse($data, $httpCode = 200) {
+    http_response_code($httpCode);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// Fonction pour logger les erreurs sans les afficher
+function logError($message) {
+    error_log(date('[Y-m-d H:i:s] ') . $message . PHP_EOL, 3, 'mistral_errors.log');
+}
 
 // Clé API Mistral
 $apiKey = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'error' => 'Méthode non autorisée']);
-    exit;
+    sendJsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+// Lire et décoder les données d'entrée
+$rawInput = file_get_contents('php://input');
+if ($rawInput === false) {
+    sendJsonResponse(['success' => false, 'error' => 'Impossible de lire les données']);
+}
 
-if (!$input || !isset($input['messages'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Messages manquants']);
-    exit;
+$input = json_decode($rawInput, true);
+if (json_last_error() !== JSON_ERROR_NONE) {
+    sendJsonResponse(['success' => false, 'error' => 'Données JSON invalides']);
+}
+
+if (!$input || !isset($input['messages']) || !is_array($input['messages'])) {
+    sendJsonResponse(['success' => false, 'error' => 'Messages manquants ou invalides']);
 }
 
 $messages = $input['messages'];
 
-// Validation des messages
+// Validation et nettoyage des messages
+$cleanMessages = [];
 foreach ($messages as $message) {
     if (!isset($message['role']) || !isset($message['content'])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Format de message invalide']);
-        exit;
+        continue; // Ignorer les messages mal formés
     }
+    
+    $role = trim($message['role']);
+    $content = trim($message['content']);
+    
+    if (empty($role) || empty($content)) {
+        continue;
+    }
+    
+    if (!in_array($role, ['user', 'assistant', 'system'])) {
+        $role = 'user'; // Par défaut
+    }
+    
+    $cleanMessages[] = [
+        'role' => $role,
+        'content' => $content
+    ];
 }
 
-// Fonction pour sauvegarder un message en base de données
-function saveMessage($pdo, $channel_id, $role, $content) {
-    try {
-        $stmt = $pdo->prepare("INSERT INTO chat_messages (chat_channel_id, role, content, created_at) VALUES (?, ?, ?, NOW())");
-        return $stmt->execute([$channel_id, $role, $content]);
-    } catch (PDOException $e) {
-        error_log("Erreur sauvegarde message: " . $e->getMessage());
-        return false;
-    }
+if (empty($cleanMessages)) {
+    sendJsonResponse(['success' => false, 'error' => 'Aucun message valide trouvé']);
 }
 
-// Sauvegarder le dernier message utilisateur (le plus récent dans le tableau)
-$lastUserMessage = null;
-for ($i = count($messages) - 1; $i >= 0; $i--) {
-    if ($messages[$i]['role'] === 'user') {
-        $lastUserMessage = $messages[$i];
-        break;
-    }
-}
-
-if ($lastUserMessage) {
-    if (!saveMessage($pdo, $channel_id, 'user', $lastUserMessage['content'])) {
-        error_log("Erreur lors de la sauvegarde du message utilisateur");
-    }
-}
-
-$ch = curl_init();
-
+// Préparer les données pour l'API Mistral
 $data = [
     "model" => "mistral-medium",
-    "messages" => $messages,
+    "messages" => $cleanMessages,
     "temperature" => 0.7,
     "max_tokens" => 1000,
     "top_p" => 0.95,
     "stream" => false
 ];
 
-curl_setopt_array($ch, [
+// Initialiser cURL
+$ch = curl_init();
+if ($ch === false) {
+    logError("Impossible d'initialiser cURL");
+    sendJsonResponse(['success' => false, 'error' => 'Erreur système']);
+}
+
+// Configuration cURL
+$success = curl_setopt_array($ch, [
     CURLOPT_URL => 'https://api.mistral.ai/v1/chat/completions',
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($data),
+    CURLOPT_POSTFIELDS => json_encode($data, JSON_UNESCAPED_UNICODE),
     CURLOPT_HTTPHEADER => [
         'Content-Type: application/json',
         'Authorization: Bearer ' . $apiKey
@@ -97,83 +110,92 @@ curl_setopt_array($ch, [
     CURLOPT_TIMEOUT => 30,
     CURLOPT_CONNECTTIMEOUT => 10,
     CURLOPT_SSL_VERIFYPEER => true,
-    CURLOPT_USERAGENT => 'Mistral-Chat-App/1.0'
+    CURLOPT_USERAGENT => 'Mistral-Chat-App/1.0',
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_MAXREDIRS => 3
 ]);
 
+if (!$success) {
+    curl_close($ch);
+    logError("Erreur configuration cURL");
+    sendJsonResponse(['success' => false, 'error' => 'Erreur de configuration']);
+}
+
+// Exécuter la requête
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlError = curl_error($ch);
 
 curl_close($ch);
 
-if ($curlError) {
-    error_log("CURL Error: " . $curlError);
-    echo json_encode([
-        'success' => false, 
-        'error' => 'Erreur de connexion à l\'API Mistral'
-    ]);
-    exit;
+// Gestion des erreurs cURL
+if ($response === false || !empty($curlError)) {
+    logError("CURL Error: " . $curlError);
+    sendJsonResponse(['success' => false, 'error' => 'Erreur de connexion à l\'API Mistral']);
 }
 
+// Vérification du code HTTP
 if ($httpCode !== 200) {
-    error_log("API Error: HTTP $httpCode - " . $response);
+    logError("API Error: HTTP $httpCode - " . substr($response, 0, 500));
     
-    $errorResponse = json_decode($response, true);
     $errorMessage = 'Erreur API Mistral';
-    
-    if ($errorResponse && isset($errorResponse['message'])) {
-        $errorMessage = $errorResponse['message'];
-    } elseif ($httpCode === 401) {
-        $errorMessage = 'Clé API invalide';
+    if ($httpCode === 401) {
+        $errorMessage = 'Clé API invalide ou expirée';
     } elseif ($httpCode === 429) {
-        $errorMessage = 'Trop de requêtes, réessayez plus tard';
+        $errorMessage = 'Trop de requêtes, réessayez dans quelques secondes';
     } elseif ($httpCode === 500) {
-        $errorMessage = 'Erreur serveur Mistral';
+        $errorMessage = 'Erreur serveur Mistral, réessayez plus tard';
+    } elseif ($httpCode >= 400) {
+        // Essayer de décoder la réponse pour obtenir plus de détails
+        $errorResponse = json_decode($response, true);
+        if ($errorResponse && isset($errorResponse['message'])) {
+            $errorMessage = $errorResponse['message'];
+        }
     }
     
-    echo json_encode([
-        'success' => false, 
-        'error' => $errorMessage,
-        'http_code' => $httpCode
-    ]);
-    exit;
+    sendJsonResponse(['success' => false, 'error' => $errorMessage], $httpCode >= 500 ? 500 : 400);
 }
 
+// Décoder la réponse JSON
 $result = json_decode($response, true);
 
-if (!$result) {
-    error_log("JSON Decode Error: " . json_last_error_msg());
-    echo json_encode([
-        'success' => false, 
-        'error' => 'Réponse API invalide'
-    ]);
-    exit;
+if ($result === null || json_last_error() !== JSON_ERROR_NONE) {
+    logError("JSON Decode Error: " . json_last_error_msg() . " - Response: " . substr($response, 0, 200));
+    sendJsonResponse(['success' => false, 'error' => 'Réponse API invalide']);
+}
+
+// Vérifier la structure de la réponse
+if (!isset($result['choices']) || !is_array($result['choices']) || empty($result['choices'])) {
+    logError("Unexpected API Response structure: " . json_encode($result));
+    sendJsonResponse(['success' => false, 'error' => 'Format de réponse inattendu']);
 }
 
 if (!isset($result['choices'][0]['message']['content'])) {
-    error_log("Unexpected API Response: " . $response);
-    echo json_encode([
-        'success' => false, 
-        'error' => 'Format de réponse inattendu'
-    ]);
-    exit;
+    logError("Missing content in API response: " . json_encode($result['choices'][0] ?? 'No choices[0]'));
+    sendJsonResponse(['success' => false, 'error' => 'Contenu de réponse manquant']);
 }
 
-// Récupérer la réponse de l'IA
-$aiContent = trim($result['choices'][0]['message']['content']);
-
-// Sauvegarder la réponse de l'IA en base de données (contenu brut, sans formatage HTML)
-if (!saveMessage($pdo, $channel_id, 'assistant', $aiContent)) {
-    error_log("Erreur lors de la sauvegarde de la réponse IA");
+// Extraire et nettoyer le contenu
+$content = $result['choices'][0]['message']['content'];
+if (!is_string($content)) {
+    logError("Content is not a string: " . gettype($content));
+    sendJsonResponse(['success' => false, 'error' => 'Contenu de réponse invalide']);
 }
 
-// Nettoyer et formater la réponse pour l'affichage
-$formattedContent = nl2br(htmlspecialchars($aiContent, ENT_QUOTES, 'UTF-8'));
+$content = trim($content);
+if (empty($content)) {
+    sendJsonResponse(['success' => false, 'error' => 'Réponse vide de l\'API']);
+}
 
-echo json_encode([
+// Formater la réponse (convertir les retours à la ligne en <br>)
+$content = nl2br(htmlspecialchars($content, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+// Envoyer la réponse finale
+sendJsonResponse([
     'success' => true,
-    'content' => $formattedContent,
+    'content' => $content,
     'model' => $result['model'] ?? 'mistral-medium',
-    'usage' => $result['usage'] ?? null
+    'usage' => $result['usage'] ?? null,
+    'timestamp' => date('c')
 ]);
 ?>
