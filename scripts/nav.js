@@ -91,9 +91,9 @@ if (themeToggle) {
 // Toggle de la sidebar
 if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-        chatContainer.classList.toggle('collapsed');
-        body_buy_credits.classList.toggle('collapsed');
+        if (sidebar) sidebar.classList.toggle('collapsed');
+        if (chatContainer) chatContainer.classList.toggle('collapsed');
+        if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
     });
 }
 
