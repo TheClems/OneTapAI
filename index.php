@@ -1359,8 +1359,8 @@
                     <div class="tw-flex tw-flex-col tw-gap-3">
                         <a href="#" class="footer-link">Support channels</a>
                         <a href="#" class="footer-link">Systems</a>
-                        <a href="https://twitter.com/pauls_freeman" class="footer-link">Twitter</a>
-                        <a href="https://github.com/PaulleDemon" class="footer-link">Github</a>
+                        <a href="https://twitter.com/" class="footer-link">Twitter</a>
+                        <a href="https://github.com/TheClems" class="footer-link">Github</a>
                     </div>
                 </div>
 
@@ -1378,7 +1378,7 @@
         <hr class="tw-mt-8">
         <div class="tw-mt-2 tw-flex tw-gap-2 tw-flex-col tw-text-gray-700 dark:tw-text-gray-300 tw-place-items-center 
                     tw-text-[12px] tw-w-full tw-text-center tw-place-content-around">
-            <span>Copyright &#169; 2023-2025</span>
+            <span>Copyright &#169; 2025</span>
             <span>All trademarks and copyrights belong to their respective owners.</span>
         </div>
 
