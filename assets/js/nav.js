@@ -41,25 +41,24 @@ toggleBtn.addEventListener('click', () => {
 });
 
 
-const selectedTheme = isDarkMode ? 0 : 1; // 0 = dark, 1 = light
-
-fetch('theme.php', {
+fetch('https://onetapai.ctts.fr/theme.php', {
     method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ theme: selectedTheme })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
 })
-.then(response => response.json())
+.then(response => {
+    if (!response.ok) throw new Error('Erreur réseau');
+    return response.json();
+})
 .then(data => {
     if (data.success) {
-        console.log('Thème mis à jour');
+        console.log('Thème mis à jour en base');
     } else {
-        console.error('Erreur de mise à jour:', data.error);
+        console.error('Erreur serveur:', data.error);
     }
 })
 .catch(error => {
-    console.error('Erreur réseau:', error);
+    console.error('Fetch failed:', error);
 });
 
 
