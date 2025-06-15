@@ -40,6 +40,29 @@ toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
 });
 
+
+const selectedTheme = isDarkMode ? 0 : 1; // 0 = dark, 1 = light
+
+fetch('theme.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ theme: selectedTheme })
+})
+.then(response => response.json())
+.then(data => {
+    if (data.success) {
+        console.log('Thème mis à jour');
+    } else {
+        console.error('Erreur de mise à jour:', data.error);
+    }
+})
+.catch(error => {
+    console.error('Erreur réseau:', error);
+});
+
+
 // Gestion des liens actifs - VERSION CORRIGÉE
 const navLinks = document.querySelectorAll('.nav-link');
 navLinks.forEach(link => {
