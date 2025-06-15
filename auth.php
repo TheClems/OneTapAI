@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($stmt->execute([$name, $email, $password, $username])) {
                     $success = 'Compte créé avec succès ! Vous pouvez maintenant vous connecter.';
                     $mode_panel = "container"; // Retour au panel de connexion après succès
-                    header('Location: auth2.php?mode=login');
+                    header('Location: auth.php?mode=login');
                 } else {
                     $error = 'Erreur lors de la création du compte.';
                 }
@@ -204,12 +204,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn" onclick="window.location.href='auth2.php?mode=login'">Sign In</button>
+				<button class="ghost" id="signIn" onclick="window.location.href='auth.php?mode=login'">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
 				<h1>Hello, Friend!</h1>
 				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp" onclick="window.location.href='auth2.php?mode=register'">Sign Up</button>
+				<button class="ghost" id="signUp" onclick="window.location.href='auth.php?mode=register'">Sign Up</button>
 			</div>
 		</div>
 	</div>
