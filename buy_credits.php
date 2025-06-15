@@ -133,53 +133,48 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <div class="container">
-    <div class="header">
-        <h1>Acheter des crédits</h1>
-        <p class="subtitle">Boostez votre créativité avec nos packs de crédits IA</p>
-    </div>
-
-    <div class="demo-notice">
-        <strong>⚡ Mode démo</strong> : Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
-    </div>
-
-    <div class="current-credits">
-        <div class="current-credits-content">
-            <p>Vos crédits actuels</p>
-            <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
+        <div class="header">
+            <h1>Acheter des crédits</h1>
+            <p class="subtitle">Boostez votre créativité avec nos packs de crédits IA</p>
+        </div>
+        
+        <div class="demo-notice">
+            <strong>⚡ Mode démo</strong> : Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
+        </div>
+        
+        <div class="current-credits">
+            <div class="current-credits-content">
+                <p>Vos crédits actuels</p>
+                <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
+            </div>
+        </div>
+        
+        <?php if ($success): ?>
+            <div class="success">✅ <?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+        
+        <?php if ($error): ?>
+            <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        
+        <div class="packages">
+            <?php foreach ($packages as $i => $package): ?>
+                <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
+                    <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
+                    <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
+                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                        Acheter
+                    </button>
+                    <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        
+        <div class="back-link">
+            <a href="dashboard.php">← Retour au tableau de bord</a>
         </div>
     </div>
-
-    <?php if ($success): ?>
-        <div class="success">✅ <?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
-
-    <?php if ($error): ?>
-        <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-
-    <div class="packages">
-        <?php foreach ($packages as $i => $package): ?>
-            <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
-                <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
-                <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
-                <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
-                    Acheter
-                </button>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <!-- Conteneur pour l'interface de paiement -->
-    <div id="payment-interface" class="payment-interface">
-        <!-- Contenu de l'interface de paiement -->
-    </div>
-
-    <div class="back-link">
-        <a href="dashboard.php">← Retour au tableau de bord</a>
-    </div>
-</div>
-
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
     <script>
@@ -202,46 +197,40 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         const pseudoPHP = <?= json_encode($user['username']) ?>;
 
         document.querySelectorAll('.acheter-btn').forEach(function(button) {
-    button.addEventListener('click', function () {
-        const id = this.getAttribute('data-id');
-        const nom = this.getAttribute('data-nom');
-        const prix = this.getAttribute('data-prix');
-        const credits = this.getAttribute('data-credits');
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const nom = this.getAttribute('data-nom');
+                const prix = this.getAttribute('data-prix');
+                const credits = this.getAttribute('data-credits');
 
-        this.disabled = true;
+                this.disabled = true;
 
-        // Afficher le conteneur du formulaire de paiement
-        const paymentFormContainer = document.getElementById('payment-form-container');
-        paymentFormContainer.classList.add('visible');
-
-        // Insérer le formulaire de paiement dans le conteneur
-        paypal.Buttons({
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        description: nom + " - " + credits + " crédits",
-                        custom_id: pseudoPHP + "-" + nom,
-                        invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
-                        amount: {
-                            value: prix,
-                            currency_code: 'EUR'
-                        }
-                    }],
-                    application_context: {
-                        shipping_preference: "NO_SHIPPING"
+                paypal.Buttons({
+                    createOrder: function (data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: nom + " - " + credits + " crédits",
+                                custom_id: pseudoPHP + "-" + nom,
+                                invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                                amount: {
+                                    value: prix,
+                                    currency_code: 'EUR'
+                                }
+                            }],
+                            application_context: {
+                                shipping_preference: "NO_SHIPPING"
+                            }
+                        });
+                    },
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                            console.log("Détails : ", details);
+                        });
                     }
-                });
-            },
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
-                    console.log("Détails : ", details);
-                });
-            }
-        }).render("#payment-form-container");
-    });
-});
-
+                }).render("#paypal-boutons-" + id);
+            });
+        });
 
         // Enhanced mouse parallax effect
         document.addEventListener('mousemove', function(e) {
