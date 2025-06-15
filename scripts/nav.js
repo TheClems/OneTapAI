@@ -179,8 +179,10 @@ setInterval(createParticles, 6000);
 function handleResize() {
     if (sidebar && window.innerWidth <= 768) {
         sidebar.classList.add('mobile');
+        chatContainer.classList.add('mobile');
     } else if (sidebar) {
         sidebar.classList.remove('mobile');
+        chatContainer.classList.remove('mobile');
     }
 }
 
