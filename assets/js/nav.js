@@ -29,6 +29,7 @@ themeToggle.addEventListener('click', () => {
         if (el) el.classList.toggle('light-mode');
     });
 
+    // Mettre à jour l'icône
     if (isDarkMode) {
         themeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
     } else {
@@ -57,6 +58,29 @@ themeToggle.addEventListener('click', () => {
 toggleBtn.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
 });
+const selectedTheme = isDarkMode ? 0 : 1;  // 0 = dark, 1 = light, ou selon ta convention
+
+
+fetch('https://onetapai.ctts.fr/theme.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
+})
+.then(response => {
+    if (!response.ok) throw new Error('Erreur réseau');
+    return response.json();
+})
+.then(data => {
+    if (data.success) {
+        console.log('Thème mis à jour en base');
+    } else {
+        console.error('Erreur serveur:', data.error);
+    }
+})
+.catch(error => {
+    console.error('Fetch failed:', error);
+});
+
 
 // Gestion des liens actifs - VERSION CORRIGÉE
 const navLinks = document.querySelectorAll('.nav-link');
