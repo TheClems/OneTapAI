@@ -16,12 +16,12 @@ if (isset($_SESSION['user_id'])) {
 }
 
 
-if (!isset($_GET['id_channel'])) {
-    // Le paramètre `post` est manquant dans l'URL
-    // Par exemple, on redirige ou on affiche un message
-    $id = uniqid('chat_', true); // ID unique, par exemple "chat_666d10e4512b18.12345678"
+if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
+    // Pas de paramètre id_channel ou id_channel vide => création d'un nouveau chat
 
-    $createdAt = date('Y-m-d H:i:s'); // Date actuelle
+    $id = uniqid('chat_', true); // ID unique
+
+    $createdAt = date('Y-m-d H:i:s');
     $pdo = getDBConnection();
 
     $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at) VALUES (:id, :id_user, :created_at)");
