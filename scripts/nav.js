@@ -95,13 +95,15 @@ navLinks.forEach(link => {
 
 // Restaurer le lien actif au chargement de la page (optionnel)
 window.addEventListener('DOMContentLoaded', () => {
-    const currentPage = window.location.pathname;
-    const activeLink = document.querySelector(`.nav-link[href*="${currentPage.split('/').pop()}"]`);
+    const currentPage = window.location.pathname.split('/').pop(); // ex: 'index.html'
     
-    if (activeLink) {
-        navLinks.forEach(l => l.classList.remove('active'));
-        activeLink.classList.add('active');
-    }
+    navLinks.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        if (linkHref && linkHref.includes(currentPage)) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        }
+    });
 });
 
 // Création des particules flottantes
