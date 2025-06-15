@@ -10,7 +10,8 @@ if (!isset($_GET['id_channel'])) {
     $id = uniqid('chat_', true); // ID unique, par exemple "chat_666d10e4512b18.12345678"
 
     $createdAt = date('Y-m-d H:i:s'); // Date actuelle
-    
+    $pdo = getDBConnection();
+
     $stmt = $pdo->prepare("INSERT INTO chat_channels (id, created_at) VALUES (:id, :created_at)");
     $stmt->execute([
         ':id' => $id,
