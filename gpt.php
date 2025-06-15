@@ -82,11 +82,12 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         }
 
         .chat-container.mobile {
+            margin-left: 0rem;
 
         }
 
         .chat-container.collapsed.mobile {
-            margin-left: 2rem;
+            margin-left: 17rem;
             
         }
         .header {
