@@ -63,7 +63,7 @@
         font-size: 0.9rem;
     }
 
-    .info-card {
+    .info-cards {
         width: 100%;
     }
     .profile-card {
@@ -129,6 +129,7 @@
 .info-cards {
     opacity: 0;
     animation: fadeInRight 1s ease 0.4s forwards;
+    width: 50%;
 }
 
 .info-card {
@@ -142,7 +143,6 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    width: 50%;
 }
 
 
