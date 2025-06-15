@@ -570,7 +570,17 @@ $user = getCurrentUser();
                     </div>
                 </div>
             </div>
-            
+            <div class="logout-container">
+            <div class="demo-label">Style Dégradé</div>
+            <button class="logout-btn logout-btn-alt" id="logoutBtnAlt">
+                <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16,17 21,12 16,7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span class="logout-text">Se déconnecter</span>
+            </button>
+        </div>
         </div>
 
     </div>
@@ -676,3 +686,68 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script>
+        function createParticles(button) {
+            const rect = button.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+                
+                const angle = (Math.PI * 2 * i) / 8;
+                const velocity = 2;
+                particle.style.setProperty('--dx', Math.cos(angle) * velocity + 'px');
+                particle.style.setProperty('--dy', Math.sin(angle) * velocity + 'px');
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 2000);
+            }
+        }
+
+        function handleLogout(button) {
+            // Ajout de la classe loading
+            button.classList.add('loading');
+            button.querySelector('.logout-text').textContent = 'Déconnexion...';
+            
+            // Création des particules
+            createParticles(button);
+            
+            // Simulation de la déconnexion
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.querySelector('.logout-text').textContent = 'Déconnecté !';
+                button.style.background = 'linear-gradient(135deg, #48bb78, #38a169)';
+                
+                // Reset après 2 secondes
+                setTimeout(() => {
+                    button.querySelector('.logout-text').textContent = 'Se déconnecter';
+                    button.style.background = '';
+                }, 2000);
+            }, 1500);
+        }
+
+        // Event listeners
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            handleLogout(this);
+        });
+
+        document.getElementById('logoutBtnAlt').addEventListener('click', function() {
+            handleLogout(this);
+        });
+
+        // Effet de survol avec son (optionnel)
+        document.querySelectorAll('.logout-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                // Vous pouvez ajouter un son ici si nécessaire
+                // new Audio('hover-sound.mp3').play();
+            });
+        });
+    </script>
