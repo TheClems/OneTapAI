@@ -94,23 +94,15 @@ navLinks.forEach(link => {
 });
 
 // Restaurer le lien actif au chargement de la page (optionnel)
-
 window.addEventListener('DOMContentLoaded', () => {
-    const currentPath = window.location.pathname;
-    console.log('Page chargée :', currentPath);
-
-    navLinks.forEach(link => {
-        const linkPath = new URL(link.href, window.location.origin).pathname;
-        console.log('Lien:', link.href, '→', linkPath);
-
-        if (linkPath === currentPath) {
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            console.log('Lien actif restauré:', link.href);
-        }
-    });
+    const currentPage = window.location.pathname;
+    const activeLink = document.querySelector(`.nav-link[href*="${currentPage.split('/').pop()}"]`);
+    
+    if (activeLink) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        activeLink.classList.add('active');
+    }
 });
-
 
 // Création des particules flottantes
 function createParticles() {
