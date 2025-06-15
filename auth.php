@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			<div class="overlay-panel overlay-right">
 				<h1>Hello, Friend!</h1>
 				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp" onclick="window.location.href='auth.php?mode=register'">Sign Up</button>
+				<button class="ghost" id="signUp" <?php sleep(2); echo 'onclick="window.location.href="auth.php?mode=register"'; ?>>Sign Up</button>
 			</div>
 		</div>
 	</div>
