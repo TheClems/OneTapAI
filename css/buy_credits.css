@@ -91,7 +91,7 @@ body {
 .demo-notice {
     background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
     border: 1px solid rgba(255, 193, 7, 0.3);
-    border-radius: 16px;
+    border-radius: 6px;
     padding: 1.5rem;
     margin-bottom: 2rem;
     text-align: center;
@@ -119,7 +119,7 @@ body {
 .current-credits {
     background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(29, 233, 182, 0.1));
     border: 1px solid rgba(100, 255, 218, 0.3);
-    border-radius: 20px;
+    border-radius: 6px;
     padding: 2rem;
     text-align: center;
     margin-bottom: 3rem;
@@ -175,7 +175,7 @@ body {
 .package {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
+    border-radius: 6px;
     padding: 2.5rem 2rem;
     text-align: center;
     position: relative;
@@ -270,7 +270,7 @@ body {
     background: linear-gradient(135deg, #64ffda 0%, #1de9b6 100%);
     color: #0f0f23;
     border: none;
-    border-radius: 16px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
@@ -310,7 +310,7 @@ body {
 
 .success, .error {
     padding: 1.5rem;
-    border-radius: 16px;
+    border-radius: 6px;
     margin-bottom: 2rem;
     text-align: center;
     font-weight: 500;
