@@ -74,11 +74,21 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             margin-left: 17rem;
         }
 
+
+
         .chat-container.collapsed {
             margin-left: 2rem;
             
         }
 
+        .chat-container.mobile {
+
+        }
+
+        .chat-container.collapsed.mobile {
+            margin-left: 2rem;
+            
+        }
         .header {
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
             padding: 20px;
