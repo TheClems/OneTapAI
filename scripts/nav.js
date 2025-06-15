@@ -18,6 +18,7 @@ const featuredPackage = document.querySelector('.package.featured');
 const currentCredits = document.querySelector('.current-credits');
 const demoNotice = document.querySelector('.demo-notice');
 const chatContainer = document.querySelector('.chat-container');
+const body_buy_credits = document.querySelector('.body_buy_credits');
 // Gestion du thème
 let isDarkMode = true;
 
@@ -92,6 +93,7 @@ if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
         chatContainer.classList.toggle('collapsed');
+        body_buy_credits.classList.toggle('collapsed');
     });
 }
 
