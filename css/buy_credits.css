@@ -15,6 +15,8 @@
   color: #ffffff;
   overflow-x: hidden;
   margin-left: 18rem;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+
 }
 
 .body_buy_credits.collapsed {
