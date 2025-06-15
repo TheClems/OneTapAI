@@ -13,7 +13,6 @@ $user = getCurrentUser();
     <title>Dashboard - AI Credits</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/nav.css" />
 
 </head>
 
