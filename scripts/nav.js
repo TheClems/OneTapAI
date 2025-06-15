@@ -4,6 +4,8 @@ const toggleBtn = document.getElementById('toggleBtn');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 const body = document.body;
+
+// Éléments avec vérification d'existence (évite les erreurs si certains éléments n'existent pas)
 const welcome = document.querySelector('.welcome');
 const infoValues = document.querySelectorAll('.info-value');
 const infoCards = document.querySelectorAll('.info-card');
@@ -11,106 +13,113 @@ const profileCard = document.querySelector('.profile-card');
 const infoLabels = document.querySelectorAll('.info-label');
 const h2 = document.querySelectorAll('h2');
 const packages = document.querySelectorAll('.package');
-
 const backLink = document.querySelector('.back-link a');
 const featuredPackage = document.querySelector('.package.featured');
 const currentCredits = document.querySelector('.current-credits');
 const demoNotice = document.querySelector('.demo-notice');
-// Gestion du thème
+
 // Gestion du thème
 let isDarkMode = true;
-const elementsToToggle = [
-    ...infoValues,
-    ...infoCards,
-    welcome,
-    profileCard,
-    ...infoLabels,
-    ...h2,
-    backLink,
-    ...packages,
-    featuredPackage,
-    currentCredits,
-    demoNotice
-];
-themeToggle.addEventListener('click', () => {
-    isDarkMode = !isDarkMode;
-    body.classList.toggle('light-mode');
 
-    elementsToToggle.forEach(el => {
-        if (el) el.classList.toggle('light-mode');
+// Fonction pour sauvegarder le thème (avec vérification si currentUserId existe)
+function saveTheme() {
+    if (typeof currentUserId !== 'undefined') {
+        const selectedTheme = isDarkMode ? 0 : 1;
+        
+        fetch('https://onetapai.ctts.fr/theme.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur réseau');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log('Thème mis à jour en base');
+            } else {
+                console.error('Erreur serveur:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch failed:', error);
+        });
+    }
+}
+
+// Toggle du thème
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        isDarkMode = !isDarkMode;
+        body.classList.toggle('light-mode');
+
+        // Appliquer le thème aux éléments qui existent
+        const elementsToToggle = [
+            ...infoValues,
+            ...infoCards,
+            welcome,
+            profileCard,
+            ...infoLabels,
+            ...h2,
+            backLink,
+            ...packages,
+            featuredPackage,
+            currentCredits,
+            demoNotice
+        ];
+
+        elementsToToggle.forEach(el => {
+            if (el) el.classList.toggle('light-mode');
+        });
+
+        // Changer l'icône
+        if (themeIcon) {
+            if (isDarkMode) {
+                themeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
+            } else {
+                themeIcon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>';
+            }
+        }
+        
+        // Sauvegarder le thème
+        saveTheme();
     });
+}
 
-    if (isDarkMode) {
-        themeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
-    } else {
-        themeIcon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>';
-    }
-});
+// Toggle de la sidebar
+if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+}
 
-toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-});
-const selectedTheme = isDarkMode ? 0 : 1;  // 0 = dark, 1 = light, ou selon ta convention
-
-
-fetch('https://onetapai.ctts.fr/theme.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
-})
-.then(response => {
-    if (!response.ok) throw new Error('Erreur réseau');
-    return response.json();
-})
-.then(data => {
-    if (data.success) {
-        console.log('Thème mis à jour en base');
-    } else {
-        console.error('Erreur serveur:', data.error);
-    }
-})
-.catch(error => {
-    console.error('Fetch failed:', error);
-});
-
-
-
-// Gestion des liens actifs - VERSION ROBUSTE
-document.addEventListener('DOMContentLoaded', function() {
+// Gestion des liens actifs - VERSION CORRIGÉE
+document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav-link');
     
+    // Fonction pour définir le lien actif
     function setActiveLink() {
-        // Récupérer l'URL actuelle de différentes façons pour être sûr
         const currentPath = window.location.pathname;
         const currentFile = currentPath.split('/').pop();
-        const fullURL = window.location.href;
         
         console.log('=== DEBUG NAVIGATION ===');
-        console.log('Chemin complet:', currentPath);
-        console.log('Nom du fichier:', currentFile);
-        console.log('URL complète:', fullURL);
+        console.log('Chemin:', currentPath);
+        console.log('Fichier:', currentFile);
         
-        // Retirer toutes les classes active
-        navLinks.forEach(link => link.classList.remove('active'));
+        // Supprimer toutes les classes active
+        navLinks.forEach(l => l.classList.remove('active'));
         
-        // Chercher le lien correspondant
+        // Trouver et activer le lien correspondant
         let linkFound = false;
-        
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
-            console.log('Vérification du lien:', href);
             
-            // Plusieurs méthodes de comparaison
-            const isMatch = (
-                href === currentFile ||                    // Correspondance exacte du fichier
-                href === currentPath ||                    // Correspondance du chemin complet
-                currentPath.endsWith('/' + href) ||       // Chemin se termine par le href
-                currentPath.endsWith(href) ||             // Chemin se termine par le href
-                fullURL.endsWith(href) ||                 // URL complète se termine par le href
-                (currentFile === '' && href === 'test.php') // Page d'accueil par défaut
-            );
-            
-            if (isMatch) {
+            if (href === currentFile || 
+                href === currentPath || 
+                currentPath.endsWith('/' + href) ||
+                (currentFile === '' && href === 'test.php')) {
+                
                 link.classList.add('active');
                 console.log('✅ Lien activé:', href);
                 linkFound = true;
@@ -118,14 +127,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         if (!linkFound) {
-            console.log('❌ Aucun lien correspondant trouvé');
-            // Afficher tous les liens disponibles pour debug
-            navLinks.forEach(link => {
-                console.log('Lien disponible:', link.getAttribute('href'));
-            });
+            console.log('❌ Aucun lien actif trouvé');
         }
-        
-        console.log('======================');
     }
     
     // Définir le lien actif au chargement
@@ -133,27 +136,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Gestion des clics
     navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            // Retirer toutes les classes active
+        link.addEventListener('click', () => {
             navLinks.forEach(l => l.classList.remove('active'));
-            // Ajouter la classe active au lien cliqué
-            this.classList.add('active');
-            
-            console.log('Clic sur:', this.getAttribute('href'));
+            link.classList.add('active');
+            console.log('Navigation vers:', link.getAttribute('href'));
         });
     });
 });
 
-// Alternative si le DOM est déjà chargé
-if (document.readyState !== 'loading') {
-    // Le DOM est déjà prêt, exécuter immédiatement
-    const event = new Event('DOMContentLoaded');
-    document.dispatchEvent(event);
-}
-
 // Création des particules flottantes
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
+    if (!particlesContainer) return; // Éviter les erreurs si l'élément n'existe pas
+    
     const particleCount = 15;
     
     for (let i = 0; i < particleCount; i++) {
@@ -181,9 +176,9 @@ setInterval(createParticles, 6000);
 
 // Gestion responsive
 function handleResize() {
-    if (window.innerWidth <= 768) {
+    if (sidebar && window.innerWidth <= 768) {
         sidebar.classList.add('mobile');
-    } else {
+    } else if (sidebar) {
         sidebar.classList.remove('mobile');
     }
 }
