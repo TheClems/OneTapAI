@@ -1,29 +1,33 @@
 <?php
-session_start();
-require_once 'config.php';
+header('Content-Type: application/json');
 
-// On vérifie si l'utilisateur est connecté
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401); // non autorisé
-    echo json_encode(["error" => "Non connecté"]);
-    exit;
-}
+// Exemple d'exécution de la mise à jour
+// Récupération des données envoyées en POST
+$data = json_decode(file_get_contents('php://input'), true);
 
-// On récupère la donnée envoyée en JSON
-$data = json_decode(file_get_contents("php://input"), true);
-
-if (!isset($data['theme'])) {
+if (!$data || !isset($data['theme']) || !isset($data['user_id'])) {
     http_response_code(400);
-    echo json_encode(["error" => "Thème non spécifié"]);
+    echo json_encode(['error' => 'Données manquantes']);
     exit;
 }
 
-$theme = $data['theme']; // 0 ou 1
+// Connexion à la base de données (exemple)
+$conn = new mysqli('localhost', 'user', 'password', 'database');
+if ($conn->connect_error) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Erreur de connexion à la base']);
+    exit;
+}
 
-$sql = "UPDATE users SET theme = ? WHERE id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $theme, $user_id);
-$stmt->execute();
+// Mise à jour du thème
+$stmt = $conn->prepare("UPDATE users SET theme = ? WHERE id = ?");
+$stmt->bind_param("ii", $data['theme'], $data['user_id']);
+if ($stmt->execute()) {
+    echo json_encode(['success' => true]);
+} else {
+    http_response_code(500);
+    echo json_encode(['error' => 'Erreur lors de la mise à jour']);
+}
 
-echo json_encode(["success" => true]);
-?>
+$stmt->close();
+$conn->close();
