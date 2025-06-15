@@ -1,5 +1,7 @@
 <?php
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 $apiKey = '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'; // remplace par ta clé OpenAI
 
 $ch = curl_init();
