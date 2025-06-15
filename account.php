@@ -160,7 +160,7 @@ $user = getCurrentUser();
     <div class="logout-container2">
                 
                 <div class="logout-container">
-                    <button class="logout-btn logout-btn-alt" id="logoutBtnAlt">
+                    <button class="logout-btn logout-btn-alt" id="logoutBtnAlt" onclick="window.location.href = 'logout.php';">
                         <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16,17 21,12 16,7"/>
@@ -171,7 +171,7 @@ $user = getCurrentUser();
                 </div>
     
                 <div class="logout-container">
-                    <button class="logout-btn logout-btn-profile" id="profileBtn">
+                    <button class="logout-btn logout-btn-profile" id="profileBtn" onclick="window.location.href = 'auth.php?mode=edite_profile';">
                         <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 6 9 17l-5-5"/>
                             <circle cx="12" cy="12" r="3"/>
@@ -183,7 +183,7 @@ $user = getCurrentUser();
                 </div>
     
                 <div class="logout-container">
-                    <button class="logout-btn logout-btn-delete" id="deleteBtn">
+                    <button class="logout-btn logout-btn-delete" id="deleteBtn" onclick="window.location.href = 'delete_account.php';">
                         <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3,6 5,6 21,6"/>
                             <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
