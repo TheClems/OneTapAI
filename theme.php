@@ -1,6 +1,8 @@
 <?php
 header('Content-Type: application/json');
-
+<script>
+  const currentUserId = <?php echo json_encode($userId); ?>;
+</script>
 // Exemple d'exécution de la mise à jour
 // Récupération des données envoyées en POST
 $data = json_decode(file_get_contents('php://input'), true);
