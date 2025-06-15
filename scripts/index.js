@@ -102,7 +102,7 @@ function updateToggleModeBtn(){
 }
 
 
-const promptWindow =  new Prompt("#OneTapAI-playground")
+const promptWindow =  new Prompt("#pixa-playground")
 const promptForm = document.querySelector("#prompt-form")
 const promptInput = promptForm.querySelector("input[name='prompt']")
 
