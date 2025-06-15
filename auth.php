@@ -204,15 +204,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn" onclick="window.location.href='auth.php?mode=login'">Sign In</button>
+				<button class="ghost" id="signIn" onclick="delayedRedirect('auth.php?mode=login')">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
 				<h1>Hello, Friend!</h1>
 				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp" <?php sleep(2); echo 'onclick="window.location.href="auth.php?mode=register"'; ?>>Sign Up</button>
+				<button class="ghost" id="signUp" onclick="delayedRedirect('auth.php?mode=register')">Sign Up</button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <script type="text/javascript" src="scripts/auth.js"></script>
+<script>
+  function delayedRedirect(url) {
+    setTimeout(function() {
+      window.location.href = url;
+    }, 2000); // attend 2 secondes
+  }
+</script>
