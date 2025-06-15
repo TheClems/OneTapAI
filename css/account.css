@@ -12,6 +12,9 @@
 .body_account.collapsed{
     margin-left: 0rem;
 }
+.body_account.mobile{
+    margin-left: 0rem;
+}
 .dark-mode {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     color: #e2e8f0;
