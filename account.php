@@ -570,33 +570,7 @@ $user = getCurrentUser();
                     </div>
                 </div>
             </div>
-            <div class="action-buttons mt-6">
-                <div class="flex flex-col gap-4">
-                    <!-- Modifier le profil -->
-                    <a href="auth2.php?mode=edit_profile" class="button w-full flex items-center justify-center gap-2">
-                        <i data-lucide="edit-2" class="w-5 h-5"></i>
-                        Modifier le profil
-                    </a>
-                    
-                    <!-- Déconnexion -->
-                    <form action="auth2.php" method="POST" class="w-full">
-                        <input type="hidden" name="action" value="logout">
-                        <button type="submit" class="button w-full flex items-center justify-center gap-2">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
-                            Déconnexion
-                        </button>
-                    </form>
-                    
-                    <!-- Supprimer le compte -->
-                    <form action="auth2.php" method="POST" class="w-full">
-                        <input type="hidden" name="action" value="delete_account">
-                        <button type="submit" class="button w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                            Supprimer le compte
-                        </button>
-                    </form>
-                </div>
-            </div>
+            
         </div>
 
     </div>
