@@ -94,17 +94,20 @@ navLinks.forEach(link => {
 });
 
 // Restaurer le lien actif au chargement de la page (optionnel)
+
 window.addEventListener('DOMContentLoaded', () => {
-    const currentPage = window.location.pathname.split('/').pop(); // ex: 'index.html'
-    
+    const currentPath = window.location.pathname;
+
     navLinks.forEach(link => {
-        const linkHref = link.getAttribute('href');
-        if (linkHref && linkHref.includes(currentPage)) {
+        const linkPath = new URL(link.href, window.location.origin).pathname;
+
+        if (linkPath === currentPath) {
             navLinks.forEach(l => l.classList.remove('active'));
             link.classList.add('active');
         }
     });
 });
+
 
 // Création des particules flottantes
 function createParticles() {
