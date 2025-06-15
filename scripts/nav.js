@@ -180,11 +180,15 @@ setInterval(createParticles, 6000);
 // Gestion responsive
 function handleResize() {
     if (sidebar && window.innerWidth <= 768) {
-        sidebar.classList.add('mobile');
-        chatContainer.classList.add('mobile');
+        if (body_buy_credits) body_buy_credits.classList.add('mobile');
+
+        if (sidebar) sidebar.classList.add('mobile');
+        if (chatContainer) chatContainer.classList.add('mobile');
+
     } else if (sidebar) {
-        sidebar.classList.remove('mobile');
-        chatContainer.classList.remove('mobile');
+        if (body_buy_credits) body_buy_credits.classList.remove('mobile');
+        if (sidebar) sidebar.classList.remove('mobile');
+        if (chatContainer) chatContainer.classList.remove('mobile');
     }
 }
 
