@@ -519,7 +519,11 @@ h2.light-mode {
     background: linear-gradient(135deg, #ff6b6b, #ee5a24);
     color: white;
     border: none;
+    width: 100%;
+    text-align: center;
     box-shadow: 0 8px 32px rgba(238, 90, 36, 0.3);
+    display: flex;
+    justify-content: center;
 }
 
 .logout-btn-alt:hover {
@@ -532,7 +536,10 @@ h2.light-mode {
     background: linear-gradient(135deg, #4facfe, #00f2fe);
     color: white;
     border: none;
+    width: 100%;
     box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3);
+    display: flex;
+    justify-content: center;
 }
 
 .logout-btn-profile:hover {
@@ -545,7 +552,10 @@ h2.light-mode {
     background: linear-gradient(135deg, #fc466b, #3f5efb);
     color: white;
     border: none;
+    width: 100%;
     box-shadow: 0 8px 32px rgba(252, 70, 107, 0.3);
+    display: flex;
+    justify-content: center;
 }
 
 .logout-btn-delete:hover {
@@ -582,14 +592,16 @@ h2.light-mode {
 
 
 .logout-container2 {
-    width: 80vw;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     flex-wrap: wrap;
 }
 
 .logout-container{
-    padding: 2rem;
+    padding: 2rem 0 2rem 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 
