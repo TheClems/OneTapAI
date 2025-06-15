@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="css/nav.css" />
+
+
 <nav class="sidebar" id="sidebar">
     <div class="floating-particles" id="particles"></div>
 
