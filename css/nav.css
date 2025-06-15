@@ -295,7 +295,7 @@ body.light-mode .content-card {
 
 @media (max-width: 768px) {
     .sidebar {
-        transform: translateX(-240px);
+        transform: translateX(-275px);
     }
     
     .sidebar.mobile-open {
@@ -308,6 +308,10 @@ body.light-mode .content-card {
     
     .sidebar.mobile-open + .main-content {
         margin-left: 280px;
+    }
+
+    .sidebar.collapsed {
+        transform: translateX(0px);
     }
 }
 
