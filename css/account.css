@@ -5,6 +5,13 @@
     box-sizing: border-box;
 }
 
+
+.body_account{
+    margin-left: 17.5rem;
+}
+.body_account.collapsed{
+    margin-left: 0rem;
+}
 .dark-mode {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     color: #e2e8f0;
