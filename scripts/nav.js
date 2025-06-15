@@ -17,7 +17,7 @@ const backLink = document.querySelector('.back-link a');
 const featuredPackage = document.querySelector('.package.featured');
 const currentCredits = document.querySelector('.current-credits');
 const demoNotice = document.querySelector('.demo-notice');
-
+const chatContainer = document.querySelector('.chat-container');
 // Gestion du thème
 let isDarkMode = true;
 
@@ -91,6 +91,7 @@ if (themeToggle) {
 if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
         sidebar.classList.toggle('collapsed');
+        chatContainer.classList.toggle('collapsed');
     });
 }
 
