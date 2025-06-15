@@ -70,4 +70,3 @@
 </nav>
 
 
-<script type="text/javascript" src="scripts/nav.js"></script>
