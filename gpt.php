@@ -76,7 +76,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         }
 
         .chat-container.collapsed {
-            margin: 2rem;
+            margin-left: 2rem;
             
         }
 
