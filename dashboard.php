@@ -100,7 +100,7 @@ $user = getCurrentUser();
                 </a>
             </li>
             <li class="nav-item">
-                <a href="test3.php" class="nav-link pulse-effect">
+                <a href="gpt.php" class="nav-link pulse-effect">
                     <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
                     </svg>
