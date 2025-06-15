@@ -18,7 +18,8 @@ const elementsToToggle = [
     ...infoCards,
     welcome,
     profileCard,
-    ...infoLabels
+    ...infoLabels,
+    ...h2
 ];
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
