@@ -121,7 +121,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: rgba(10, 10, 20, 0.5);
+            background: black;
             scrollbar-width: thin;
             scrollbar-color: #6366f1 transparent;
         }
