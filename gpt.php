@@ -3,19 +3,19 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Remplace cette clé par ta clé Mistral API personnelle
-$apiKey = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey';
+// Clé API Mistral (PAS OpenAI)
+$apiKey = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey'; // ta clé API Mistral ici
 
 $ch = curl_init();
 
 $data = [
-    "model" => "mistral-tiny", // Ou mistral-small, mistral-medium selon ton accès
-    "prompt" => "Dis-moi une blague !",
-    "temperature" => 0.7,
-    "max_tokens" => 200
+    "model" => "mistral-medium", // ou mistral-small, mistral-large, etc.
+    "messages" => [
+        ["role" => "user", "content" => "Dis-moi une blague !"]
+    ]
 ];
 
-curl_setopt($ch, CURLOPT_URL, 'https://api.mistral.ai/v1/completions');
+curl_setopt($ch, CURLOPT_URL, 'https://api.mistral.ai/v1/chat/completions');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
@@ -35,8 +35,8 @@ if (curl_errno($ch)) {
     if ($httpCode !== 200) {
         echo "Erreur API (HTTP $httpCode) :<br>";
         echo "<pre>" . htmlspecialchars($response) . "</pre>";
-    } elseif (isset($result['choices'][0]['text'])) {
-        echo nl2br(htmlspecialchars($result['choices'][0]['text']));
+    } elseif (isset($result['choices'][0]['message']['content'])) {
+        echo $result['choices'][0]['message']['content'];
     } else {
         echo "Réponse inattendue de l'API :<br>";
         echo "<pre>" . htmlspecialchars($response) . "</pre>";
