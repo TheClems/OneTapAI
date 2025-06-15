@@ -11,7 +11,6 @@ requireLogin();
 $user = getCurrentUser();
 if (!$user) {
     http_response_code(401);
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'error' => 'Utilisateur non authentifié']);
     exit;
 }
@@ -21,7 +20,6 @@ $theme = isset($_POST['theme']) ? (int)$_POST['theme'] : null;
 
 if ($theme === null || !in_array($theme, [0, 1])) {
     http_response_code(400);
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'error' => 'Thème invalide']);
     exit;
 }
@@ -31,11 +29,9 @@ try {
     $stmt = $pdo->prepare("UPDATE users SET dark_mode = ? WHERE id = ?");
     $success = $stmt->execute([$theme, $user['id']]);
     
-    header('Content-Type: application/json');
     echo json_encode(['success' => $success]);
 } catch (PDOException $e) {
     http_response_code(500);
-    header('Content-Type: application/json');
     echo json_encode(['success' => false, 'error' => 'Erreur de base de données']);
 }
 
