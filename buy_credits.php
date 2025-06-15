@@ -217,3 +217,4 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </script>
 </body>
 
+<script type="text/javascript" src="scripts/nav.js"></script>
