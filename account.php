@@ -171,7 +171,7 @@ $user = getCurrentUser();
                 </div>
     
                 <div class="logout-container">
-                    <button class="logout-btn logout-btn-profile" id="profileBtn" onclick="window.location.href = 'auth.php?mode=edite_profile';">
+                    <button class="logout-btn logout-btn-profile" id="profileBtn" onclick="window.location.href = 'auth.php?mode=edit_profile';">
                         <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 6 9 17l-5-5"/>
                             <circle cx="12" cy="12" r="3"/>
