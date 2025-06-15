@@ -7,10 +7,8 @@ require_once 'config.php';
 if (!isset($_GET['id_channel'])) {
     // Le paramètre `post` est manquant dans l'URL
     // Par exemple, on redirige ou on affiche un message
-    $id = uniqid(bin2hex(random_bytes(4)), true);
-
-    header("Location: ?id_channel=" . $id);
     $id = uniqid('chat_', true); // ID unique, par exemple "chat_666d10e4512b18.12345678"
+
     $createdAt = date('Y-m-d H:i:s'); // Date actuelle
     
     $stmt = $pdo->prepare("INSERT INTO chat_channels (id, created_at) VALUES (:id, :created_at)");
@@ -18,6 +16,7 @@ if (!isset($_GET['id_channel'])) {
         ':id' => $id,
         ':created_at' => $createdAt
     ]);
+    header("Location: ?id_channel=" . $id);
     exit;
 }
 ?>
