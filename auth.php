@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
-        
+
         if (empty($email) || empty($password)) {
             $error = 'Tous les champs sont obligatoires.';
         } else {
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $pdo->prepare("SELECT id, email, password, username FROM users WHERE email = ? OR username = ?");
             $stmt->execute([$email, $email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if ($user && $user['password'] === $password) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_email'] = $user['email'];
@@ -42,24 +42,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = 'Email ou mot de passe incorrect.';
             }
         }
-    } 
-    else if ($mode == 'edit_profile') {
+    } else if ($mode == 'edit_profile') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
-    
+
         // Vérifier si l'utilisateur existe
         if (!$user) {
             $error = 'Utilisateur non trouvé.';
             header('Location: dashboard.php');
             exit();
         }
-    
+
         // Récupérer et nettoyer les données
         $email = trim($_POST['email']);
         $password = trim($_POST['password']);
         $confirm_password = trim($_POST['confirm_password']);
         $username = trim($_POST['username']);
         $name = trim($_POST['name']);
-    
+
         // Validation
         if (empty($email) || empty($username) || empty($name)) {
             $error = 'Tous les champs obligatoires doivent être remplis.';
@@ -69,11 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $error = 'Les mots de passe ne correspondent pas.';
         } else {
             $pdo = getDBConnection();
-    
+
             // Vérifier si email ou username sont déjà utilisés par un autre utilisateur
             $stmt = $pdo->prepare("SELECT id FROM users WHERE (email = ? OR username = ?) AND id != ?");
             $stmt->execute([$email, $username, $user['id']]);
-    
+
             if ($stmt->fetch()) {
                 $error = 'Cet email ou ce nom d\'utilisateur est déjà utilisé par un autre compte.';
             } else {
@@ -87,14 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?, full_name = ? WHERE id = ?");
                     $params = [$email, $username, $name, $user['id']];
                 }
-    
+
                 // Exécution
                 if ($stmt->execute($params)) {
                     $success = 'Informations mises à jour avec succès !';
-    
+
                     // Rafraîchir les données utilisateur
                     $user = getCurrentUser();
-    
+
                     // Mettre à jour la session
                     $_SESSION['user_email'] = $email;
                     $_SESSION['user_username'] = $username;
@@ -104,8 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
-    }    
-    else if ($mode == 'register') {
+    } else if ($mode == 'register') {
         $mode_panel = "container right-panel-active"; // garder le panel de droite
 
         $email = trim($_POST['email']);
@@ -114,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = trim($_POST['username']);
         $name = trim($_POST['name']);
 
-        
+
         if (empty($email) || empty($password) || empty($confirm_password) || empty($username) || empty($name)) {
             $error = 'Tous les champs sont obligatoires.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -129,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute([$email]);
             $stmt2 = $pdo->prepare("SELECT id FROM users WHERE username = ?");
             $stmt2->execute([$username]);
-            
+
             if ($stmt->fetch()) {
                 $error = 'Cet email est déjà utilisé.';
             } elseif ($stmt2->fetch()) {
@@ -159,67 +157,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php endif; ?>
 
 <div class="<?php echo $mode_panel; ?>" id="container">
-	<div class="form-container sign-up-container">
-		<form method="POST" class="auth-form">
-			<h1>Create Account</h1>
-			<div class="social-container">
-				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-			</div>
-			<span>or use your email for registration</span>
-            <input type="text" id="name" name="name" placeholder="Name" 
+    <div class="form-container sign-up-container">
+        <form method="POST" class="auth-form">
+            <h1>Create Account</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your email for registration</span>
+            <input type="text" id="name" name="name" placeholder="Name"
                 value="<?php echo isset($user) ? htmlspecialchars($user['full_name']) : ''; ?>" required />
 
-            <input type="text" id="username" name="username" placeholder="Username" 
+            <input type="text" id="username" name="username" placeholder="Username"
                 value="<?php echo isset($user) ? htmlspecialchars($user['username']) : ''; ?>" required />
 
-            <input type="email" id="email" name="email" placeholder="Email" 
+            <input type="email" id="email" name="email" placeholder="Email"
                 value="<?php echo isset($user) ? htmlspecialchars($user['email']) : ''; ?>" required />
 
-            <input type="password" id="password" name="password"  placeholder="Password" <?php echo $passwd_required; ?>/>
+            <input type="password" id="password" name="password" placeholder="Password" <?php echo $passwd_required; ?> />
 
-            <input type="password" id="confirm_password" name="confirm_password"  placeholder="Confirm password" <?php echo $passwd_required; ?>/>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" <?php echo $passwd_required; ?> />
 
             <button type="submit">Sign Up</button>
-		</form>
-	</div>
-	<div class="form-container sign-in-container">
-		<form method="POST">
-			<h1>Sign in</h1>
-			<div class="social-container">
-				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-			</div>
-			<span>or use your account</span>
-			<input id="email" name="email" placeholder="Email" required/>
-			<input type="password" id="password" name="password" placeholder="Password" required/>
-			<a href="#">Forgot your password?</a>
-			<button>Sign In</button>
-		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-left">
-				<h1>Welcome Back!</h1>
-				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn" onclick="delayedRedirect('auth.php?mode=login')">Sign In</button>
-			</div>
-			<div class="overlay-panel overlay-right">
-				<h1>Hello, Friend!</h1>
-				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp" onclick="delayedRedirect('auth.php?mode=register')">Sign Up</button>
-			</div>
-		</div>
-	</div>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form method="POST">
+            <h1>Sign in</h1>
+            <div class="social-container">
+                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your account</span>
+            <input id="email" name="email" placeholder="Email" required />
+            <input type="password" id="password" name="password" placeholder="Password" required />
+            <a href="#">Forgot your password?</a>
+            <button>Sign In</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>To keep connected with us please login with your personal info</p>
+                <button class="ghost" id="signIn" onclick="delayedRedirect('auth.php?mode=login')">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello, Friend!</h1>
+                <p>Enter your personal details and start journey with us</p>
+                <button class="ghost" id="signUp" onclick="delayedRedirect('auth.php?mode=register')">Sign Up</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript" src="scripts/auth.js"></script>
 <script>
-  function delayedRedirect(url) {
-    setTimeout(function() {
-      window.location.href = url;
-    }, 800);
-  }
+    function delayedRedirect(url) {
+        setTimeout(function() {
+            window.location.href = url;
+        }, 800);
+    }
 </script>

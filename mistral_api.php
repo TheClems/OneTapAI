@@ -17,14 +17,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Fonction pour envoyer une réponse JSON et arrêter l'exécution
-function sendJsonResponse($data, $httpCode = 200) {
+function sendJsonResponse($data, $httpCode = 200)
+{
     http_response_code($httpCode);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 // Fonction pour logger les erreurs sans les afficher
-function logError($message) {
+function logError($message)
+{
     error_log(date('[Y-m-d H:i:s] ') . $message . PHP_EOL, 3, 'mistral_errors.log');
 }
 
@@ -58,18 +60,18 @@ foreach ($messages as $message) {
     if (!isset($message['role']) || !isset($message['content'])) {
         continue; // Ignorer les messages mal formés
     }
-    
+
     $role = trim($message['role']);
     $content = trim($message['content']);
-    
+
     if (empty($role) || empty($content)) {
         continue;
     }
-    
+
     if (!in_array($role, ['user', 'assistant', 'system'])) {
         $role = 'user'; // Par défaut
     }
-    
+
     $cleanMessages[] = [
         'role' => $role,
         'content' => $content
@@ -137,7 +139,7 @@ if ($response === false || !empty($curlError)) {
 // Vérification du code HTTP
 if ($httpCode !== 200) {
     logError("API Error: HTTP $httpCode - " . substr($response, 0, 500));
-    
+
     $errorMessage = 'Erreur API Mistral';
     if ($httpCode === 401) {
         $errorMessage = 'Clé API invalide ou expirée';
@@ -152,7 +154,7 @@ if ($httpCode !== 200) {
             $errorMessage = $errorResponse['message'];
         }
     }
-    
+
     sendJsonResponse(['success' => false, 'error' => $errorMessage], $httpCode >= 500 ? 500 : 400);
 }
 
@@ -198,4 +200,3 @@ sendJsonResponse([
     'usage' => $result['usage'] ?? null,
     'timestamp' => date('c')
 ]);
-?>

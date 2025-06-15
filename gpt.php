@@ -41,6 +41,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,19 +87,24 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             animation: shimmer 3s infinite;
         }
 
         @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
         }
 
         .header h1 {
             font-size: 2em;
             font-weight: 600;
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
             position: relative;
             z-index: 1;
         }
@@ -136,6 +142,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -253,14 +260,23 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             animation: bounce 1.4s infinite both;
         }
 
-        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
 
         @keyframes bounce {
-            0%, 80%, 100% {
+
+            0%,
+            80%,
+            100% {
                 transform: scale(0.8);
                 opacity: 0.5;
             }
+
             40% {
                 transform: scale(1.2);
                 opacity: 1;
@@ -278,9 +294,19 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
         }
 
         /* Responsive */
@@ -288,11 +314,11 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             .message-content {
                 max-width: 85%;
             }
-            
+
             .header h1 {
                 font-size: 1.5em;
             }
-            
+
             .input-group {
                 gap: 10px;
             }
@@ -321,12 +347,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 transform: translateY(100vh) rotate(0deg);
                 opacity: 0;
             }
+
             10% {
                 opacity: 1;
             }
+
             90% {
                 opacity: 1;
             }
+
             100% {
                 transform: translateY(-100px) rotate(360deg);
                 opacity: 0;
@@ -334,14 +363,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         }
     </style>
 </head>
+
 <body>
     <div class="particles" id="particles"></div>
-    
+
     <div class="chat-container">
         <div class="header">
             <h1>🤖 Mistral AI Chat</h1>
         </div>
-        
+
         <div class="chat-messages" id="chatMessages">
             <div class="message ai">
                 <div class="message-content">
@@ -350,7 +380,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 <div class="message-time" id="welcomeTime"></div>
             </div>
         </div>
-        
+
         <div class="loading" id="loading">
             <div class="loading-dots">
                 <div class="loading-dot"></div>
@@ -359,7 +389,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             </div>
             <p>Mistral réfléchit...</p>
         </div>
-        
+
         <div class="input-container">
             <div class="input-group">
                 <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
@@ -376,16 +406,16 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const loading = document.getElementById('loading');
-        
+
         // Historique des messages
         let messageHistory = [];
-        
+
         // Afficher l'heure de bienvenue
         document.getElementById('welcomeTime').textContent = new Date().toLocaleTimeString('fr-FR', {
             hour: '2-digit',
             minute: '2-digit'
         });
-        
+
         // Créer les particules d'arrière-plan
         function createParticles() {
             const particles = document.getElementById('particles');
@@ -400,33 +430,33 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 particles.appendChild(particle);
             }
         }
-        
+
         // Ajouter un message au chat
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
-            
+
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', {
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            
+
             messageDiv.innerHTML = `
                 <div class="message-content">${content}</div>
                 <div class="message-time">${timeString}</div>
             `;
-            
+
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
             // Mise à jour de l'historique
             messageHistory.push({
                 role: isUser ? 'user' : 'assistant',
                 content: content
             });
         }
-        
+
         // Afficher une erreur
         function showError(message) {
             const errorDiv = document.createElement('div');
@@ -434,31 +464,34 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             errorDiv.textContent = message;
             chatMessages.appendChild(errorDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
-            
+
             setTimeout(() => {
                 errorDiv.remove();
             }, 5000);
         }
-        
+
         // Envoyer un message
         async function sendMessage() {
             const message = messageInput.value.trim();
             if (!message) return;
-            
+
             // Ajouter le message utilisateur
             addMessage(message, true);
             messageInput.value = '';
-            
+
             // Désactiver l'interface
             sendButton.disabled = true;
             messageInput.disabled = true;
             loading.style.display = 'block';
-            
+
             try {
                 // Préparer les messages pour l'API (garder les 10 derniers)
                 const messages = messageHistory.slice(-10);
-                messages.push({ role: 'user', content: message });
-                
+                messages.push({
+                    role: 'user',
+                    content: message
+                });
+
                 const response = await fetch('mistral_api.php', {
                     method: 'POST',
                     headers: {
@@ -468,15 +501,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                         messages: messages
                     })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
                     addMessage(data.content);
                 } else {
                     showError(data.error || 'Erreur inconnue');
                 }
-                
+
             } catch (error) {
                 showError('Erreur de connexion: ' + error.message);
             } finally {
@@ -487,29 +520,29 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 messageInput.focus();
             }
         }
-        
+
         // Gestionnaires d'événements
         sendButton.addEventListener('click', sendMessage);
-        
+
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
-        
+
         // Auto-focus sur l'input
         messageInput.focus();
-        
+
         // Créer les particules
         createParticles();
-        
+
         // Effet de frappe automatique pour le message de bienvenue
         setTimeout(() => {
             const welcomeMessage = document.querySelector('.message.ai .message-content');
             const text = welcomeMessage.textContent;
             welcomeMessage.textContent = '';
-            
+
             let i = 0;
             const typeInterval = setInterval(() => {
                 welcomeMessage.textContent += text[i];
@@ -521,4 +554,5 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         }, 500);
     </script>
 </body>
+
 </html>

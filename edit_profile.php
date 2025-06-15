@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
     $username = trim($_POST['username']);
-    
+
     // Validation
     if (empty($email) || (empty($password) && !empty($confirm_password)) || empty($username)) {
         $error = 'Tous les champs obligatoires doivent être remplis.';
@@ -21,15 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = 'Les mots de passe ne correspondent pas.';
     } else {
         $pdo = getDBConnection();
-        
+
         // Update user information
         $stmt = $pdo->prepare("UPDATE users SET email = ?, username = ?" . (!empty($password) ? ", password = ?" : "") . " WHERE id = ?");
         $params = [$email, $username, $user['id']];
-        
+
         if (!empty($password)) {
             array_splice($params, 2, 0, $password);
         }
-        
+
         if ($stmt->execute($params)) {
             $success = 'Informations mises à jour avec succès !';
             // Refresh user data
@@ -42,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,33 +54,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 20px;
             background-color: #f4f4f4;
         }
+
         .container {
             max-width: 400px;
             margin: 0 auto;
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
         }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             color: #555;
         }
-        input[type="email"], input[type="password"], input[type="text"] {
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             box-sizing: border-box;
         }
+
         .btn {
             width: 100%;
             padding: 12px;
@@ -90,48 +99,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             cursor: pointer;
             font-size: 16px;
         }
+
         .btn:hover {
             background: #0056b3;
         }
+
         .error {
             color: red;
             text-align: center;
             margin-bottom: 20px;
         }
+
         .success {
             color: green;
             text-align: center;
             margin-bottom: 20px;
         }
+
         .text-center {
             text-align: center;
             margin-top: 20px;
         }
+
         a {
             color: #007bff;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
+
         .optional {
             font-size: 0.9em;
             color: #666;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Modifier le profil</h1>
-        
+
         <?php if ($error): ?>
             <div class="error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
-        
+
         <?php if ($success): ?>
             <div class="success"><?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
-        
+
         <form method="POST">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur :</label>
@@ -142,18 +159,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label for="email">Email :</label>
                 <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="password">Nouveau mot de passe :</label>
                 <input type="password" name="password" id="password">
                 <span class="optional">(Laissez vide pour ne pas modifier le mot de passe)</span>
             </div>
-            
+
             <div class="form-group">
                 <label for="confirm_password">Confirmer le nouveau mot de passe :</label>
                 <input type="password" name="confirm_password" id="confirm_password">
             </div>
-            
+
             <button type="submit" class="btn">Mettre à jour le profil</button>
             <div class="text-center">
                 <a href="dashboard.php">Retour au tableau de bord</a>
@@ -161,4 +178,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 </body>
+
 </html>
