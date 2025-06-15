@@ -1,3 +1,15 @@
+<?php
+require_once 'config.php';
+if (!isset($_GET['post'])) {
+    // Le paramètre `post` est manquant dans l'URL
+    // Par exemple, on redirige ou on affiche un message
+    header("Location: ?post=default_value");
+    exit;
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
