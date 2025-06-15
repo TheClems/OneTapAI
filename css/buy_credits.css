@@ -82,11 +82,11 @@ body {
 
 @keyframes glow-text {
   from {
-    text-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
 
   to {
-    text-shadow: 0 0 30px rgba(100, 255, 218, 0.6);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -144,20 +144,6 @@ body {
 
 .current-credits.light-mode {
   background: rgba(45, 55, 72, 0.95);
-}
-
-.current-credits::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg,
-      transparent,
-      rgba(100, 255, 218, 0.1),
-      transparent);
-  animation: rotate 4s linear infinite;
 }
 
 .current-credits-content {
@@ -288,7 +274,7 @@ body {
 .btn {
   width: 100%;
   padding: 1rem 2rem;
-  background: linear-gradient(135deg, #64ffda 0%, #1de9b6 100%);
+  background: #fff;
   color: #0f0f23;
   border: none;
   border-radius: 6px;
