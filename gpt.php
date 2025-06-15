@@ -86,10 +86,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
         }
 
-        .chat-container.collapsed.mobile {
-            margin-left: 17rem;
-            
-        }
         .header {
             background: linear-gradient(90deg, #6366f1, #8b5cf6);
             padding: 20px;
