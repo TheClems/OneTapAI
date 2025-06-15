@@ -8,7 +8,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
 require_once 'config.php';
+
+// Vérifier que l'utilisateur a un channel_id
+if (!isset($_SESSION['id_channel'])) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Channel ID manquant']);
+    exit;
+}
+
+$channel_id = $_SESSION['id_channel'];
 
 // Clé API Mistral
 $apiKey = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey';
@@ -27,20 +37,7 @@ if (!$input || !isset($input['messages'])) {
     exit;
 }
 
-$stmt = $pdo->prepare("INSERT INTO chat_channels (name) VALUES (?)");
-$stmt->execute(['Conversation du ' . date('Y-m-d H:i:s')]);
-$chatChannelId = $pdo->lastInsertId();
-
-
 $messages = $input['messages'];
-
-// Insertion des messages
-$stmt = $pdo->prepare("INSERT INTO chat_messages (chat_channel_id, role, content) VALUES (?, ?, ?)");
-
-foreach ($messages as $message) {
-    $stmt->execute([$chatChannelId, $message['role'], $message['content']]);
-}
-
 
 // Validation des messages
 foreach ($messages as $message) {
@@ -48,6 +45,32 @@ foreach ($messages as $message) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Format de message invalide']);
         exit;
+    }
+}
+
+// Fonction pour sauvegarder un message en base de données
+function saveMessage($pdo, $channel_id, $role, $content) {
+    try {
+        $stmt = $pdo->prepare("INSERT INTO chat_messages (chat_channel_id, role, content, created_at) VALUES (?, ?, ?, NOW())");
+        return $stmt->execute([$channel_id, $role, $content]);
+    } catch (PDOException $e) {
+        error_log("Erreur sauvegarde message: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Sauvegarder le dernier message utilisateur (le plus récent dans le tableau)
+$lastUserMessage = null;
+for ($i = count($messages) - 1; $i >= 0; $i--) {
+    if ($messages[$i]['role'] === 'user') {
+        $lastUserMessage = $messages[$i];
+        break;
+    }
+}
+
+if ($lastUserMessage) {
+    if (!saveMessage($pdo, $channel_id, 'user', $lastUserMessage['content'])) {
+        error_log("Erreur lors de la sauvegarde du message utilisateur");
     }
 }
 
@@ -136,13 +159,20 @@ if (!isset($result['choices'][0]['message']['content'])) {
     exit;
 }
 
-// Nettoyer et formater la réponse
-$content = trim($result['choices'][0]['message']['content']);
-$content = nl2br(htmlspecialchars($content, ENT_QUOTES, 'UTF-8'));
+// Récupérer la réponse de l'IA
+$aiContent = trim($result['choices'][0]['message']['content']);
+
+// Sauvegarder la réponse de l'IA en base de données (contenu brut, sans formatage HTML)
+if (!saveMessage($pdo, $channel_id, 'assistant', $aiContent)) {
+    error_log("Erreur lors de la sauvegarde de la réponse IA");
+}
+
+// Nettoyer et formater la réponse pour l'affichage
+$formattedContent = nl2br(htmlspecialchars($aiContent, ENT_QUOTES, 'UTF-8'));
 
 echo json_encode([
     'success' => true,
-    'content' => $content,
+    'content' => $formattedContent,
     'model' => $result['model'] ?? 'mistral-medium',
     'usage' => $result['usage'] ?? null
 ]);
