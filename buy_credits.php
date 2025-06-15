@@ -49,113 +49,404 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR"></script>
     <link rel="stylesheet" href="css/nav.css" />
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>Acheter des crédits - AI Credits</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .bg-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #64ffda, #1de9b6);
+            border-radius: 50%;
+            animation: float-particle 8s infinite linear;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
         }
-        h1 {
-            color: #333;
+
+        .header {
             text-align: center;
+            margin-bottom: 3rem;
         }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #64ffda 0%, #1de9b6 50%, #00bcd4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: glow-text 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-text {
+            from {
+                text-shadow: 0 0 20px rgba(100, 255, 218, 0.3);
+            }
+            to {
+                text-shadow: 0 0 30px rgba(100, 255, 218, 0.6);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .demo-notice {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 152, 0, 0.1));
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            animation: pulse-border 3s infinite;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% {
+                border-color: rgba(255, 193, 7, 0.3);
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+            }
+            50% {
+                border-color: rgba(255, 193, 7, 0.6);
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+        }
+
         .current-credits {
-            background: #e7f3ff;
-            padding: 15px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(29, 233, 182, 0.1));
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
         }
+
+        .current-credits::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(100, 255, 218, 0.1), transparent);
+            animation: rotate 4s linear infinite;
+        }
+
+        .current-credits-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .current-credits h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #64ffda;
+        }
+
+        .credits-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #64ffda, #1de9b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .packages {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
+
         .package {
-            border: 2px solid #eee;
-            border-radius: 10px;
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
             text-align: center;
-            transition: border-color 0.3s;
+            position: relative;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
         }
+
+        .package::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(100, 255, 218, 0.8), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .package:hover::before {
+            transform: translateX(100%);
+        }
+
         .package:hover {
-            border-color: #007bff;
+            transform: translateY(-8px);
+            border-color: rgba(100, 255, 218, 0.4);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(100, 255, 218, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
+
+        .package.featured {
+            border-color: rgba(100, 255, 218, 0.6);
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(29, 233, 182, 0.05));
+            transform: scale(1.05);
+        }
+
+        .package.featured::after {
+            content: 'POPULAIRE';
+            position: absolute;
+            top: -1px;
+            right: 20px;
+            background: linear-gradient(135deg, #64ffda, #1de9b6);
+            color: #0f0f23;
+            padding: 0.5rem 1rem;
+            border-radius: 0 0 12px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
         .package h3 {
-            color: #333;
-            margin-top: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
         }
+
         .price {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-            margin: 10px 0;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #64ffda, #1de9b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            line-height: 1;
         }
+
         .credits {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-weight: 500;
         }
+
         .btn {
             width: 100%;
-            padding: 12px;
-            background: #007bff;
-            color: white;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #64ffda 0%, #1de9b6 100%);
+            color: #0f0f23;
             border: none;
-            border-radius: 5px;
+            border-radius: 16px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.025em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
         .btn:hover {
-            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(100, 255, 218, 0.4);
         }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .paypal-boutons {
+            margin-top: 1rem;
+        }
+
+        .success, .error {
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
         .success {
-            color: green;
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #d4edda;
-            border-radius: 5px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
         }
+
         .error {
-            color: red;
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #f8d7da;
-            border-radius: 5px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
         }
+
         .back-link {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 3rem;
         }
+
         .back-link a {
-            color: #007bff;
+            color: #64ffda;
             text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+
         .back-link a:hover {
-            text-decoration: underline;
+            color: #1de9b6;
+            transform: translateX(-4px);
         }
-        .demo-notice {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #856404;
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .packages {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .package {
+                padding: 2rem 1.5rem;
+            }
+
+            .package.featured {
+                transform: none;
+            }
+
+            .price {
+                font-size: 2.5rem;
+            }
+
+            .current-credits {
+                padding: 1.5rem;
+            }
+
+            .credits-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .package {
+                padding: 1.5rem 1rem;
+            }
+
+            .price {
+                font-size: 2rem;
+            }
+
+            .btn {
+                padding: 0.875rem 1.5rem;
+            }
+        }
+
+        /* Floating elements modernisés */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -164,44 +455,54 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             height: 100%;
             pointer-events: none;
             z-index: -1;
+            overflow: hidden;
         }
 
         .floating-element {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(100, 255, 218, 0.03) 0%, transparent 70%);
             border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            animation: float-modern 12s ease-in-out infinite;
         }
 
         .floating-element:nth-child(1) {
-            top: 20%;
-            left: 10%;
+            top: 10%;
+            left: 5%;
             animation-delay: 0s;
         }
 
         .floating-element:nth-child(2) {
             top: 60%;
             right: 10%;
-            animation-delay: 2s;
+            animation-delay: 4s;
         }
 
         .floating-element:nth-child(3) {
             bottom: 20%;
-            left: 20%;
-            animation-delay: 4s;
+            left: 15%;
+            animation-delay: 8s;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+        @keyframes float-modern {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.3;
+            }
+            33% { 
+                transform: translateY(-30px) rotate(120deg) scale(1.1);
+                opacity: 0.5;
+            }
+            66% { 
+                transform: translateY(15px) rotate(240deg) scale(0.9);
+                opacity: 0.4;
+            }
         }
-        
     </style>
 </head>
 <body>
-<nav class="sidebar" id="sidebar">
+    <nav class="sidebar" id="sidebar">
         <div class="floating-particles" id="particles"></div>
         
         <button class="toggle-btn" id="toggleBtn"></button>
@@ -265,41 +566,52 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <span class="nav-text">Mon Compte</span>
                 </a>
             </li>
-
         </ul>
     </nav>
+
+    <!-- Animated background -->
+    <div class="animated-bg" id="animatedBg"></div>
+
     <div class="floating-elements">
         <div class="floating-element"></div>
         <div class="floating-element"></div>
         <div class="floating-element"></div>
     </div>
+
     <div class="container">
-        <h1>Acheter des crédits</h1>
+        <div class="header">
+            <h1>Acheter des crédits</h1>
+            <p class="subtitle">Boostez votre créativité avec nos packs de crédits IA</p>
+        </div>
         
         <div class="demo-notice">
-            <strong>Mode démo :</strong> Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
+            <strong>⚡ Mode démo</strong> : Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
         </div>
         
         <div class="current-credits">
-            <strong>Vos crédits actuels : <?php echo number_format($user['credits']); ?></strong>
+            <div class="current-credits-content">
+                <h2>Vos crédits actuels</h2>
+                <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
+            </div>
         </div>
         
         <?php if ($success): ?>
-            <div class="success"><?php echo htmlspecialchars($success); ?></div>
+            <div class="success">✅ <?php echo htmlspecialchars($success); ?></div>
         <?php endif; ?>
         
         <?php if ($error): ?>
-            <div class="error"><?php echo htmlspecialchars($error); ?></div>
+            <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
         
         <div class="packages">
             <?php foreach ($packages as $i => $package): ?>
-                <div class="package">
+                <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
-
-                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">Acheter avec PayPal</button>
+                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                        Acheter avec PayPal
+                    </button>
                     <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
                 </div>
             <?php endforeach; ?>
@@ -309,68 +621,110 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <a href="dashboard.php">← Retour au tableau de bord</a>
         </div>
     </div>
-</body>
-</html>
-<?php
-$pseudo = htmlspecialchars($user['username']); // Supposons que ce soit "alex_du_78"
-?>
-<script>
-    const pseudoPHP = <?= json_encode($user['username']) ?>;
 
-    document.querySelectorAll('.acheter-btn').forEach(function(button) {
-        button.addEventListener('click', function () {
-            const id = this.getAttribute('data-id');
-            const nom = this.getAttribute('data-nom');
-            const prix = this.getAttribute('data-prix');
-            const credits = this.getAttribute('data-credits');
-
-            // Empêche le double affichage
-            this.disabled = true;
-
-            paypal.Buttons({
-                createOrder: function (data, actions) {
-                    return actions.order.create({
-                        purchase_units: [{
-                            description: nom + " - " + credits + " crédits",
-                            custom_id: pseudoPHP + "-" + nom,
-                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
-                            amount: {
-                                value: prix,
-                                currency_code: 'EUR'
-                            }
-                        }],
-                        application_context: {
-                            shipping_preference: "NO_SHIPPING"
-                        }
-                    });
-                },
-                onApprove: function (data, actions) {
-                    return actions.order.capture().then(function (details) {
-                        alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
-                        console.log("Détails : ", details);
-
-                        // Optionnel : envoie AJAX pour créditer automatiquement l’utilisateur
-                        // fetch('crediter.php', { method: 'POST', body: JSON.stringify({ ... }) })
-                    });
-                }
-            }).render("#paypal-boutons-" + id);
-        });
-    });
-
-    // Effet de parallaxe sur les éléments flottants
-    document.addEventListener('mousemove', function(e) {
-            const floatingElements = document.querySelectorAll('.floating-element');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
+    <?php $pseudo = htmlspecialchars($user['username']); ?>
+    <script>
+        // Animated background particles
+        function createBackgroundParticles() {
+            const bg = document.getElementById('animatedBg');
+            const particleCount = 20;
             
-            floatingElements.forEach((element, index) => {
-                const speed = (index + 1) * 0.5;
-                const xPos = x * speed * 20;
-                const yPos = y * speed * 20;
-                
-                element.style.transform = `translate(${xPos}px, ${yPos}px)`;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'bg-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+                bg.appendChild(particle);
+            }
+        }
+
+        // PayPal integration
+        const pseudoPHP = <?= json_encode($user['username']) ?>;
+
+        document.querySelectorAll('.acheter-btn').forEach(function(button) {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const nom = this.getAttribute('data-nom');
+                const prix = this.getAttribute('data-prix');
+                const credits = this.getAttribute('data-credits');
+
+                this.disabled = true;
+
+                paypal.Buttons({
+                    createOrder: function (data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: nom + " - " + credits + " crédits",
+                                custom_id: pseudoPHP + "-" + nom,
+                                invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                                amount: {
+                                    value: prix,
+                                    currency_code: 'EUR'
+                                }
+                            }],
+                            application_context: {
+                                shipping_preference: "NO_SHIPPING"
+                            }
+                        });
+                    },
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                            console.log("Détails : ", details);
+                        });
+                    }
+                }).render("#paypal-boutons-" + id);
             });
         });
-</script>
-<script type="text/javascript" src="assets/js/nav.js"></script>
 
+        // Enhanced mouse parallax effect
+        document.addEventListener('mousemove', function(e) {
+            const floatingElements = document.querySelectorAll('.floating-element');
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            
+            floatingElements.forEach((element, index) => {
+                const speed = (index + 1) * 0.3;
+                const xPos = x * speed * 30;
+                const yPos = y * speed * 30;
+                
+                element.style.transform = `translate(${xPos}px, ${yPos}px) rotate(${x * speed * 10}deg)`;
+            });
+        });
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            createBackgroundParticles();
+            
+            // Stagger animation for packages
+            const packages = document.querySelectorAll('.package');
+            packages.forEach((pkg, index) => {
+                pkg.style.animationDelay = (index * 0.1) + 's';
+                pkg.style.animation = 'fadeInUp 0.6s ease forwards';
+            });
+        });
+
+        // Add fadeInUp animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            .package {
+                opacity: 0;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    <script type="text/javascript" src="assets/js/nav.js"></script>
+</body>
+</html>
