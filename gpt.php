@@ -1,9 +1,11 @@
 <?php
 require_once 'config.php';
-if (!isset($_GET['post'])) {
+if (!isset($_GET['id_channel'])) {
     // Le paramètre `post` est manquant dans l'URL
     // Par exemple, on redirige ou on affiche un message
-    header("Location: ?post=default_value");
+    $id = uniqid(bin2hex(random_bytes(4)), true);
+
+    header("Location: ?id_channel=" . $id);
     exit;
 }
 ?>
