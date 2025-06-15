@@ -133,3 +133,4 @@ $user = getCurrentUser();
 
 </html>
 <script type="text/javascript" src="scripts/account.js"></script>
+<script type="text/javascript" src="scripts/nav.js"></script>
