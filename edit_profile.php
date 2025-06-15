@@ -180,4 +180,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </body>
 
 </html>
-<script type="text/javascript" src="scripts/nav.js"></script>
