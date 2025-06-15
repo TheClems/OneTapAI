@@ -164,7 +164,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
-                        Acheter avec PayPal
+                        Acheter
                     </button>
                     <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
                 </div>
