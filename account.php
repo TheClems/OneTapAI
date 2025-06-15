@@ -341,6 +341,143 @@ $user = getCurrentUser();
             left: 100%;
         }
 
+        /* Styles pour les boutons d'action */
+        .action-buttons-section {
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.4s forwards;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-decoration: none;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .dark-mode .action-btn {
+            background: rgba(45, 55, 72, 0.95);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            color: #667eea;
+        }
+
+        .dark-mode .action-btn:hover {
+            color: #81e6d9;
+        }
+
+        .action-btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .action-btn-content {
+            flex: 1;
+        }
+
+        .action-btn-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-btn-description {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        /* Boutons spécialisés */
+        .action-btn.edit-profile::before {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+        }
+
+        .action-btn.edit-profile:hover {
+            color: #48bb78;
+        }
+
+        .action-btn.edit-profile .action-btn-icon {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+
+        .action-btn.logout::before {
+            background: linear-gradient(90deg, #ed8936, #dd6b20);
+        }
+
+        .action-btn.logout:hover {
+            color: #ed8936;
+        }
+
+        .action-btn.logout .action-btn-icon {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        }
+
+        .action-btn.delete-account::before {
+            background: linear-gradient(90deg, #e53e3e, #c53030);
+        }
+
+        .action-btn.delete-account:hover {
+            color: #e53e3e;
+        }
+
+        .action-btn.delete-account .action-btn-icon {
+            background: linear-gradient(135deg, #e53e3e, #c53030);
+        }
+
+        /* Formulaires invisibles */
+        .action-form {
+            display: contents;
+        }
+
+        .action-form button {
+            background: none;
+            border: none;
+            padding: 0;
+            width: 100%;
+            cursor: pointer;
+        }
 
         h2 {
             color: white;
@@ -570,32 +707,49 @@ $user = getCurrentUser();
                     </div>
                 </div>
             </div>
-            <div class="action-buttons mt-6">
-                <div class="flex flex-col gap-4">
-                    <!-- Modifier le profil -->
-                    <a href="auth2.php?mode=edit_profile" class="button w-full flex items-center justify-center gap-2">
-                        <i data-lucide="edit-2" class="w-5 h-5"></i>
-                        Modifier le profil
-                    </a>
-                    
-                    <!-- Déconnexion -->
-                    <form action="auth2.php" method="POST" class="w-full">
-                        <input type="hidden" name="action" value="logout">
-                        <button type="submit" class="button w-full flex items-center justify-center gap-2">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
-                            Déconnexion
-                        </button>
-                    </form>
-                    
-                    <!-- Supprimer le compte -->
-                    <form action="auth2.php" method="POST" class="w-full">
-                        <input type="hidden" name="action" value="delete_account">
-                        <button type="submit" class="button w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                            Supprimer le compte
-                        </button>
-                    </form>
-                </div>
+        </div>
+
+        <!-- Section des boutons d'action -->
+        <div class="action-buttons-section">
+            <div class="action-buttons">
+                <!-- Modifier le profil -->
+                <a href="auth2.php?mode=edit_profile" class="action-btn edit-profile">
+                    <div class="action-btn-icon">
+                        <i data-lucide="edit-2"></i>
+                    </div>
+                    <div class="action-btn-content">
+                        <div class="action-btn-title">Modifier le profil</div>
+                        <div class="action-btn-description">Mettre à jour vos informations personnelles et préférences</div>
+                    </div>
+                </a>
+
+                <!-- Déconnexion -->
+                <form action="auth2.php" method="POST" class="action-form">
+                    <input type="hidden" name="action" value="logout">
+                    <button type="submit" class="action-btn logout">
+                        <div class="action-btn-icon">
+                            <i data-lucide="log-out"></i>
+                        </div>
+                        <div class="action-btn-content">
+                            <div class="action-btn-title">Déconnexion</div>
+                            <div class="action-btn-description">Se déconnecter de votre session actuelle</div>
+                        </div>
+                    </button>
+                </form>
+
+                <!-- Supprimer le compte -->
+                <form action="auth2.php" method="POST" class="action-form" onsubmit="return confirmDelete()">
+                    <input type="hidden" name="action" value="delete_account">
+                    <button type="submit" class="action-btn delete-account">
+                        <div class="action-btn-icon">
+                            <i data-lucide="trash-2"></i>
+                        </div>
+                        <div class="action-btn-content">
+                            <div class="action-btn-title">Supprimer le compte</div>
+                            <div class="action-btn-description">Supprimer définitivement votre compte et toutes vos données</div>
+                        </div>
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -619,6 +773,11 @@ $user = getCurrentUser();
             }
             
             lucide.createIcons();
+        }
+
+        // Confirmation pour la suppression du compte
+        function confirmDelete() {
+            return confirm('Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.');
         }
 
         // Charger le thème sauvegardé
