@@ -70,11 +70,14 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             background: rgba(15, 15, 25, 0.8);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            margin: 17rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+
+            margin-left: 17rem;
         }
 
         .chat-container.collapsed {
             margin: 2rem;
+            
         }
 
         .header {
