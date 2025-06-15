@@ -50,33 +50,36 @@ body {
     color: #334155;
 }
 
-.btn {
+.btn,
+.button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 1.75rem 1.5rem;
+    padding: 1rem 1.5rem;
     border-radius: 0.5rem;
     font-weight: 500;
     text-decoration: none;
-    font-size: 2rem;
+    font-size: 1.1rem;
     transition: all 0.2s ease;
     border: none;
     cursor: pointer;
     box-shadow: var(--shadow-sm);
-    width: 49%;
 }
 
-.btn:hover {
+.btn:hover,
+.button:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
 }
 
-.btn-primary {
+.btn-primary,
+.button {
     background-color: var(--primary-color);
     color: white;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.button:hover {
     background-color: var(--secondary-color);
 }
 
@@ -89,12 +92,14 @@ body {
     background-color: #16a34a;
 }
 
-.btn-danger {
+.btn-danger,
+.button.bg-red-500 {
     background-color: var(--danger-color);
     color: white;
 }
 
-.btn-danger:hover {
+.btn-danger:hover,
+.button.bg-red-500:hover {
     background-color: #dc2626;
 }
 
