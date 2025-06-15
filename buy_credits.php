@@ -151,7 +151,13 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             text-align: center;
             backdrop-filter: blur(10px);
             animation: pulse-border 3s infinite;
+            color: #ffffff;
         }
+
+        .demo-notice.light-mode {
+            color: #0f0f23;
+
+        
 
         @keyframes pulse-border {
             0%, 100% {
@@ -174,6 +180,11 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             backdrop-filter: blur(20px);
             position: relative;
             overflow: hidden;
+        }
+
+        .current-credits.light-mode {
+            background: rgba(45, 55, 72, 0.95);
+
         }
 
         .current-credits::before {
@@ -227,6 +238,11 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             overflow: hidden;
         }
 
+        .package.light-mode {
+            background: rgba(45, 55, 72, 0.95);
+
+        }
+
         .package::before {
             content: '';
             position: absolute;
@@ -256,6 +272,11 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             border-color: rgba(100, 255, 218, 0.6);
             background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(29, 233, 182, 0.05));
             transform: scale(1.05);
+        }
+
+        .package.featured.light-mode {
+            border-color: rgba(45, 55, 72, 0.95);
+
         }
 
         .package.featured::after {
@@ -369,6 +390,17 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         .back-link a {
             color: #64ffda;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-link.light-mode {
+            color:rgba(45, 55, 72, 0.95);
             text-decoration: none;
             font-weight: 500;
             font-size: 1.1rem;
