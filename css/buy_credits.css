@@ -23,6 +23,15 @@
   margin-left: 2rem;
 }
 
+
+.body_buy_credits.mobile {
+
+}
+
+
+.body_buy_credits.mobile.collapsed {
+
+}
 /* Animated background */
 .animated-bg {
   position: fixed;
