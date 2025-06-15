@@ -10,6 +10,11 @@ const infoCards = document.querySelectorAll('.info-card');
 const profileCard = document.querySelector('.profile-card');
 const infoLabels = document.querySelectorAll('.info-label');
 const h2 = document.querySelectorAll('h2');
+const backLink = document.querySelector('.back-link a');
+const packages = document.querySelectorAll('.package');
+const featuredPackage = document.querySelector('.package.featured');
+const currentCredits = document.querySelector('.current-credits');
+const demoNotice = document.querySelector('.demo-notice');
 // Gestion du thème
 // Gestion du thème
 let isDarkMode = true;
@@ -19,7 +24,12 @@ const elementsToToggle = [
     welcome,
     profileCard,
     ...infoLabels,
-    ...h2
+    ...h2,
+    backLink,
+    ...packages,
+    featuredPackage,
+    currentCredits,
+    demoNotice
 ];
 themeToggle.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
