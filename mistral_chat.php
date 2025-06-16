@@ -193,6 +193,105 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             position: relative;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        /* Styles pour le formatage du texte */
+        .message-content h1, .message-content h2, .message-content h3, 
+        .message-content h4, .message-content h5, .message-content h6 {
+            color: #8b5cf6;
+            margin: 15px 0 10px 0;
+            font-weight: 600;
+        }
+
+        .message-content h1 { font-size: 1.5em; }
+        .message-content h2 { font-size: 1.3em; }
+        .message-content h3 { font-size: 1.2em; }
+
+        .message-content strong, .message-content b {
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        .message-content em, .message-content i {
+            color: #c4b5fd;
+            font-style: italic;
+        }
+
+        .message-content code {
+            background: rgba(15, 15, 25, 0.8);
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .message-content pre {
+            background: rgba(15, 15, 25, 0.9);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .message-content pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .message-content pre::before {
+            content: '💻 Code';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: rgba(15, 15, 25, 0.9);
+            color: #10b981;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin: 5px 0;
+            color: #e0e0e0;
+        }
+
+        .message-content blockquote {
+            border-left: 3px solid #8b5cf6;
+            padding-left: 15px;
+            margin: 15px 0;
+            color: #c4b5fd;
+            font-style: italic;
+        }
+
+        .message-content a {
+            color: #6366f1;
+            text-decoration: underline;
+        }
+
+        .message-content a:hover {
+            color: #8b5cf6;
+        }
+
+        /* Style pour les emojis */
+        .message-content .emoji {
+            font-size: 1.2em;
         }
 
         .message.user .message-content {
@@ -476,8 +575,13 @@ function loadHistoryMessages() {
             
             const timeString = formatTime(message.created_at);
             
+            // Formater le contenu pour les messages de l'IA depuis la DB
+            const formattedContent = message.role === 'user' ? 
+                message.content : 
+                formatMessageContent(message.content);
+            
             messageDiv.innerHTML = `
-                <div class="message-content">${message.content}</div>
+                <div class="message-content">${formattedContent}</div>
                 <div class="message-time">${timeString}</div>
             `;
             
@@ -514,6 +618,50 @@ function createParticles() {
     }
 }
 
+// Fonction pour formater le contenu d'un message
+function formatMessageContent(content) {
+    // Convertir les **texte** en <strong>
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convertir les *texte* en <em>
+    content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Convertir les ### Titre en <h3>
+    content = content.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    
+    // Convertir les ## Titre en <h2>
+    content = content.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    
+    // Convertir les # Titre en <h1>
+    content = content.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    
+    // Convertir les blocs de code ```code```
+    content = content.replace(/```(\w+)?\n?([\s\S]*?)```/g, function(match, lang, code) {
+        return `<pre><code>${code.trim()}</code></pre>`;
+    });
+    
+    // Convertir le code inline `code`
+    content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    // Convertir les liens [texte](url)
+    content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    
+    // Convertir les listes - item
+    content = content.replace(/^- (.*$)/gm, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // Convertir les listes numérotées 1. item
+    content = content.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
+    
+    // Convertir les citations > texte
+    content = content.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+    
+    // Convertir les retours à la ligne
+    content = content.replace(/\n/g, '<br>');
+    
+    return content;
+}
+
 // Afficher un message dans le chat (sans affecter l'historique)
 function displayMessage(content, isUser = false) {
     const messageDiv = document.createElement('div');
@@ -525,8 +673,11 @@ function displayMessage(content, isUser = false) {
         minute: '2-digit'
     });
 
+    // Formater le contenu seulement pour les messages de l'IA
+    const formattedContent = isUser ? content : formatMessageContent(content);
+
     messageDiv.innerHTML = `
-        <div class="message-content">${content}</div>
+        <div class="message-content">${formattedContent}</div>
         <div class="message-time">${timeString}</div>
     `;
 
@@ -600,7 +751,7 @@ async function sendMessage() {
         const data = await response.json();
 
         if (data.success) {
-            // Afficher la réponse de l'IA
+            // Formater et afficher la réponse de l'IA
             displayMessage(data.content);
             
             // Mettre à jour l'historique avec BOTH messages
