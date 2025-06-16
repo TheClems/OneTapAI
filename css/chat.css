@@ -433,6 +433,7 @@ h3.light-mode {
 }
 .message.ai .message-content.light-mode{
     background: rgb(37 37 37);
+}
 
 .message-time {
     font-size: 0.8em;
@@ -445,9 +446,7 @@ h3.light-mode {
     background: rgb(11 11 11);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-.input-container.light-mode{
-    background: rgb(250 250 250);
-}
+
 .input-group {
     display: flex;
     gap: 15px;
@@ -659,5 +658,4 @@ h3.light-mode {
         flex: 1;
         min-height: 0;
     }
-}
 }
