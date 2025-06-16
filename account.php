@@ -6,7 +6,7 @@ $user = getCurrentUser();
 ?>
 
 <!DOCTYPE html>
-<html lang="frs">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,8 +27,8 @@ $user = getCurrentUser();
 
     <div class="main-content">
         
-        <h1>Mon Compte</h1>
-        <p class="subtitle">Gérez votre profil et vos paramètres</p>
+        <h1>Account</h1>
+        <p class="subtitle">Manage your profile and settings</p>
 
         <div class="account-container">
             <div class="profile-header">
@@ -39,7 +39,7 @@ $user = getCurrentUser();
                     <h2 class="h2_name"><?php echo htmlspecialchars($user['full_name']); ?></h2>
                     <div class="username">@<?php echo htmlspecialchars($user['username']); ?></div>
                     <div class="email"><?php echo htmlspecialchars($user['email']); ?></div>
-                    <div class="status">Membre Premium</div>
+                    <div class="status">Premium member</div>
                 </div>
             </div>
 
@@ -47,7 +47,7 @@ $user = getCurrentUser();
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-label">
-                            Crédits actuels
+                            Current credits
                         </div>
                         <div class="info-value credits"><?php echo number_format($user['credits']); ?></div>
                     </div>
@@ -56,13 +56,13 @@ $user = getCurrentUser();
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-label">
-                            Date d'inscription
+                            Date of registration
                         </div>
                         <div class="info-value"><?php echo date('d/m/Y à H:i', strtotime($user['date_inscription'])); ?></div>
                     </div>
                     <div class="info-row">
                         <div class="info-label">
-                            Dernière connexion
+                            Last connection
                         </div>
                         <div class="info-value">14/06/2025 14:32</div>
                     </div>
@@ -70,16 +70,16 @@ $user = getCurrentUser();
             </div>
 
             <div class="actions-section">
-                <h3>Actions du compte</h3>
+                <h3>Account actions</h3>
                 <div class="actions-grid">
                     <button class="btn btn-primary" id="profileBtn" onclick="window.location.href = 'auth.php?mode=edit_profile';">
-                        Modifier profil
+                        Edit profile
                     </button>
                     <button class="btn btn-secondary" id="logoutBtn" onclick="window.location.href = 'logout.php';">
-                        Se déconnecter
+                        Logout
                     </button>
                     <button class="btn btn-danger" id="deleteBtn" onclick="showDeleteModal()">
-                        Supprimer compte
+                        Delete account
                     </button>
                 </div>
             </div>
@@ -89,14 +89,14 @@ $user = getCurrentUser();
     <!-- Modal de confirmation de suppression -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
-            <h3>⚠️ Supprimer le compte</h3>
-            <p>Cette action est irréversible. Toutes vos données seront définitivement supprimées.</p>
-            <p>Pour confirmer la suppression, tapez votre nom d'utilisateur : <strong><?php echo htmlspecialchars($user['username']); ?></strong></p>
-            <input type="text" id="confirmUsername" placeholder="Nom d'utilisateur">
+            <h3>⚠️ Delete account</h3>
+            <p>This action is irreversible. All your data will be permanently deleted.</p>
+            <p>To confirm the deletion, type your username : <strong><?php echo htmlspecialchars($user['username']); ?></strong></p>
+            <input type="text" id="confirmUsername" placeholder="Username">
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeDeleteModal()">Annuler</button>
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
                 <button class="btn btn-danger" onclick="confirmDelete()" disabled id="deleteConfirmBtn">
-                    Supprimer définitivement
+                    Delete permanently
                 </button>
             </div>
         </div>

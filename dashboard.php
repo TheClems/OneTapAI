@@ -5,7 +5,7 @@ requireLogin();
 $user = getCurrentUser();
 ?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -31,17 +31,17 @@ $user = getCurrentUser();
     <div class="container">
         <div class="header">
             <div class="user-info">
-                <h1 class="welcome">Bienvenue <?php echo htmlspecialchars($user['full_name']); ?></h1>
+                <h1 class="welcome">Welcome <?php echo htmlspecialchars($user['full_name']); ?></h1>
             </div>
         </div>
 
         <div class="section features">
-            <h3>Fonctionnalités disponibles</h3>
+            <h3>Features</h3>
             <ul>
-                <li>Chat avec des IA avancées</li>
-                <li>Historique de vos conversations</li>
-                <li>Gestion flexible de vos crédits</li>
-                <li>Support technique</li>
+                <li>Chat with advanced AI</li>
+                <li>Conversation history</li>
+                <li>Flexible credit management</li>
+                <li>Technical support</li>
             </ul>
         </div>
     </div>
