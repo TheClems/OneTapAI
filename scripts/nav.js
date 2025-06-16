@@ -35,7 +35,7 @@ const h3 = document.querySelectorAll('h3');
 const historyHeader = document.querySelectorAll('.history-header');
 const chatMessages2 = document.querySelector('.chat-messages');
 const inputContainer = document.querySelector('.input-container');
-const messageAi = document.querySelector('.message.ai .message-content');
+const messageAi = document.querySelector('.message-content');
 const elementsToToggle = [
     ...infoValues,
     ...infoCards,
