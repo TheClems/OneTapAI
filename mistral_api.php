@@ -95,6 +95,7 @@ if (isset($_GET['id_channel'])) {
     $chatChannelId = $_GET['id_channel'];
 }
 
+$pdo = getDatabaseConnection();
 
 $stmt_count = $pdo->prepare("SELECT COUNT(*) AS total FROM chat_messages WHERE chat_channel_id = ?");
 $stmt_count->execute([$chatChannelId]);
