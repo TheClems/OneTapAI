@@ -368,7 +368,7 @@ if ($currentChannelId !== null) {
                 </button>
             </div>
 
-            <div class="chat-list" id="chatList" style="display: <?php echo $display_list; ?>;">
+            <div class="chat-list" id="chatList" >
                 <?php foreach ($userChannels as $channel): ?>
                     <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
                         data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
@@ -417,7 +417,7 @@ if ($currentChannelId !== null) {
             <div class="input-container">
                 <div class="input-group">
                     <!-- Sélecteur de modèle -->
-                    <div class="model-selector">
+                    <div class="model-selector" style="display: <?php echo $display_list; ?>;">
                         <select id="modelSelect" class="model-select">
                             <option value="" disabled selected>-- Choisir un modèle --</option>
                             <?php foreach ($availableModels as $modelKey => $modelInfo): ?>
