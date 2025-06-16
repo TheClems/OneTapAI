@@ -61,6 +61,10 @@ body {
     align-items: center;
 }
 
+.history-header.light-mode {
+    background-color: #fafafa;
+}
+
 .history-header h3 {
     font-size: 1.1em;
     font-weight: 600;
@@ -68,6 +72,10 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+h3.light-mode {
+    color: #334155;
 }
 
 .new-chat-btn {
@@ -114,8 +122,12 @@ body {
     overflow-y: auto;
     padding: 10px;
     scrollbar-width: thin;
-    scrollbar-color: #6366f1 transparent;
+    scrollbar-color: #122d27 transparent;
     background-color: #0b0b0b;
+}
+
+chat-liste.light-mode {
+    background-color: #fafafa;
 }
 
 .chat-list::-webkit-scrollbar {
@@ -142,6 +154,10 @@ body {
     position: relative;
     overflow: hidden;
     margin-left: 10px;
+}
+
+.chat-item.light-mode {
+    background-color: rgba(62, 243, 199, 0.1);
 }
 
 .chat-item:hover {
@@ -175,12 +191,29 @@ body {
     max-width: 100%;
 }
 
+.chat-preview.light-mode {
+    color: #334155;
+}
+
+.chat-model {
+    color: #e0e0e0;
+}
+
+.chat-model.light-mode {
+    color: #334155;
+}
+
 .chat-time {
     color: #9ca3af;
     font-size: 0.75em;
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+
+.chat-time.light-mode {
+    color: #334155;
 }
 
 .chat-container {
