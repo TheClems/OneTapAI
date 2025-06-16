@@ -16,14 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Configuration de la base de données
-$dbConfig = [
-    'host' => 'localhost',
-    'dbname' => 'votre_base_de_donnees',
-    'username' => 'votre_username',
-    'password' => 'votre_password',
-    'charset' => 'utf8mb4'
-];
+// Inclure la configuration de la base de données
+require_once 'config.php';
 
 // Fonction pour envoyer une réponse JSON et arrêter l'exécution
 function sendJsonResponse($data, $httpCode = 200)
@@ -40,11 +34,11 @@ function logError($message)
 }
 
 // Fonction pour se connecter à la base de données
-function getDatabaseConnection($config)
+function getDatabaseConnection()
 {
     try {
-        $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
-        $pdo = new PDO($dsn, $config['username'], $config['password'], [
+        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+        $pdo = new PDO($dsn, DB_USER, DB_PASS, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false
@@ -55,6 +49,7 @@ function getDatabaseConnection($config)
         return null;
     }
 }
+
 
 // Fonction pour sauvegarder un message en base
 function saveMessageToDatabase($pdo, $chatChannelId, $role, $content)
@@ -147,7 +142,7 @@ if (!$input || !isset($input['messages']) || !is_array($input['messages'])) {
 $messages = $input['messages'];
 
 // Connexion à la base de données
-$pdo = getDatabaseConnection($dbConfig);
+$pdo = getDatabaseConnection();
 if (!$pdo) {
     sendJsonResponse(['success' => false, 'error' => 'Erreur de connexion à la base de données']);
 }
