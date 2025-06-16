@@ -51,12 +51,14 @@ const elementsToToggle = [
     profileHeader,
     actionsSection,
     actionsSectionH3,
+    toggleBtn2,
+    chatHistoryPanel2,
     chatList,
     chatItem,
-    chatPreview,
-    chatModel,
-    chatTime,
-    h3
+    ...chatPreview,
+    ...chatModel,
+    ...chatTime,
+    ...h3
 ];
 
 
