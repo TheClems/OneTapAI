@@ -27,7 +27,7 @@ $availableModels = [
         'description' => 'Le plus puissant'
     ],
     'mistral-medium' => [
-        'name' => 'Mistral Medium', 
+        'name' => 'Mistral Medium',
         'icon' => '⚡',
         'description' => 'Équilibré'
     ],
@@ -90,7 +90,8 @@ function getUserChannels($userId)
 }
 
 // Fonction améliorée pour supprimer les channels vides
-function cleanupEmptyChannels($userId, $currentChannelId = null) {
+function cleanupEmptyChannels($userId, $currentChannelId = null)
+{
     if (!$userId) return;
 
     $pdo = getDBConnection();
@@ -105,33 +106,33 @@ function cleanupEmptyChannels($userId, $currentChannelId = null) {
             AND cm.id IS NULL
         ";
         $params = [$userId];
-        
+
         if ($currentChannelId) {
             $sql .= " AND cc.id != ?";
             $params[] = $currentChannelId;
         }
-        
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        
+
         $deletedCount = $stmt->rowCount();
         if ($deletedCount > 0) {
             error_log("Supprimé $deletedCount channels vides pour l'utilisateur $userId");
         }
-        
     } catch (PDOException $e) {
         error_log("Erreur lors du nettoyage des channels : " . $e->getMessage());
     }
 }
 
 // Fonction pour vérifier si un channel existe et appartient à l'utilisateur
-function verifyChannelOwnership($channelId, $userId) {
+function verifyChannelOwnership($channelId, $userId)
+{
     $pdo = getDBConnection();
     try {
         $stmt = $pdo->prepare("SELECT id_user FROM chat_channels WHERE id = ?");
         $stmt->execute([$channelId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         return $result && $result['id_user'] === $userId;
     } catch (PDOException $e) {
         error_log("Erreur vérification propriété channel: " . $e->getMessage());
@@ -147,7 +148,7 @@ $userChannels = getUserChannels($userId);
 
 if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     // Pas de paramètre id_channel => vérifier s'il existe déjà un channel vide
-    
+
     // Chercher un channel existant sans messages et sans modèle
     $existingEmptyChannel = null;
     foreach ($userChannels as $channel) {
@@ -156,7 +157,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             break;
         }
     }
-    
+
     if ($existingEmptyChannel) {
         // Utiliser le channel vide existant
         $currentChannelId = $existingEmptyChannel;
@@ -182,14 +183,12 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
             header("Location: ?id_channel=" . $id . $modelParam);
             exit;
-            
         } catch (PDOException $e) {
             error_log("Erreur création channel: " . $e->getMessage());
             // En cas d'erreur, afficher la page sans redirection
             $currentChannelId = null;
         }
     }
-    
 } else {
     $currentChannelId = $_GET['id_channel'];
 
@@ -203,7 +202,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     // Récupérer l'historique
     $channelHistory = getChannelHistory($currentChannelId);
-    
+
     // Nettoyer les autres channels vides (pas celui-ci)
     cleanupEmptyChannels($userId, $currentChannelId);
 }
@@ -228,7 +227,8 @@ if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels))
 }
 
 // Fonction pour compter les messages dans un channel
-function countMessagesInChannel($channelId) {
+function countMessagesInChannel($channelId)
+{
     $pdo = getDBConnection();
     try {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = ?");
@@ -263,161 +263,163 @@ if ($currentChannelId !== null) {
     <link rel="stylesheet" href="css/chat.css">
 </head>
 <style>
-/* Styles pour le sélecteur de modèle */
+    /* Styles pour le sélecteur de modèle */
 
 
-
-.model-selector {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
-    min-width: 200px;
-}
-
-.model-label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0.25rem;
-}
-
-.model-select {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    color: white;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    min-width: 200px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.model-select:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.model-select:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
-}
-
-.model-select option {
-    background: #2d3748;
-    color: white;
-    padding: 0.5rem;
-    font-weight: 500;
-}
-
-.model-description {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-style: italic;
-    text-align: right;
-    margin-top: 0.25rem;
-    min-height: 1rem;
-    transition: all 0.3s ease;
-}
-
-/* Animation pour la description */
-.model-description {
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive pour mobile */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-
-    .header-content h1 {
-        font-size: 1.5rem;
-    }
 
     .model-selector {
-        align-items: center;
-        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+        min-width: 200px;
+    }
+
+    .model-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 0.25rem;
     }
 
     .model-select {
-        min-width: 250px;
-        max-width: 100%;
+        background: rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        color: white;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        min-width: 200px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .model-select:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.4);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .model-select:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+    }
+
+    .model-select option {
+        background: #2d3748;
+        color: white;
+        padding: 0.5rem;
+        font-weight: 500;
     }
 
     .model-description {
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .header {
-        padding: 1rem;
-    }
-
-    .model-select {
-        min-width: 200px;
-        font-size: 0.9rem;
-        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        text-align: right;
+        margin-top: 0.25rem;
+        min-height: 1rem;
+        transition: all 0.3s ease;
     }
 
-    .header-content h1 {
-        font-size: 1.3rem;
+    /* Animation pour la description */
+    .model-description {
+        animation: fadeIn 0.3s ease-in-out;
     }
-}
 
-/* Style amélioré pour les options du select */
-.model-select option[value="mistral-large"] {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-}
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
 
-.model-select option[value="mistral-medium"] {
-    background: linear-gradient(135deg, #4ecdc4, #44a08d);
-}
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-.model-select option[value="mistral-small"] {
-    background: linear-gradient(135deg, #45b7d1, #3498db);
-}
+    /* Responsive pour mobile */
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
 
-.model-select option[value="codestral"] {
-    background: linear-gradient(135deg, #96ceb4, #85c9a0);
-}
+        .header-content h1 {
+            font-size: 1.5rem;
+        }
 
-/* Effet de glow subtil pour le select */
-.model-select:focus {
-    box-shadow: 
-        0 0 0 3px rgba(255, 255, 255, 0.2),
-        0 0 20px rgba(255, 255, 255, 0.1),
-        0 4px 15px rgba(0,0,0,0.2);
-}
+        .model-selector {
+            align-items: center;
+            width: 100%;
+        }
 
-/* Animation au survol de la description */
-.model-selector:hover .model-description {
-    color: rgba(255, 255, 255, 1);
-    transform: scale(1.05);
-}
+        .model-select {
+            min-width: 250px;
+            max-width: 100%;
+        }
+
+        .model-description {
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header {
+            padding: 1rem;
+        }
+
+        .model-select {
+            min-width: 200px;
+            font-size: 0.9rem;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.3rem;
+        }
+    }
+
+    /* Style amélioré pour les options du select */
+    .model-select option[value="mistral-large"] {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    }
+
+    .model-select option[value="mistral-medium"] {
+        background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    }
+
+    .model-select option[value="mistral-small"] {
+        background: linear-gradient(135deg, #45b7d1, #3498db);
+    }
+
+    .model-select option[value="codestral"] {
+        background: linear-gradient(135deg, #96ceb4, #85c9a0);
+    }
+
+    /* Effet de glow subtil pour le select */
+    .model-select:focus {
+        box-shadow:
+            0 0 0 3px rgba(255, 255, 255, 0.2),
+            0 0 20px rgba(255, 255, 255, 0.1),
+            0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Animation au survol de la description */
+    .model-selector:hover .model-description {
+        color: rgba(255, 255, 255, 1);
+        transform: scale(1.05);
+    }
 </style>
+
 <body>
     <?php require_once 'nav.php'; ?>
 
@@ -439,12 +441,13 @@ if ($currentChannelId !== null) {
                 </button>
             </div>
 
-            <div class="chat-list" id="chatList" >
+            <div class="chat-list" id="chatList">
                 <?php foreach ($userChannels as $channel): ?>
-                    <?php if ($channel['message_count'] > 0): // Afficher seulement les channels avec des messages ?>
+                    <?php if ($channel['message_count'] > 0): // Afficher seulement les channels avec des messages 
+                    ?>
                         <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
-                            data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>" 
-                            data-model="<?php echo htmlspecialchars($channel['model']); ?>"> 
+                            data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
+                            data-model="<?php echo htmlspecialchars($channel['model']); ?>">
                             <div class="chat-preview">
                                 <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                             </div>
@@ -517,87 +520,87 @@ if ($currentChannelId !== null) {
 
 </html>
 <script>
-// Historique des messages depuis PHP
-let messageHistory = <?php echo json_encode(array_map(function ($msg) {
-                            return [
-                                'role' => $msg['role'],
-                                'content' => $msg['content']
-                            ];
-                        }, $channelHistory)); ?>;
+    // Historique des messages depuis PHP
+    let messageHistory = <?php echo json_encode(array_map(function ($msg) {
+                                return [
+                                    'role' => $msg['role'],
+                                    'content' => $msg['content']
+                                ];
+                            }, $channelHistory)); ?>;
 
-// Historique des messages depuis la base de données
-const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+    // Historique des messages depuis la base de données
+    const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
 
-// Modèle sélectionné - avec une valeur par défaut si null
-const selectedModel = '<?php echo $selectedModel ?: ''; ?>';
+    // Modèle sélectionné - avec une valeur par défaut si null
+    const selectedModel = '<?php echo $selectedModel ?: ''; ?>';
 
-console.log('Modèle sélectionné au chargement:', selectedModel);
+    console.log('Modèle sélectionné au chargement:', selectedModel);
 
-// Gestion du changement de modèle
-document.getElementById('modelSelect').addEventListener('change', function() {
-    const newModel = this.value;
-    const currentUrl = new URL(window.location);
-    currentUrl.searchParams.set('model', newModel);
-    window.location.href = currentUrl.toString();
-});
-
-// Gestion du nouveau chat - éviter les redirections multiples
-document.getElementById('newChatBtn').addEventListener('click', function() {
-    // Empêcher les clics multiples rapides
-    if (this.disabled) return;
-    this.disabled = true;
-    
-    // Rediriger vers la page sans paramètres pour créer un nouveau chat
-    const currentUrl = new URL(window.location);
-    const modelToUse = selectedModel || 'mistral-large';
-    
-    // Construire l'URL proprement
-    window.location.href = currentUrl.pathname + '?model=' + encodeURIComponent(modelToUse);
-});
-
-// Gestion des clics sur l'historique avec préservation du modèle
-document.querySelectorAll('.chat-item').forEach(item => {
-    item.addEventListener('click', function() {
-        // Empêcher les clics multiples
-        if (this.classList.contains('loading')) return;
-        this.classList.add('loading');
-        
-        const channelId = this.dataset.channelId;
-        const channelModel = this.dataset.model;
-        
-        console.log('Clic sur chat item:', {
-            channelId: channelId,
-            channelModel: channelModel,
-            selectedModel: selectedModel
-        });
-        
+    // Gestion du changement de modèle
+    document.getElementById('modelSelect').addEventListener('change', function() {
+        const newModel = this.value;
         const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('id_channel', channelId);
-        
-        // Priorité 1: Modèle du channel s'il existe et est valide
-        // Priorité 2: Modèle sélectionné actuellement
-        // Priorité 3: Modèle par défaut
-        let modelToUse;
-        
-        if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
-            modelToUse = channelModel;
-            console.log('Utilisation du modèle du channel:', modelToUse);
-        } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
-            modelToUse = selectedModel;
-            console.log('Utilisation du modèle sélectionné:', modelToUse);
-        } else {
-            modelToUse = 'mistral-large';
-            console.log('Utilisation du modèle par défaut:', modelToUse);
-        }
-        
-        currentUrl.searchParams.set('model', modelToUse);
-        
-        const finalUrl = currentUrl.toString();
-        console.log('URL finale:', finalUrl);
-        
-        window.location.href = finalUrl;
+        currentUrl.searchParams.set('model', newModel);
+        window.location.href = currentUrl.toString();
     });
-});
+
+    // Gestion du nouveau chat - éviter les redirections multiples
+    document.getElementById('newChatBtn').addEventListener('click', function() {
+        // Empêcher les clics multiples rapides
+        if (this.disabled) return;
+        this.disabled = true;
+
+        // Rediriger vers la page sans paramètres pour créer un nouveau chat
+        const currentUrl = new URL(window.location);
+        const modelToUse = selectedModel || 'mistral-large';
+
+        // Construire l'URL proprement
+        window.location.href = currentUrl.pathname + '?model=' + encodeURIComponent(modelToUse);
+    });
+
+    // Gestion des clics sur l'historique avec préservation du modèle
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.addEventListener('click', function() {
+            // Empêcher les clics multiples
+            if (this.classList.contains('loading')) return;
+            this.classList.add('loading');
+
+            const channelId = this.dataset.channelId;
+            const channelModel = this.dataset.model;
+
+            console.log('Clic sur chat item:', {
+                channelId: channelId,
+                channelModel: channelModel,
+                selectedModel: selectedModel
+            });
+
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('id_channel', channelId);
+
+            // Priorité 1: Modèle du channel s'il existe et est valide
+            // Priorité 2: Modèle sélectionné actuellement
+            // Priorité 3: Modèle par défaut
+            let modelToUse;
+
+            if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
+                modelToUse = channelModel;
+                console.log('Utilisation du modèle du channel:', modelToUse);
+            } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
+                modelToUse = selectedModel;
+                console.log('Utilisation du modèle sélectionné:', modelToUse);
+            } else {
+                modelToUse = 'mistral-large';
+                console.log('Utilisation du modèle par défaut:', modelToUse);
+            }
+
+            currentUrl.searchParams.set('model', modelToUse);
+
+            const finalUrl = currentUrl.toString();
+            console.log('URL finale:', finalUrl);
+
+            window.location.href = finalUrl;
+        });
+    });
 </script>
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
