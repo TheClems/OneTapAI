@@ -480,7 +480,7 @@ let messageHistory = <?php echo json_encode(array_map(function ($msg) {
 const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
 
 // Modèle sélectionné - avec une valeur par défaut si null
-const selectedModel = '<?php echo $selectedModel ?: "mistral-large"; ?>';
+const selectedModel = '';
 
 console.log('Modèle sélectionné au chargement:', selectedModel);
 
