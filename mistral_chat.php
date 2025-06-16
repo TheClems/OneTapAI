@@ -418,190 +418,172 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     <script>
         // Configuration
-        const chatMessages = document.getElementById('chatMessages');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-        const loading = document.getElementById('loading');
+const chatMessages = document.getElementById('chatMessages');
+const messageInput = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+const loading = document.getElementById('loading');
 
-        // Historique des messages
-        let messageHistory = [];
+// Historique des messages
+let messageHistory = [];
 
-        // Afficher l'heure de bienvenue
-        document.getElementById('welcomeTime').textContent = new Date().toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit'
+// Afficher l'heure de bienvenue
+document.getElementById('welcomeTime').textContent = new Date().toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit'
+});
+
+// Créer les particules d'arrière-plan
+function createParticles() {
+    const particles = document.getElementById('particles');
+    for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.width = Math.random() * 4 + 2 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+        particles.appendChild(particle);
+    }
+}
+
+// Afficher un message dans le chat (sans affecter l'historique)
+function displayMessage(content, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    messageDiv.innerHTML = `
+        <div class="message-content">${content}</div>
+        <div class="message-time">${timeString}</div>
+    `;
+
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Afficher une erreur
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    chatMessages.appendChild(errorDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    setTimeout(() => {
+        errorDiv.remove();
+    }, 5000);
+}
+
+// Envoyer un message
+async function sendMessage() {
+    const message = messageInput.value.trim();
+    if (!message) return;
+
+    // Éviter les doubles soumissions
+    if (sendButton.disabled) return;
+
+    // Afficher le message utilisateur
+    displayMessage(message, true);
+    messageInput.value = '';
+
+    // IMPORTANT: Ajouter le message utilisateur à l'historique IMMÉDIATEMENT
+    messageHistory.push({
+        role: 'user',
+        content: message
+    });
+
+    // Désactiver l'interface
+    sendButton.disabled = true;
+    messageInput.disabled = true;
+    loading.style.display = 'block';
+
+    try {
+        // Préparer les messages pour l'API (garder les 10 derniers messages)
+        const messages = messageHistory.slice(-10);
+
+        console.log('Messages envoyés à l\'API:', messages); // Debug
+
+        const response = await fetch('mistral_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                messages: messages
+            })
         });
 
-        // Créer les particules d'arrière-plan
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = Math.random() * 4 + 2 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
-                particles.appendChild(particle);
-            }
-        }
+        const data = await response.json();
 
-        // Ajouter un message au chat ET à l'historique
-        function addMessage(content, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
-
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fr-FR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            messageDiv.innerHTML = `
-                <div class="message-content">${content}</div>
-                <div class="message-time">${timeString}</div>
-            `;
-
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // Mise à jour de l'historique
+        if (data.success) {
+            // Afficher la réponse de l'IA
+            displayMessage(data.content);
+            
+            // Ajouter la réponse de l'IA à l'historique
             messageHistory.push({
-                role: isUser ? 'user' : 'assistant',
-                content: content
-            });
-        }
-
-        // Afficher une erreur
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-message';
-            errorDiv.textContent = message;
-            chatMessages.appendChild(errorDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 5000);
-        }
-
-        // Ajouter un message à l'affichage seulement (sans historique)
-        function displayMessage(content, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
-
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fr-FR', {
-                hour: '2-digit',
-                minute: '2-digit'
+                role: 'assistant',
+                content: data.content
             });
 
-            messageDiv.innerHTML = `
-                <div class="message-content">${content}</div>
-                <div class="message-time">${timeString}</div>
-            `;
-
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            console.log('Historique après réponse:', messageHistory); // Debug
+        } else {
+            // En cas d'erreur, retirer le message utilisateur de l'historique
+            messageHistory.pop();
+            showError(data.error || 'Erreur inconnue');
         }
 
-        // Envoyer un message
-        async function sendMessage() {
-            const message = messageInput.value.trim();
-            if (!message) return;
-
-            // Éviter les doubles soumissions
-            if (sendButton.disabled) return;
-
-            // Afficher le message utilisateur
-            displayMessage(message, true);
-            messageInput.value = '';
-
-            // Désactiver l'interface
-            sendButton.disabled = true;
-            messageInput.disabled = true;
-            loading.style.display = 'block';
-
-            try {
-                // Préparer les messages pour l'API (historique + nouveau message)
-                const messages = [
-                    ...messageHistory.slice(-10),
-                    {
-                        role: 'user',
-                        content: message
-                    }
-                ];
-
-                const response = await fetch('mistral_api.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        messages: messages
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Afficher la réponse de l'IA
-                    displayMessage(data.content);
-                    
-                    // Mettre à jour l'historique avec les deux messages
-                    messageHistory.push(
-                        { role: 'user', content: message },
-                        { role: 'assistant', content: data.content }
-                    );
-                } else {
-                    showError(data.error || 'Erreur inconnue');
-                }
-
-            } catch (error) {
-                showError('Erreur de connexion: ' + error.message);
-            } finally {
-                // Réactiver l'interface
-                sendButton.disabled = false;
-                messageInput.disabled = false;
-                loading.style.display = 'none';
-                messageInput.focus();
-            }
-        }
-
-        // Gestionnaires d'événements
-        sendButton.addEventListener('click', sendMessage);
-
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // Auto-focus sur l'input
+    } catch (error) {
+        // En cas d'erreur, retirer le message utilisateur de l'historique
+        messageHistory.pop();
+        showError('Erreur de connexion: ' + error.message);
+    } finally {
+        // Réactiver l'interface
+        sendButton.disabled = false;
+        messageInput.disabled = false;
+        loading.style.display = 'none';
         messageInput.focus();
+    }
+}
 
-        // Créer les particules
-        createParticles();
+// Gestionnaires d'événements
+sendButton.addEventListener('click', sendMessage);
 
-        // Effet de frappe automatique pour le message de bienvenue
-        setTimeout(() => {
-            const welcomeMessage = document.querySelector('.message.ai .message-content');
-            if (welcomeMessage) {
-                const text = welcomeMessage.textContent;
-                welcomeMessage.textContent = '';
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
 
-                let i = 0;
-                const typeInterval = setInterval(() => {
-                    welcomeMessage.textContent += text[i];
-                    i++;
-                    if (i >= text.length) {
-                        clearInterval(typeInterval);
-                    }
-                }, 50);
+// Auto-focus sur l'input
+messageInput.focus();
+
+// Créer les particules
+createParticles();
+
+// Effet de frappe automatique pour le message de bienvenue
+setTimeout(() => {
+    const welcomeMessage = document.querySelector('.message.ai .message-content');
+    if (welcomeMessage) {
+        const text = welcomeMessage.textContent;
+        welcomeMessage.textContent = '';
+
+        let i = 0;
+        const typeInterval = setInterval(() => {
+            welcomeMessage.textContent += text[i];
+            i++;
+            if (i >= text.length) {
+                clearInterval(typeInterval);
             }
-        }, 500);
+        }, 50);
+    }
+}, 500);
     </script>
 </body>
 
