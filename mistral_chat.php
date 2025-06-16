@@ -16,7 +16,8 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Fonction pour récupérer l'historique des messages d'un channel
-function getChannelHistory($channelId) {
+function getChannelHistory($channelId)
+{
     $pdo = getDBConnection();
     try {
         $stmt = $pdo->prepare("
@@ -34,7 +35,8 @@ function getChannelHistory($channelId) {
 }
 
 // Fonction pour récupérer la liste des channels
-function getUserChannels($userId) {
+function getUserChannels($userId)
+{
     $pdo = getDBConnection();
     try {
         $stmt = $pdo->prepare("
@@ -97,7 +99,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 </head>
 
 <body>
-<?php require_once 'nav.php'; ?>
+    <?php require_once 'nav.php'; ?>
 
     <div class="particles" id="particles"></div>
 
@@ -107,7 +109,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             <button class="toggle-history-btn" id="toggleHistoryBtn" title="Basculer l'historique">
                 📊
             </button>
-            
+
             <div class="history-header">
                 <h3>
                     💬 Historique
@@ -116,11 +118,11 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                     ➕ Nouveau
                 </button>
             </div>
-            
+
             <div class="chat-list" id="chatList">
                 <?php foreach ($userChannels as $channel): ?>
-                    <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>" 
-                         data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
+                    <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
+                        data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
                         <div class="chat-preview">
                             <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                         </div>
@@ -176,15 +178,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 </html>
 <script>
     // Historique des messages depuis PHP
-let messageHistory = <?php echo json_encode(array_map(function($msg) {
-    return [
-        'role' => $msg['role'],
-        'content' => $msg['content']
-    ];
-}, $channelHistory)); ?>;
+    let messageHistory = <?php echo json_encode(array_map(function ($msg) {
+                                return [
+                                    'role' => $msg['role'],
+                                    'content' => $msg['content']
+                                ];
+                            }, $channelHistory)); ?>;
 
-// Historique des messages depuis la base de données
-const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+    // Historique des messages depuis la base de données
+    const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
 </script>
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
