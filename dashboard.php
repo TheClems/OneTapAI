@@ -11,63 +11,18 @@ $user = getCurrentUser();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AI Credits</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/animations.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
-    <style>
-        .floating-elements {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .floating-element {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .floating-element:nth-child(1) {
-            top: 20%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .floating-element:nth-child(2) {
-            top: 60%;
-            right: 10%;
-            animation-delay: 2s;
-        }
-
-        .floating-element:nth-child(3) {
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 4s;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-            }
-        }
-    </style>
     <?php require_once 'nav.php'; ?>
+
+    <!-- Animated background -->
+    <div class="animated-bg" id="animatedBg"></div>
+
     <div class="floating-elements">
         <div class="floating-element"></div>
         <div class="floating-element"></div>
@@ -124,23 +79,8 @@ $user = getCurrentUser();
             </ul>
         </div>
     </div>
+    <script type="text/javascript" src="scripts/nav.js"></script>
+    <script type="text/javascript" src="scripts/floating-element.js"></script>
 </body>
 
 </html>
-<script>
-    // Effet de parallaxe sur les éléments flottants
-    document.addEventListener('mousemove', function(e) {
-        const floatingElements = document.querySelectorAll('.floating-element');
-        const x = e.clientX / window.innerWidth;
-        const y = e.clientY / window.innerHeight;
-
-        floatingElements.forEach((element, index) => {
-            const speed = (index + 1) * 0.5;
-            const xPos = x * speed * 20;
-            const yPos = y * speed * 20;
-
-            element.style.transform = `translate(${xPos}px, ${yPos}px)`;
-        });
-    });
-</script>
-<script type="text/javascript" src="scripts/nav.js"></script>

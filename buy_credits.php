@@ -50,6 +50,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR"></script>
     <link rel="stylesheet" href="css/buy_credits.css" />
+    <link rel="stylesheet" href="css/animations.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>Buy credits - OneTapAI</title>
@@ -152,6 +153,5 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
     });
 });
     </script>
+    <script type="text/javascript" src="scripts/nav.js"></script>
 </body>
-
-<script type="text/javascript" src="scripts/nav.js"></script>
