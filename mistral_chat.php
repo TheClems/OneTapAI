@@ -486,6 +486,26 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             }, 5000);
         }
 
+        // Ajouter un message à l'affichage seulement (sans historique)
+        function displayMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${timeString}</div>
+            `;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
         // Envoyer un message
         async function sendMessage() {
             const message = messageInput.value.trim();
@@ -494,8 +514,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             // Éviter les doubles soumissions
             if (sendButton.disabled) return;
 
-            // Ajouter le message utilisateur à l'affichage ET à l'historique
-            addMessage(message, true);
+            // Afficher le message utilisateur
+            displayMessage(message, true);
             messageInput.value = '';
 
             // Désactiver l'interface
@@ -504,9 +524,14 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             loading.style.display = 'block';
 
             try {
-                // Préparer les messages pour l'API (garder les 10 derniers)
-                // IMPORTANT : Utiliser une copie de l'historique, pas l'original
-                const messages = messageHistory.slice(-10);
+                // Préparer les messages pour l'API (historique + nouveau message)
+                const messages = [
+                    ...messageHistory.slice(-10),
+                    {
+                        role: 'user',
+                        content: message
+                    }
+                ];
 
                 const response = await fetch('mistral_api.php', {
                     method: 'POST',
@@ -521,8 +546,14 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 const data = await response.json();
 
                 if (data.success) {
-                    // Ajouter la réponse de l'IA
-                    addMessage(data.content);
+                    // Afficher la réponse de l'IA
+                    displayMessage(data.content);
+                    
+                    // Mettre à jour l'historique avec les deux messages
+                    messageHistory.push(
+                        { role: 'user', content: message },
+                        { role: 'assistant', content: data.content }
+                    );
                 } else {
                     showError(data.error || 'Erreur inconnue');
                 }
