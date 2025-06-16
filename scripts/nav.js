@@ -33,7 +33,7 @@ const chatModel = document.querySelectorAll('.chat-model');
 const chatTime = document.querySelectorAll('.chat-time');
 const h3 = document.querySelectorAll('h3');
 const historyHeader = document.querySelectorAll('.history-header');
-var chatMessages = document.querySelector('.chat-messages');
+const chatMessages2 = document.querySelector('.chat-messages');
 
 const elementsToToggle = [
     ...infoValues,
@@ -60,7 +60,7 @@ const elementsToToggle = [
     ...chatTime,
     ...h3,
     ...historyHeader,
-    chatMessages
+    chatMessages2
 ];
 
 
