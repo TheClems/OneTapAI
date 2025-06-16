@@ -95,6 +95,23 @@ if (isset($_GET['id_channel'])) {
     $chatChannelId = $_GET['id_channel'];
 }
 
+
+$stmt_count = $pdo->prepare("SELECT COUNT(*) AS total FROM chat_messages WHERE chat_channel_id = ?");
+$stmt_count->execute([$chatChannelId]);
+$result = $stmt_count->fetch(PDO::FETCH_ASSOC);
+
+$totalMessages = $result['total'];
+
+if ($totalMessages < 1) {
+    $stmt = $pdo->prepare("
+        UPDATE chat_channels
+        SET model = ?
+        WHERE id = ?
+    ");
+    return $stmt->execute([$_GET['model'], $chatChannelId]);
+
+}
+
 // Vérifier dans les paramètres POST
 if (!$chatChannelId && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $rawInput = file_get_contents('php://input');
