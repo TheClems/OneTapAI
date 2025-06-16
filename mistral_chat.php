@@ -484,28 +484,40 @@ if ($currentChannelId !== null) {
         window.location.href = currentUrl.toString();
     });
 
-// Gestion des clics sur l'historique avec préservation du modèle
-document.querySelectorAll('.chat-item').forEach(item => {
-    item.addEventListener('click', function() {
-        const channelId = this.dataset.channelId;
-        const model = this.dataset.model; // Récupère le modèle spécifique au channel
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('id_channel', channelId);
-        
-        // Si le channel a un modèle défini, on l'utilise
-        // Sinon, on garde le modèle actuellement sélectionné
-        if (model && model !== '' && model !== 'null') {
-            currentUrl.searchParams.set('model', model);
-        } else {
-            // Utiliser le modèle actuellement sélectionné comme fallback
-            if (selectedModel && selectedModel !== '') {
-                currentUrl.searchParams.set('model', selectedModel);
+    // Gestion des clics sur l'historique avec préservation du modèle
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const channelId = this.dataset.channelId;
+            const model = this.dataset.model; // Récupère le modèle spécifique au channel
+            
+            console.log('Clic sur chat item:', {
+                channelId: channelId,
+                model: model,
+                selectedModel: selectedModel
+            });
+            
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('id_channel', channelId);
+            
+            // Si le channel a un modèle défini, on l'utilise
+            // Sinon, on garde le modèle actuellement sélectionné
+            if (model && model !== '' && model !== 'null') {
+                console.log('Utilisation du modèle du channel:', model);
+                currentUrl.searchParams.set('model', model);
+            } else {
+                console.log('Utilisation du modèle sélectionné comme fallback:', selectedModel);
+                // Utiliser le modèle actuellement sélectionné comme fallback
+                if (selectedModel && selectedModel !== '') {
+                    currentUrl.searchParams.set('model', selectedModel);
+                }
             }
-        }
-        
-        window.location.href = currentUrl.toString();
+            
+            const finalUrl = currentUrl.toString();
+            console.log('URL finale:', finalUrl);
+            
+            window.location.href = finalUrl;
+        });
     });
-});
 </script>
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
