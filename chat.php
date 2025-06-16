@@ -139,42 +139,55 @@ function verifyChannelOwnership($channelId, $userId) {
     }
 }
 
-// NETTOYER D'ABORD les channels vides avant tout traitement
-cleanupEmptyChannels($userId);
-
 $channelHistory = [];
 $currentChannelId = null;
 
+// Récupérer d'abord les channels existants
+$userChannels = getUserChannels($userId);
+
 if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
-    // Pas de paramètre id_channel => création d'un nouveau chat
+    // Pas de paramètre id_channel => vérifier s'il existe déjà un channel vide
     
-    // Nettoyer encore une fois avant de créer un nouveau channel
-    cleanupEmptyChannels($userId);
+    // Chercher un channel existant sans messages et sans modèle
+    $existingEmptyChannel = null;
+    foreach ($userChannels as $channel) {
+        if ($channel['message_count'] == 0 && (empty($channel['model']) || $channel['model'] === 'null')) {
+            $existingEmptyChannel = $channel['id'];
+            break;
+        }
+    }
     
-    $id = uniqid('chat_', true); // ID unique
-    $createdAt = date('Y-m-d H:i:s');
-    $pdo = getDBConnection();
-
-    try {
-        $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at, model) VALUES (:id, :id_user, :created_at, :model)");
-        $stmt->execute([
-            ':id' => $id,
-            ':id_user' => $userId,
-            ':created_at' => $createdAt,
-            ':model' => $selectedModel ?: '' // Définir le modèle dès la création si disponible
-        ]);
-        $_SESSION['id_channel'] = $id;
-
-        // Préserver le modèle sélectionné lors de la redirection
+    if ($existingEmptyChannel) {
+        // Utiliser le channel vide existant
+        $currentChannelId = $existingEmptyChannel;
         $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
-        header("Location: ?id_channel=" . $id . $modelParam);
+        header("Location: ?id_channel=" . $existingEmptyChannel . $modelParam);
         exit;
-        
-    } catch (PDOException $e) {
-        error_log("Erreur création channel: " . $e->getMessage());
-        // Rediriger vers une page d'erreur ou la page d'accueil
-        header("Location: chat.php");
-        exit;
+    } else {
+        // Créer un nouveau channel seulement s'il n'y en a pas de vide
+        $id = uniqid('chat_', true);
+        $createdAt = date('Y-m-d H:i:s');
+        $pdo = getDBConnection();
+
+        try {
+            $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at, model) VALUES (:id, :id_user, :created_at, :model)");
+            $stmt->execute([
+                ':id' => $id,
+                ':id_user' => $userId,
+                ':created_at' => $createdAt,
+                ':model' => $selectedModel ?: ''
+            ]);
+            $_SESSION['id_channel'] = $id;
+
+            $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
+            header("Location: ?id_channel=" . $id . $modelParam);
+            exit;
+            
+        } catch (PDOException $e) {
+            error_log("Erreur création channel: " . $e->getMessage());
+            // En cas d'erreur, afficher la page sans redirection
+            $currentChannelId = null;
+        }
     }
     
 } else {
@@ -183,16 +196,19 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     // Vérifier si ce channel appartient à l'utilisateur
     if (!verifyChannelOwnership($currentChannelId, $userId)) {
         // Channel n'existe pas ou n'appartient pas à cet utilisateur
-        cleanupEmptyChannels($userId);
-        header("Location: chat.php");
+        // Rediriger vers la page sans paramètres (éviter la boucle)
+        header("Location: " . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
         exit;
     }
 
     // Récupérer l'historique
     $channelHistory = getChannelHistory($currentChannelId);
+    
+    // Nettoyer les autres channels vides (pas celui-ci)
+    cleanupEmptyChannels($userId, $currentChannelId);
 }
 
-// Récupérer la liste des channels APRÈS le nettoyage
+// Récupérer la liste des channels APRÈS le traitement
 $userChannels = getUserChannels($userId);
 
 // Gestion de la mise à jour du modèle
@@ -544,19 +560,18 @@ document.getElementById('modelSelect').addEventListener('change', function() {
     window.location.href = currentUrl.toString();
 });
 
-// Gestion du nouveau chat avec préservation du modèle
+// Gestion du nouveau chat - éviter les redirections multiples
 document.getElementById('newChatBtn').addEventListener('click', function() {
     // Empêcher les clics multiples rapides
+    if (this.disabled) return;
     this.disabled = true;
     
+    // Rediriger vers la page sans paramètres pour créer un nouveau chat
     const currentUrl = new URL(window.location);
-    currentUrl.searchParams.delete('id_channel');
-    
-    // Utiliser le modèle actuellement sélectionné ou un défaut
     const modelToUse = selectedModel || 'mistral-large';
-    currentUrl.searchParams.set('model', modelToUse);
     
-    window.location.href = currentUrl.toString();
+    // Construire l'URL proprement
+    window.location.href = currentUrl.pathname + '?model=' + encodeURIComponent(modelToUse);
 });
 
 // Gestion des clics sur l'historique avec préservation du modèle
