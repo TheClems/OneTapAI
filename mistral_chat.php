@@ -515,13 +515,18 @@ async function sendMessage() {
         console.log('Historique avant envoi:', messageHistory);
         console.log('Messages envoyés à l\'API:', messagesToSend);
 
+        // Extraire le chat_channel_id de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatChannelId = urlParams.get('id_channel');
+
         const response = await fetch('mistral_api.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                messages: messagesToSend
+                messages: messagesToSend,
+                chat_channel_id: chatChannelId
             })
         });
 
