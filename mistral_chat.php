@@ -15,6 +15,26 @@ if (isset($_SESSION['user_id'])) {
     $userId = null;
 }
 
+// Fonction pour récupérer l'historique des messages d'un channel
+function getChannelHistory($channelId) {
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("
+            SELECT role, content, created_at 
+            FROM chat_messages 
+            WHERE chat_channel_id = ? 
+            ORDER BY created_at ASC
+        ");
+        $stmt->execute([$channelId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur récupération historique: " . $e->getMessage());
+        return [];
+    }
+}
+
+$channelHistory = [];
+$currentChannelId = null;
 
 if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     // Pas de paramètre id_channel ou id_channel vide => création d'un nouveau chat
@@ -34,10 +54,12 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     header("Location: ?id_channel=" . $id);
     exit;
+} else {
+    // Channel existant, récupérer l'historique
+    $currentChannelId = $_GET['id_channel'];
+    $channelHistory = getChannelHistory($currentChannelId);
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -74,16 +96,12 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             margin-left: 17rem;
         }
 
-
-
         .chat-container.collapsed {
             margin-left: 2rem;
-            
         }
 
         .chat-container.mobile {
             margin-left: 0rem;
-
         }
 
         .header {
@@ -175,6 +193,105 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             position: relative;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        /* Styles pour le formatage du texte */
+        .message-content h1, .message-content h2, .message-content h3, 
+        .message-content h4, .message-content h5, .message-content h6 {
+            color: #8b5cf6;
+            margin: 15px 0 10px 0;
+            font-weight: 600;
+        }
+
+        .message-content h1 { font-size: 1.5em; }
+        .message-content h2 { font-size: 1.3em; }
+        .message-content h3 { font-size: 1.2em; }
+
+        .message-content strong, .message-content b {
+            color: #a78bfa;
+            font-weight: 700;
+        }
+
+        .message-content em, .message-content i {
+            color: #c4b5fd;
+            font-style: italic;
+        }
+
+        .message-content code {
+            background: rgba(15, 15, 25, 0.8);
+            color: #10b981;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .message-content pre {
+            background: rgba(15, 15, 25, 0.9);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .message-content pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .message-content pre::before {
+            content: '💻 Code';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: rgba(15, 15, 25, 0.9);
+            color: #10b981;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin: 5px 0;
+            color: #e0e0e0;
+        }
+
+        .message-content blockquote {
+            border-left: 3px solid #8b5cf6;
+            padding-left: 15px;
+            margin: 15px 0;
+            color: #c4b5fd;
+            font-style: italic;
+        }
+
+        .message-content a {
+            color: #6366f1;
+            text-decoration: underline;
+        }
+
+        .message-content a:hover {
+            color: #8b5cf6;
+        }
+
+        /* Style pour les emojis */
+        .message-content .emoji {
+            font-size: 1.2em;
         }
 
         .message.user .message-content {
@@ -389,12 +506,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         </div>
 
         <div class="chat-messages" id="chatMessages">
-            <div class="message ai">
-                <div class="message-content">
-                    Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+            <?php if (empty($channelHistory)): ?>
+                <!-- Message de bienvenue seulement si pas d'historique -->
+                <div class="message ai">
+                    <div class="message-content">
+                        Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+                    </div>
+                    <div class="message-time" id="welcomeTime"></div>
                 </div>
-                <div class="message-time" id="welcomeTime"></div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <div class="loading" id="loading">
@@ -423,14 +543,65 @@ const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const loading = document.getElementById('loading');
 
-// Historique des messages
-let messageHistory = [];
+// Historique des messages depuis PHP
+let messageHistory = <?php echo json_encode(array_map(function($msg) {
+    return [
+        'role' => $msg['role'],
+        'content' => $msg['content']
+    ];
+}, $channelHistory)); ?>;
 
-// Afficher l'heure de bienvenue
-document.getElementById('welcomeTime').textContent = new Date().toLocaleTimeString('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit'
-});
+// Historique des messages depuis la base de données
+const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+
+// Fonction pour formater l'heure
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Charger l'historique existant
+function loadHistoryMessages() {
+    if (channelHistoryFromDB && channelHistoryFromDB.length > 0) {
+        // Vider le conteneur (enlever le message de bienvenue)
+        chatMessages.innerHTML = '';
+        
+        channelHistoryFromDB.forEach((message, index) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.role === 'user' ? 'user' : 'ai'}`;
+            
+            const timeString = formatTime(message.created_at);
+            
+            // Formater le contenu pour les messages de l'IA depuis la DB
+            const formattedContent = message.role === 'user' ? 
+                message.content : 
+                formatMessageContent(message.content);
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${formattedContent}</div>
+                <div class="message-time">${timeString}</div>
+            `;
+            
+            // Ajouter un délai pour l'animation
+            setTimeout(() => {
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, index * 100);
+        });
+    } else {
+        // Pas d'historique, afficher l'heure de bienvenue
+        const welcomeTimeEl = document.getElementById('welcomeTime');
+        if (welcomeTimeEl) {
+            welcomeTimeEl.textContent = new Date().toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    }
+}
 
 // Créer les particules d'arrière-plan
 function createParticles() {
@@ -447,6 +618,50 @@ function createParticles() {
     }
 }
 
+// Fonction pour formater le contenu d'un message
+function formatMessageContent(content) {
+    // Convertir les **texte** en <strong>
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convertir les *texte* en <em>
+    content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Convertir les ### Titre en <h3>
+    content = content.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    
+    // Convertir les ## Titre en <h2>
+    content = content.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    
+    // Convertir les # Titre en <h1>
+    content = content.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    
+    // Convertir les blocs de code ```code```
+    content = content.replace(/```(\w+)?\n?([\s\S]*?)```/g, function(match, lang, code) {
+        return `<pre><code>${code.trim()}</code></pre>`;
+    });
+    
+    // Convertir le code inline `code`
+    content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
+    
+    // Convertir les liens [texte](url)
+    content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    
+    // Convertir les listes - item
+    content = content.replace(/^- (.*$)/gm, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // Convertir les listes numérotées 1. item
+    content = content.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
+    
+    // Convertir les citations > texte
+    content = content.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
+    
+    // Convertir les retours à la ligne
+    content = content.replace(/\n/g, '<br>');
+    
+    return content;
+}
+
 // Afficher un message dans le chat (sans affecter l'historique)
 function displayMessage(content, isUser = false) {
     const messageDiv = document.createElement('div');
@@ -458,8 +673,11 @@ function displayMessage(content, isUser = false) {
         minute: '2-digit'
     });
 
+    // Formater le contenu seulement pour les messages de l'IA
+    const formattedContent = isUser ? content : formatMessageContent(content);
+
     messageDiv.innerHTML = `
-        <div class="message-content">${content}</div>
+        <div class="message-content">${formattedContent}</div>
         <div class="message-time">${timeString}</div>
     `;
 
@@ -533,7 +751,7 @@ async function sendMessage() {
         const data = await response.json();
 
         if (data.success) {
-            // Afficher la réponse de l'IA
+            // Formater et afficher la réponse de l'IA
             displayMessage(data.content);
             
             // Mettre à jour l'historique avec BOTH messages
@@ -587,23 +805,28 @@ messageInput.focus();
 // Créer les particules
 createParticles();
 
-// Effet de frappe automatique pour le message de bienvenue
-setTimeout(() => {
-    const welcomeMessage = document.querySelector('.message.ai .message-content');
-    if (welcomeMessage) {
-        const text = welcomeMessage.textContent;
-        welcomeMessage.textContent = '';
+// Charger l'historique au démarrage
+loadHistoryMessages();
 
-        let i = 0;
-        const typeInterval = setInterval(() => {
-            welcomeMessage.textContent += text[i];
-            i++;
-            if (i >= text.length) {
-                clearInterval(typeInterval);
-            }
-        }, 50);
-    }
-}, 500);
+// Effet de frappe automatique pour le message de bienvenue (seulement si pas d'historique)
+if (channelHistoryFromDB.length === 0) {
+    setTimeout(() => {
+        const welcomeMessage = document.querySelector('.message.ai .message-content');
+        if (welcomeMessage) {
+            const text = welcomeMessage.textContent;
+            welcomeMessage.textContent = '';
+
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                welcomeMessage.textContent += text[i];
+                i++;
+                if (i >= text.length) {
+                    clearInterval(typeInterval);
+                }
+            }, 50);
+        }
+    }, 500);
+}
     </script>
 </body>
 
