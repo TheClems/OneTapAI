@@ -54,7 +54,7 @@ body {
 
 .history-header {
     padding: 20px;
-    background: linear-gradient(135deg, #1e1b4b, #312e81);
+    background: #0b0b0b;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: space-between;
@@ -71,7 +71,7 @@ body {
 }
 
 .new-chat-btn {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: #3ef3c7;
     border: none;
     border-radius: 20px;
     color: white;
@@ -115,6 +115,7 @@ body {
     padding: 10px;
     scrollbar-width: thin;
     scrollbar-color: #6366f1 transparent;
+    background-color: #0b0b0b;
 }
 
 .chat-list::-webkit-scrollbar {
