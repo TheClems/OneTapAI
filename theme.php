@@ -1,6 +1,9 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start(); // On démarre la session
-require_once 'connexion.php'; // Connexion PDO à la BDD
+require_once 'config.php'; // Connexion PDO à la BDD
 
 // Vérifie que l'utilisateur est connecté
 if (!isset($_SESSION['user_id'])) {
