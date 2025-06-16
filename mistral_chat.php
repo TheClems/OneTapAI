@@ -129,10 +129,10 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     // Sinon on récupère l'historique normalement
     $channelHistory = getChannelHistory($currentChannelId);
-    if(!isset($_GET['model'])){
-        $display_chat="none";
-    }else{
+    if(isset($_GET['model']) && $_GET['model'] != ""){
         $display_chat="block";
+    }else{
+        $display_chat="none";
     }
 }
 ?>
