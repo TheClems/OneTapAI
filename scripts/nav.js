@@ -25,7 +25,6 @@ const profileHeader = document.querySelector('.profile-header');
 const actionsSection = document.querySelector('.actions-section');
 const actionsSectionH3 = document.querySelector('.actions-section h3');
 
-const chatHistoryPanel = document.querySelector('.chat-history-panel');
 const elementsToToggle = [
     ...infoValues,
     ...infoCards,
