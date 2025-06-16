@@ -95,7 +95,7 @@ h3.light-mode {
 
 .new-chat-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 5px 15px rgba(62, 243, 199, 0.4);
 }
 
 .toggle-history-btn {
@@ -113,8 +113,8 @@ h3.light-mode {
 }
 
 .toggle-history-btn:hover {
-    background: rgba(99, 102, 241, 0.2);
-    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(62, 243, 199, 0.2);
+    border-color: rgba(62, 243, 199, 0.5);
 }
 
 .chat-list {
@@ -139,7 +139,7 @@ h3.light-mode {
 }
 
 .chat-list::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    background: linear-gradient(45deg, #10b981, #3ef3c7);
     border-radius: 10px;
 }
 
@@ -284,7 +284,7 @@ h3.light-mode {
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    background: linear-gradient(45deg, #10b981, #3ef3c7);
     border-radius: 10px;
 }
 
@@ -325,7 +325,7 @@ h3.light-mode {
 /* Styles pour le formatage du texte */
 .message-content h1, .message-content h2, .message-content h3, 
 .message-content h4, .message-content h5, .message-content h6 {
-    color: #8b5cf6;
+    color: #10b981;
     margin: 15px 0 10px 0;
     font-weight: 600;
 }
@@ -335,12 +335,12 @@ h3.light-mode {
 .message-content h3 { font-size: 1.2em; }
 
 .message-content strong, .message-content b {
-    color: #a78bfa;
+    color: #34d399;
     font-weight: 700;
 }
 
 .message-content em, .message-content i {
-    color: #c4b5fd;
+    color: #6ee7b7;
     font-style: italic;
 }
 
@@ -397,20 +397,20 @@ h3.light-mode {
 }
 
 .message-content blockquote {
-    border-left: 3px solid #8b5cf6;
+    border-left: 3px solid #10b981;
     padding-left: 15px;
     margin: 15px 0;
-    color: #c4b5fd;
+    color: #6ee7b7;
     font-style: italic;
 }
 
 .message-content a {
-    color: #6366f1;
+    color: #10b981;
     text-decoration: underline;
 }
 
 .message-content a:hover {
-    color: #8b5cf6;
+    color: #3ef3c7;
 }
 
 /* Style pour les emojis */
@@ -419,10 +419,10 @@ h3.light-mode {
 }
 
 .message.user .message-content {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: linear-gradient(135deg, #10b981, #3ef3c7);
     color: white;
     border-bottom-right-radius: 5px;
-    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
 }
 
 .message.ai .message-content {
@@ -468,7 +468,7 @@ h3.light-mode {
 
 .message-input:focus {
     border-color: #31efc0;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
 
 .send-button {
@@ -514,7 +514,7 @@ h3.light-mode {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: linear-gradient(45deg, #6366f1, #8b5cf6);
+    background: linear-gradient(45deg, #10b981, #3ef3c7);
     animation: bounce 1.4s infinite both;
 }
 
@@ -580,7 +580,7 @@ h3.light-mode {
 
 .particle {
     position: absolute;
-    background: rgba(99, 102, 241, 0.1);
+    background: rgba(16, 185, 129, 0.1);
     border-radius: 50%;
     animation: float 20s infinite linear;
 }
