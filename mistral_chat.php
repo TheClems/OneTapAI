@@ -33,8 +33,33 @@ function getChannelHistory($channelId) {
     }
 }
 
+// Fonction pour récupérer la liste des channels
+function getUserChannels($userId) {
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("
+            SELECT 
+                cc.id, 
+                cc.created_at,
+                COALESCE(
+                    (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
+                    'Nouveau chat'
+                ) as first_message
+            FROM chat_channels cc 
+            WHERE cc.id_user = ? 
+            ORDER BY cc.created_at DESC
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur récupération channels: " . $e->getMessage());
+        return [];
+    }
+}
+
 $channelHistory = [];
 $currentChannelId = null;
+$userChannels = getUserChannels($userId);
 
 if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     // Pas de paramètre id_channel ou id_channel vide => création d'un nouveau chat
@@ -83,25 +108,178 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             overflow: hidden;
         }
 
+        .main-container {
+            display: flex;
+            height: 100vh;
+            margin-left: 17rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .main-container.nav-collapsed {
+            margin-left: 2rem;
+        }
+
+        .main-container.mobile {
+            margin-left: 0rem;
+        }
+
+        /* Panneau historique des chats */
+        .chat-history-panel {
+            width: 320px;
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-history-panel.collapsed {
+            width: 0;
+            border-right: none;
+        }
+
+        .history-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-header h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .new-chat-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .toggle-history-btn {
+            position: absolute;
+            top: 20px;
+            right: -40px;
+            background: rgba(15, 15, 25, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 8px 8px 0;
+            color: #e0e0e0;
+            padding: 10px 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .toggle-history-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #6366f1 transparent;
+        }
+
+        .chat-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+        }
+
+        .chat-item {
+            background: rgba(30, 30, 45, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+            transform: translateX(4px);
+        }
+
+        .chat-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+            border-color: rgba(99, 102, 241, 0.7);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .chat-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #6366f1, #8b5cf6);
+        }
+
+        .chat-preview {
+            color: #e0e0e0;
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+
+        .chat-time {
+            color: #9ca3af;
+            font-size: 0.75em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .chat-container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            margin: 0 auto;
+            flex: 1;
             background: rgba(15, 15, 25, 0.8);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-
-            margin-left: 17rem;
-        }
-
-        .chat-container.collapsed {
-            margin-left: 2rem;
-        }
-
-        .chat-container.mobile {
-            margin-left: 0rem;
         }
 
         .header {
@@ -440,21 +618,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .message-content {
-                max-width: 85%;
-            }
-
-            .header h1 {
-                font-size: 1.5em;
-            }
-
-            .input-group {
-                gap: 10px;
-            }
-        }
-
         /* Particules d'arrière-plan */
         .particles {
             position: fixed;
@@ -492,6 +655,61 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 opacity: 0;
             }
         }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                margin-left: 2rem;
+            }
+            
+            .chat-history-panel {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin-left: 0;
+                flex-direction: column;
+            }
+
+            .chat-history-panel {
+                width: 100%;
+                height: 40vh;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .chat-history-panel.collapsed {
+                height: 0;
+                border-bottom: none;
+            }
+
+            .toggle-history-btn {
+                top: auto;
+                bottom: -40px;
+                right: 20px;
+                left: auto;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .input-group {
+                gap: 10px;
+            }
+
+            .chat-container {
+                flex: 1;
+                min-height: 0;
+            }
+        }
     </style>
 </head>
 
@@ -500,38 +718,71 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     <div class="particles" id="particles"></div>
 
-    <div class="chat-container">
-        <div class="header">
-            <h1>🤖 Mistral AI Chat</h1>
-        </div>
-
-        <div class="chat-messages" id="chatMessages">
-            <?php if (empty($channelHistory)): ?>
-                <!-- Message de bienvenue seulement si pas d'historique -->
-                <div class="message ai">
-                    <div class="message-content">
-                        Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
-                    </div>
-                    <div class="message-time" id="welcomeTime"></div>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <div class="loading" id="loading">
-            <div class="loading-dots">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            </div>
-            <p>Mistral réfléchit...</p>
-        </div>
-
-        <div class="input-container">
-            <div class="input-group">
-                <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
-                <button class="send-button" id="sendButton">
-                    <span>Envoyer</span>
+    <div class="main-container" id="mainContainer">
+        <!-- Panneau historique des chats -->
+        <div class="chat-history-panel" id="chatHistoryPanel">
+            <button class="toggle-history-btn" id="toggleHistoryBtn" title="Basculer l'historique">
+                📊
+            </button>
+            
+            <div class="history-header">
+                <h3>
+                    💬 Historique
+                </h3>
+                <button class="new-chat-btn" id="newChatBtn">
+                    ➕ Nouveau
                 </button>
+            </div>
+            
+            <div class="chat-list" id="chatList">
+                <?php foreach ($userChannels as $channel): ?>
+                    <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>" 
+                         data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
+                        <div class="chat-preview">
+                            <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
+                        </div>
+                        <div class="chat-time">
+                            🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Zone de chat principale -->
+        <div class="chat-container">
+            <div class="header">
+                <h1>🤖 Mistral AI Chat</h1>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <?php if (empty($channelHistory)): ?>
+                    <!-- Message de bienvenue seulement si pas d'historique -->
+                    <div class="message ai">
+                        <div class="message-content">
+                            Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+                        </div>
+                        <div class="message-time" id="welcomeTime"></div>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+                <p>Mistral réfléchit...</p>
+            </div>
+
+            <div class="input-container">
+                <div class="input-group">
+                    <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
+                    <button class="send-button" id="sendButton">
+                        <span>Envoyer</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -542,6 +793,10 @@ const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const loading = document.getElementById('loading');
+const chatHistoryPanel = document.getElementById('chatHistoryPanel');
+const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
+const newChatBtn = document.getElementById('newChatBtn');
+const mainContainer = document.getElementById('mainContainer');
 
 // Historique des messages depuis PHP
 let messageHistory = <?php echo json_encode(array_map(function($msg) {
@@ -562,6 +817,57 @@ function formatTime(dateString) {
         minute: '2-digit'
     });
 }
+
+// Gérer le responsive basé sur la navbar
+function updateLayoutForNavbar() {
+    const nav = document.querySelector('nav') || document.querySelector('.nav') || document.querySelector('#nav');
+    if (nav) {
+        const navWidth = nav.offsetWidth;
+        const isCollapsed = navWidth < 100; // Supposer que la navbar est collapsée si < 100px
+        
+        mainContainer.classList.toggle('nav-collapsed', isCollapsed);
+    }
+}
+
+// Gérer le responsive mobile
+function handleMobileLayout() {
+    const isMobile = window.innerWidth <= 768;
+    mainContainer.classList.toggle('mobile', isMobile);
+    
+    if (isMobile) {
+        toggleHistoryBtn.textContent = chatHistoryPanel.classList.contains('collapsed') ? '📊' : '✖️';
+    } else {
+        toggleHistoryBtn.textContent = chatHistoryPanel.classList.contains('collapsed') ? '📊' : '📈';
+    }
+}
+
+// Basculer l'affichage de l'historique
+toggleHistoryBtn.addEventListener('click', () => {
+    chatHistoryPanel.classList.toggle('collapsed');
+    const isCollapsed = chatHistoryPanel.classList.contains('collapsed');
+    
+    if (window.innerWidth <= 768) {
+        toggleHistoryBtn.textContent = isCollapsed ? '📊' : '✖️';
+    } else {
+        toggleHistoryBtn.textContent = isCollapsed ? '📊' : '📈';
+    }
+});
+
+// Créer un nouveau chat
+newChatBtn.addEventListener('click', () => {
+    window.location.href = window.location.pathname; // Retour à la page sans paramètres
+});
+
+// Gérer les clics sur les éléments de chat
+document.addEventListener('click', (e) => {
+    const chatItem = e.target.closest('.chat-item');
+    if (chatItem) {
+        const channelId = chatItem.dataset.channelId;
+        if (channelId) {
+            window.location.href = `?id_channel=${channelId}`;
+        }
+    }
+});
 
 // Charger l'historique existant
 function loadHistoryMessages() {
@@ -774,6 +1080,13 @@ async function sendMessage() {
             console.log('Historique après mise à jour:', messageHistory);
             console.log('=== FIN DEBUG ===');
 
+            // Rafraîchir la liste des chats si c'est le premier message
+            if (messageHistory.length === 2) {
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+
         } else {
             showError(data.error || 'Erreur inconnue');
         }
@@ -799,6 +1112,12 @@ messageInput.addEventListener('keypress', (e) => {
     }
 });
 
+// Gestion du redimensionnement
+window.addEventListener('resize', () => {
+    handleMobileLayout();
+    updateLayoutForNavbar();
+});
+
 // Auto-focus sur l'input
 messageInput.focus();
 
@@ -807,6 +1126,24 @@ createParticles();
 
 // Charger l'historique au démarrage
 loadHistoryMessages();
+
+// Initialiser le layout
+handleMobileLayout();
+updateLayoutForNavbar();
+
+// Observer les changements de la navbar (si elle peut être toggle)
+const navObserver = new MutationObserver(() => {
+    updateLayoutForNavbar();
+});
+
+// Observer la navbar si elle existe
+const nav = document.querySelector('nav') || document.querySelector('.nav') || document.querySelector('#nav');
+if (nav) {
+    navObserver.observe(nav, { 
+        attributes: true, 
+        attributeFilter: ['class', 'style'] 
+    });
+}
 
 // Effet de frappe automatique pour le message de bienvenue (seulement si pas d'historique)
 if (channelHistoryFromDB.length === 0) {
@@ -827,6 +1164,40 @@ if (channelHistoryFromDB.length === 0) {
         }
     }, 500);
 }
+
+// Gestion du swipe sur mobile pour l'historique
+let startY = 0;
+let startX = 0;
+
+chatHistoryPanel.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+});
+
+chatHistoryPanel.addEventListener('touchend', (e) => {
+    if (!startY || !startX) return;
+    
+    const endY = e.changedTouches[0].clientY;
+    const endX = e.changedTouches[0].clientX;
+    const diffY = startY - endY;
+    const diffX = startX - endX;
+    
+    // Swipe vertical sur mobile
+    if (window.innerWidth <= 768 && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 50) {
+        if (diffY > 0) {
+            // Swipe up - fermer l'historique
+            chatHistoryPanel.classList.add('collapsed');
+            toggleHistoryBtn.textContent = '📊';
+        } else {
+            // Swipe down - ouvrir l'historique
+            chatHistoryPanel.classList.remove('collapsed');
+            toggleHistoryBtn.textContent = '✖️';
+        }
+    }
+    
+    startY = 0;
+    startX = 0;
+});
     </script>
 </body>
 
