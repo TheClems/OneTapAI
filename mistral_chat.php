@@ -138,6 +138,29 @@ if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels))
     $display_chat = "none";
 }
 
+function countMessagesInChannel($channelId) {
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = ?");
+        $stmt->execute([$channelId]);
+        return (int) $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log("Erreur lors du comptage des messages : " . $e->getMessage());
+        return 0;
+    }
+}
+if ($currentChannelId !== null) {
+    $messageCount = countMessagesInChannel($currentChannelId);
+
+    if ($messageCount > 1) {
+        // Ici tu mets ce que tu veux faire si plus de 1 message
+        // Par exemple afficher un message, modifier une variable, etc.
+        $display_list = "none";
+    } else {
+        $display_list = "block";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -345,7 +368,7 @@ if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels))
                 </button>
             </div>
 
-            <div class="chat-list" id="chatList">
+            <div class="chat-list" id="chatList" style="display: <?php echo $display_list; ?>;">
                 <?php foreach ($userChannels as $channel): ?>
                     <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
                         data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
