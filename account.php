@@ -28,7 +28,7 @@ $user = getCurrentUser();
                     <?php echo htmlspecialchars(strtoupper($user['full_name'][0])); ?>
                 </div>
                 <div class="profile-info">
-                    <h2><?php echo htmlspecialchars($user['full_name']); ?></h2>
+                    <h2 class="h2_name"><?php echo htmlspecialchars($user['full_name']); ?></h2>
                     <div class="username">@<?php echo htmlspecialchars($user['username']); ?></div>
                     <div class="email"><?php echo htmlspecialchars($user['email']); ?></div>
                     <div class="status">Membre Premium</div>
