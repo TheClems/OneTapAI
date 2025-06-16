@@ -140,13 +140,13 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
             overflow: hidden;
-            margin-left: -15rem;
+            margin-left: 0rem;
         }
 
         .chat-history-panel.collapsed {
-            width: 0;
+
             border-right: none;
-            margin-left: 0rem;
+            margin-left: -15rem;
         }
 
         .history-header {
