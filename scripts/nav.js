@@ -26,14 +26,14 @@ let isDarkMode = true;
 
 // Fonction pour sauvegarder le thème (avec vérification si currentUserId existe)
 function saveTheme() {
-    if (typeof currentUserId !== 'undefined') {
         const selectedTheme = isDarkMode ? 0 : 1;
 
         fetch('https://onetapai.ctts.fr/theme.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
+            body: JSON.stringify({ theme: selectedTheme }) // pas besoin d'envoyer l'id
         })
+        
             .then(response => {
                 if (!response.ok) throw new Error('Erreur réseau');
                 return response.json();
@@ -48,7 +48,7 @@ function saveTheme() {
             .catch(error => {
                 console.error('Fetch failed:', error);
             });
-    }
+    
 }
 
 // Toggle du thème
