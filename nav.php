@@ -1,3 +1,16 @@
+<?php
+require_once 'config.php';
+requireLogin();
+
+$user = getCurrentUser();
+$isDarkMode = $user['dark_mode'] == 1 ? 'true' : 'false';
+?>
+<script>
+    const isDarkModeFromServer = <?= $isDarkMode ?>;
+</script>
+
+
+
 <link rel="stylesheet" href="css/nav.css" />
 
 
