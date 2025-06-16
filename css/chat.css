@@ -431,6 +431,9 @@ h3.light-mode {
     border-bottom-left-radius: 5px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
+.message.ai .message-content.light-mode{
+    background: #4c586a;
+}
 
 .message-time {
     font-size: 0.8em;
