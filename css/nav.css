@@ -38,7 +38,7 @@ body.light-mode .sidebar {
 }
 
 .sidebar.collapsed {
-    transform: translateX(-240px);
+    transform: translateX(-280px);
 }
 
 .sidebar::before {
@@ -76,6 +76,10 @@ body.light-mode .sidebar::before {
     box-shadow: 0 10px 25px rgba(62, 243, 199, 0.3);
     transition: all 0.3s ease;
     z-index: 1001;
+}
+
+.toggle-btn.collapsed {
+    right: -42px;
 }
 
 body.light-mode .toggle-btn {
