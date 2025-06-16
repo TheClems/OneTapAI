@@ -195,7 +195,7 @@ body {
 
 .header {
     background: rgb(18 45 39);
-    padding: 20px;
+    padding: 0.5rem;
     text-align: center;
     position: relative;
     overflow: hidden;
