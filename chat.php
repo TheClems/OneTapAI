@@ -170,6 +170,8 @@ if ($currentChannelId !== null) {
         $display_list = "block";
     }
 }
+
+
 function deleteChannelEmpty() {
     $pdo = getDBConnection();
     try {
@@ -179,9 +181,6 @@ function deleteChannelEmpty() {
         error_log("Erreur lors de la suppression des channels : " . $e->getMessage());
     }
 }
-deleteChannelEmpty();
-
-
 ?>
 
 <!DOCTYPE html>
@@ -546,3 +545,5 @@ document.querySelectorAll('.chat-item').forEach(item => {
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
 <script type="text/javascript" src="scripts/account.js"></script>
+
+<?php deleteChannelEmpty(); ?>
