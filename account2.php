@@ -26,7 +26,12 @@ $user = getCurrentUser();
             min-height: 100vh;
             transition: all 0.3s ease;
         }
-
+        .body_account{
+            margin-left: 17.5rem;
+        }
+        .body_account.collapsed{
+            margin-left: 2rem;
+        }
         .floating-elements {
             position: fixed;
             top: 0;
@@ -95,7 +100,6 @@ $user = getCurrentUser();
         }
 
         .main-content {
-            margin-left: 8.5rem;
             padding: 2rem;
             max-width: 1200px;
             margin: 0 auto;
