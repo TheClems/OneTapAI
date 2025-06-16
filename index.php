@@ -563,7 +563,7 @@
                              max-lg:tw-px-4 max-lg:tw-gap-3 max-lg:tw-w-full lg:tw-top-[20%]
                              tw-place-items-center
                              ">
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl 
                                     hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all
@@ -583,7 +583,7 @@
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl
                                  hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all tw-p-8 tw-group/card">
@@ -603,7 +603,7 @@
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl hover:tw-shadow-lg tw-duration-300 
                                 tw-transition-all dark:tw-shadow-[#171717] tw-p-8 tw-group/card">
@@ -623,7 +623,7 @@
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full dark:tw-shadow-[#171717] tw-h-full tw-gap-8 tw-rounded-xl  hover:tw-shadow-lg tw-duration-300 
                             tw-transition-all tw-p-8 tw-group/card">
@@ -643,7 +643,7 @@
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl dark:tw-shadow-[#171717] hover:tw-shadow-lg tw-duration-300 
                                 tw-transition-all tw-p-8 tw-group/card">
@@ -664,7 +664,7 @@
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl 
                                     hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all tw-p-8 tw-group/card">
