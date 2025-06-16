@@ -1,1 +1,0 @@
-<h1 style="color: red;text-align: center;">T'as pas le droit batard</h1>
