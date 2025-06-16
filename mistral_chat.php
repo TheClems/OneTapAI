@@ -71,6 +71,7 @@ function getUserChannels($userId)
             SELECT 
                 cc.id, 
                 cc.created_at,
+                cc.model,  -- On ajoute le champ model ici
                 COALESCE(
                     (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
                     'Nouveau chat'
@@ -377,23 +378,12 @@ if ($currentChannelId !== null) {
                 </button>
             </div>
 
-            <div class="chat-list" id="chatList">
+            <div class="chat-list" id="chatList" >
                 <?php foreach ($userChannels as $channel): ?>
                     <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
                         data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
                         <div class="chat-preview">
                             <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
-                        </div>
-                        <div class="chat-model">
-                            🤖 
-                            <?php
-                                // Récupérer le nom du modèle à partir de sa clé
-                                if (isset($availableModels[$channel['model']])) {
-                                    echo $availableModels[$channel['model']]['icon'] . ' ' . $availableModels[$channel['model']]['name'];
-                                } else {
-                                    echo 'Modèle inconnu';
-                                }
-                            ?>
                         </div>
                         <div class="chat-time">
                             🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
