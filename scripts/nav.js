@@ -22,7 +22,6 @@ const body_buy_credits = document.querySelector('.body_buy_credits');
 const body_account = document.querySelector('.body_account');
 const h1 = document.querySelector('.header h1');
 const profileHeader = document.querySelector('.profile-header');
-const h2_name = document.querySelector('.h2_name');
 const actionsSection = document.querySelector('.actions-section');
 const actionsSectionH3 = document.querySelector('.actions-section h3');
 const elementsToToggle = [
@@ -39,7 +38,6 @@ const elementsToToggle = [
     demoNotice,
     h1,
     profileHeader,
-    h2_name,
     actionsSection,
     actionsSectionH3
 ];
