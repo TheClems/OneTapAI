@@ -39,21 +39,6 @@ $user = getCurrentUser();
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-label">
-                            Nom d'utilisateur
-                        </div>
-                        <div class="info-value"><?php echo htmlspecialchars($user['username']); ?></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">
-                            Email
-                        </div>
-                        <div class="info-value"><?php echo htmlspecialchars($user['email']); ?></div>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-row">
-                        <div class="info-label">
                             Crédits actuels
                         </div>
                         <div class="info-value credits"><?php echo number_format($user['credits']); ?></div>
