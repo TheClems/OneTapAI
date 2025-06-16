@@ -264,27 +264,8 @@ if ($currentChannelId !== null) {
 </head>
 <style>
 /* Styles pour le sélecteur de modèle */
-.header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
 
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    gap: 2rem;
-}
 
-.header-content h1 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 600;
-}
 
 .model-selector {
     display: flex;
