@@ -377,6 +377,7 @@ if ($currentChannelId !== null) {
                     ➕ Nouveau
                 </button>
             </div>
+            <pre><?php print_r($userChannels); ?></pre>
 
             <div class="chat-list" id="chatList" >
                 <?php foreach ($userChannels as $channel): ?>
@@ -485,14 +486,19 @@ if ($currentChannelId !== null) {
 
     // Gestion des clics sur l'historique avec préservation du modèle
     document.querySelectorAll('.chat-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const channelId = this.dataset.channelId;
-            const currentUrl = new URL(window.location);
-            currentUrl.searchParams.set('id_channel', channelId);
-            currentUrl.searchParams.set('model', selectedModel);
-            window.location.href = currentUrl.toString();
-        });
+    item.addEventListener('click', function() {
+        const channelId = this.dataset.channelId;
+        const model = this.dataset.model || ''; // Récupère le modèle spécifique au channel
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('id_channel', channelId);
+        if (model) {
+            currentUrl.searchParams.set('model', model);
+        } else {
+            currentUrl.searchParams.delete('model');
+        }
+        window.location.href = currentUrl.toString();
     });
+});
 </script>
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
