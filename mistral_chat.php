@@ -151,7 +151,6 @@ function countMessagesInChannel($channelId) {
     $pdo = getDBConnection();
     try {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = ?");
-        echo $stmt;
         $stmt->execute([$channelId]);
         return (int) $stmt->fetchColumn();
     } catch (PDOException $e) {
