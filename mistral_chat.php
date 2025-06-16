@@ -93,7 +93,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     if (!$channelOwner || $channelOwner['id_user'] !== $userId) {
         // Soit le chat n'existe pas, soit il n'appartient pas à cet utilisateur
-        header("Location: mistral_chat.php"); // ou page d'accueil, ou 403.php
+        header("Location: batard.php"); // ou page d'accueil, ou 403.php
         exit;
     }
 
