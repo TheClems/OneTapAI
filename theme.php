@@ -2,7 +2,6 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-session_start(); // On démarre la session
 require_once 'config.php'; // Connexion PDO à la BDD
 
 // Vérifie que l'utilisateur est connecté
@@ -35,7 +34,7 @@ $theme = intval($data['theme']); // 0 = dark, 1 = light
 
 // Mise à jour du thème dans la base
 $sql = "UPDATE users SET dark_mode = ? WHERE id = ?";
-$stmt = $conn->prepare($sql);
+$stmt = $pdo->prepare($sql);
 
 if ($stmt && $stmt->execute([$theme, $user_id])) {
     echo json_encode(['success' => true]);
