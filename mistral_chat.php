@@ -386,7 +386,7 @@ if ($currentChannelId !== null) {
                         <div class="chat-preview">
                             <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                         </div>
-                        <div class="chat-time">
+                        <div class="chat-model">
                             <?php echo $channel['model']; ?>
                         </div>
                         <div class="chat-time">
