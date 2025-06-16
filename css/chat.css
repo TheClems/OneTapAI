@@ -374,16 +374,16 @@ h3.light-mode {
 }
 
 .message-content pre::before {
-    content: '💻 Code';
-    position: absolute;
-    top: -10px;
-    left: 10px;
+    content: 'Code 💻';
     background: rgba(15, 15, 25, 0.9);
     color: #10b981;
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 0.8em;
+    display: flex;
     font-weight: 600;
+    margin-bottom: 10px;
+    justify-content: flex-start;
 }
 
 .message-content ul, .message-content ol {
