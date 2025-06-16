@@ -164,14 +164,7 @@ h1 {
     object-fit: cover;
 }
 
-.profile-info h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    color: #fff;
-}
-.profile-info h2.light-mode {
-    color: #000;
-}
+
 
 .profile-info .username {
     color: #00ff94;
@@ -435,6 +428,17 @@ body.dark-mode .info-card,
 body.dark-mode .actions-section {
     background: rgba(255, 255, 255, 0.05);
     border-color: #444;
+}
+
+
+.h2_name{
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.h2_name.light-mode{
+    color: #000;
 }
 
 /* Particles animation */
