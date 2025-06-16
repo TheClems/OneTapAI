@@ -240,7 +240,6 @@ body.light-mode .nav-link.active {
 }
 
 .main-content {
-    margin-left: 280px;
     padding: 2rem;
     transition: margin-left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     color: #e2e8f0;
@@ -299,13 +298,7 @@ body.light-mode .content-card {
         transform: translateX(0);
     }
 
-    .main-content {
-        margin-left: 40px;
-    }
 
-    .sidebar.mobile-open+.main-content {
-        margin-left: 280px;
-    }
 
     .sidebar.collapsed {
         transform: translateX(0px);
