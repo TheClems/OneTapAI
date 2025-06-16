@@ -8,16 +8,7 @@ const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
 
-// Historique des messages depuis PHP
-let messageHistory = <?php echo json_encode(array_map(function($msg) {
-    return [
-        'role' => $msg['role'],
-        'content' => $msg['content']
-    ];
-}, $channelHistory)); ?>;
 
-// Historique des messages depuis la base de données
-const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
 
 // Fonction pour formater l'heure
 function formatTime(dateString) {
