@@ -42,21 +42,7 @@ $availableModels = [
         'description' => 'Spécialisé code'
     ]
 ];
-$selectedModel = null;
 
-if (isset($_GET['model'])) {
-    $modelFromGet = $_GET['model'];
-    if (array_key_exists($modelFromGet, $availableModels)) {
-        $selectedModel = $modelFromGet;
-    } else {
-        // Valeur non valide, tu peux soit :
-        // - laisser $selectedModel à null
-        // - ou définir un modèle par défaut
-        $selectedModel = null; 
-    }
-}
-
-$_SESSION['selected_model'] = $selectedModel;
 // Fonction pour récupérer l'historique des messages d'un channel
 function getChannelHistory($channelId)
 {
@@ -145,6 +131,13 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     $channelHistory = getChannelHistory($currentChannelId);
 
 }
+
+if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels)) {
+    $display_chat = "block";
+} else {
+    $display_chat = "none";
+}
+
 ?>
 
 <!DOCTYPE html>
