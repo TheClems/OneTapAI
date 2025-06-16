@@ -95,6 +95,7 @@ $user = getCurrentUser();
         }
 
         .main-content {
+            margin-left: 8.5rem;
             padding: 2rem;
             max-width: 1200px;
             margin: 0 auto;
@@ -587,31 +588,7 @@ $user = getCurrentUser();
         const userUsername = '<?php echo htmlspecialchars($user['username']); ?>';
         const userFullName = '<?php echo htmlspecialchars($user['full_name']); ?>';
 
-        // Gestion du thème
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.getElementById('theme-icon');
-            
-            if (document.body.classList.contains('dark-mode')) {
-                icon.setAttribute('data-lucide', 'moon');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                icon.setAttribute('data-lucide', 'sun');
-                localStorage.setItem('theme', 'light');
-            }
-            
-            lucide.createIcons();
-        }
 
-        // Charger le thème sauvegardé
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('theme-icon').setAttribute('data-lucide', 'moon');
-                lucide.createIcons();
-            }
-        });
 
         // Gestion des boutons avec effets
         function handleButtonClick(button, loadingText, successText, successColor) {
