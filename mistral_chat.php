@@ -417,7 +417,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     </div>
 
     <script>
-        // Configuration
+// Configuration
 const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
@@ -492,22 +492,32 @@ async function sendMessage() {
     displayMessage(message, true);
     messageInput.value = '';
 
-    // IMPORTANT: Ajouter le message utilisateur à l'historique IMMÉDIATEMENT
-    messageHistory.push({
-        role: 'user',
-        content: message
-    });
-
     // Désactiver l'interface
     sendButton.disabled = true;
     messageInput.disabled = true;
     loading.style.display = 'block';
 
     try {
-        // Préparer les messages pour l'API (garder les 10 derniers messages)
-        const messages = messageHistory.slice(-10);
+        // Préparer les messages pour l'API
+        // Inclure l'historique complet + le nouveau message utilisateur
+        const currentMessages = [
+            ...messageHistory,  // Historique complet
+            {
+                role: 'user',
+                content: message
+            }
+        ];
 
-        console.log('Messages envoyés à l\'API:', messages); // Debug
+        // Garder seulement les 10 derniers messages pour l'API
+        const messagesToSend = currentMessages.slice(-10);
+
+        console.log('=== DEBUG ===');
+        console.log('Historique avant envoi:', messageHistory);
+        console.log('Messages envoyés à l\'API:', messagesToSend);
+
+        // Extraire le chat_channel_id de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatChannelId = urlParams.get('id_channel');
 
         const response = await fetch('mistral_api.php', {
             method: 'POST',
@@ -515,7 +525,8 @@ async function sendMessage() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                messages: messages
+                messages: messagesToSend,
+                chat_channel_id: chatChannelId
             })
         });
 
@@ -525,22 +536,31 @@ async function sendMessage() {
             // Afficher la réponse de l'IA
             displayMessage(data.content);
             
-            // Ajouter la réponse de l'IA à l'historique
-            messageHistory.push({
-                role: 'assistant',
-                content: data.content
-            });
+            // Mettre à jour l'historique avec BOTH messages
+            messageHistory.push(
+                {
+                    role: 'user',
+                    content: message
+                },
+                {
+                    role: 'assistant',
+                    content: data.content
+                }
+            );
 
-            console.log('Historique après réponse:', messageHistory); // Debug
+            // Garder seulement les 20 derniers messages dans l'historique
+            if (messageHistory.length > 20) {
+                messageHistory = messageHistory.slice(-20);
+            }
+
+            console.log('Historique après mise à jour:', messageHistory);
+            console.log('=== FIN DEBUG ===');
+
         } else {
-            // En cas d'erreur, retirer le message utilisateur de l'historique
-            messageHistory.pop();
             showError(data.error || 'Erreur inconnue');
         }
 
     } catch (error) {
-        // En cas d'erreur, retirer le message utilisateur de l'historique
-        messageHistory.pop();
         showError('Erreur de connexion: ' + error.message);
     } finally {
         // Réactiver l'interface
