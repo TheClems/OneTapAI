@@ -30,7 +30,7 @@ function isLoggedIn()
 function requireLogin()
 {
     if (!isLoggedIn()) {
-        header('Location: auth.php');
+        header('Location: auth.php?mode=login');
         exit();
     }
 }
