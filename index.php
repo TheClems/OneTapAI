@@ -166,7 +166,7 @@
                     <i class="bi bi-sun" id="toggle-mode-icon"></i>
                 </button>
                 <a
-                    href="/auth.php"
+                    href="dashboard.php"
                     aria-label="Try OneTapAI Playground"
                     class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform 
                                     tw-duration-[0.3s] hover:tw-translate-x-2">
@@ -247,7 +247,7 @@
 
                     <a
                         class="btn tw-group max-lg:!tw-w-[160px] tw-flex tw-gap-2 tw-shadow-lg !tw-w-[170px] !tw-rounded-xl !tw-py-4 max-lg:!tw-py-2 tw-transition-transform tw-duration-[0.3s] hover:tw-scale-x-[1.03]"
-                        href="/auth.php">
+                        href="/dashboard.php">
                         <span>Get started</span>
                         <i class="bi bi-arrow-right group-hover:tw-translate-x-1 tw-duration-300"></i>
                     </a>
@@ -548,7 +548,7 @@
                         Pre-built AI Tools
                     </h2>
 
-                    <a href="/auth.php" class="btn !tw-mt-8 !tw-bg-transparent !tw-text-black 
+                    <a href="/chat.php" class="btn !tw-mt-8 !tw-bg-transparent !tw-text-black 
                                                 !tw-border-[1px] !tw-border-black 
                                                 dark:!tw-border-white dark:!tw-text-white">
                         Start Chat
@@ -857,7 +857,7 @@
 
             </div>
 
-            <a href="#" class="reveal-up tw-group tw-shadow-xl btn tw-flex tw-gap-2 tw-mt-10">
+            <a href="/chat.php" class="reveal-up tw-group tw-shadow-xl btn tw-flex tw-gap-2 tw-mt-10">
                 <span>Start Chat</span>
                 <i class="bi bi-arrow-right tw-duration-300 group-hover:tw-translate-x-1"></i>
             </a>
