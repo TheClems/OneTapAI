@@ -386,7 +386,7 @@ deleteChannelEmpty();
                     💬 Historique
                 </h3>
                 <button class="new-chat-btn" id="newChatBtn">
-                    ➕ Nouveau
+                    ✚ Nouveau
                 </button>
             </div>
 
