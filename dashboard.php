@@ -29,6 +29,11 @@ $user = getCurrentUser();
         <div class="floating-element"></div>
     </div>
     <div class="container">
+        <div class="header">
+            <div class="user-info">
+                <h1 class="welcome">Bienvenue <?php echo htmlspecialchars($user['Fullname']); ?></h1>
+            </div>
+        </div>
 
         <div class="section features">
             <h3>Fonctionnalités disponibles</h3>
