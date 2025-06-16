@@ -380,7 +380,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             word-wrap: break-word;
-            white-space: pre-wrap;
             line-height: 1.5;
         }
 
