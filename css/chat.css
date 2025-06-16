@@ -470,6 +470,11 @@ h3.light-mode {
     backdrop-filter: blur(10px);
 }
 
+.message-input.light-mode{
+    background: rgb(255 255 255);
+    color: #000000;
+}
+
 .message-input:focus {
     border-color: #31efc0;
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
