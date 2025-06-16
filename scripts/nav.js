@@ -21,6 +21,24 @@ const chatContainer = document.querySelector('.chat-container');
 const body_buy_credits = document.querySelector('.body_buy_credits');
 const body_account = document.querySelector('.body_account');
 const h1 = document.querySelector('.header h1');
+
+const elementsToToggle = [
+    ...infoValues,
+    ...infoCards,
+    welcome,
+    profileCard,
+    ...infoLabels,
+    ...h2,
+    backLink,
+    ...packages,
+    featuredPackage,
+    currentCredits,
+    demoNotice,
+    h1
+];
+
+
+
 // Gestion du thème
 let isDarkMode = true;
 
@@ -52,26 +70,28 @@ function saveTheme() {
 }
 
 // Toggle du thème
+if (isDarkModeFromServer) {
+    body.classList.remove('light-mode');
+
+
+
+    elementsToToggle.forEach(el => {
+        if (el) el.classList.remove('light-mode');
+    });
+
+    if (themeIcon) {
+        themeIcon.innerHTML = '<path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>';
+    }
+
+    isDarkMode = true;
+}
+
+
 if (themeToggle) {
     themeToggle.addEventListener('click', () => {
         isDarkMode = !isDarkMode;
         body.classList.toggle('light-mode');
 
-        // Appliquer le thème aux éléments qui existent
-        const elementsToToggle = [
-            ...infoValues,
-            ...infoCards,
-            welcome,
-            profileCard,
-            ...infoLabels,
-            ...h2,
-            backLink,
-            ...packages,
-            featuredPackage,
-            currentCredits,
-            demoNotice,
-            h1
-        ];
 
         elementsToToggle.forEach(el => {
             if (el) el.classList.toggle('light-mode');
