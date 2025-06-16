@@ -388,7 +388,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 <div class="input-group">
                                         <!-- Sélecteur de modèle -->
                                         <div class="model-selector">
-                        <label for="modelSelect" class="model-label">Modèle :</label>
                         <select id="modelSelect" class="model-select">
                             <?php foreach ($availableModels as $modelKey => $modelInfo): ?>
                                 <option value="<?php echo $modelKey; ?>" 
@@ -397,9 +396,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                                 </option>
                             <?php endforeach; ?>
                         </select>
-                        <div class="model-description">
-                            <?php echo $availableModels[$selectedModel]['description']; ?>
-                        </div>
+
                     </div>
                     <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
                     <button class="send-button" id="sendButton">
