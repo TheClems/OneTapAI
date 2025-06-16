@@ -119,7 +119,7 @@ body.light-mode .nav-header {
     color: #e2e8f0;
     font-size: 1.5rem;
     font-weight: 700;
-    background: transparent;
+    background: #fff;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
