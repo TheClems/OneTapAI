@@ -95,23 +95,7 @@ if (isset($_GET['id_channel'])) {
     $chatChannelId = $_GET['id_channel'];
 }
 
-$pdo = getDatabaseConnection();
 
-$stmt_count = $pdo->prepare("SELECT COUNT(*) AS total FROM chat_messages WHERE chat_channel_id = ?");
-$stmt_count->execute([$chatChannelId]);
-$result = $stmt_count->fetch(PDO::FETCH_ASSOC);
-
-$totalMessages = $result['total'];
-
-if ($totalMessages < 1) {
-    $stmt = $pdo->prepare("
-        UPDATE chat_channels
-        SET model = ?
-        WHERE id = ?
-    ");
-    return $stmt->execute([$_GET['model'], $chatChannelId]);
-
-}
 
 // Vérifier dans les paramètres POST
 if (!$chatChannelId && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -160,10 +144,28 @@ if (!$input || !isset($input['messages']) || !is_array($input['messages'])) {
 $messages = $input['messages'];
 
 // Connexion à la base de données
+// Connexion à la base de données
 $pdo = getDatabaseConnection();
 if (!$pdo) {
     sendJsonResponse(['success' => false, 'error' => 'Erreur de connexion à la base de données']);
 }
+
+// Vérifier dans les paramètres GET
+if (isset($_GET['id_channel'])) {
+    $chatChannelId = $_GET['id_channel'];
+}
+
+// Vérifier si besoin de mettre à jour le modèle s'il n'y a aucun message
+$stmt_count = $pdo->prepare("SELECT COUNT(*) AS total FROM chat_messages WHERE chat_channel_id = ?");
+$stmt_count->execute([$chatChannelId]);
+$result = $stmt_count->fetch(PDO::FETCH_ASSOC);
+$totalMessages = $result['total'];
+
+if ($totalMessages < 1 && isset($_GET['model'])) {
+    $stmt = $pdo->prepare("UPDATE chat_channels SET model = ? WHERE id = ?");
+    $stmt->execute([$_GET['model'], $chatChannelId]);
+}
+
 
 // Récupérer l'historique depuis la base de données
 $dbHistory = getMessageHistory($pdo, $chatChannelId, 20);
