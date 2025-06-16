@@ -164,10 +164,16 @@ function formatMessageContent(content) {
     
     // Convertir les *texte* en <em>
     content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
 
+    // Convertir les ##### Titre en <h6>
+    content = content.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
+
+
+    // Convertir les ##### Titre en <h5>
+    content = content.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
     // Convertir les #### Titre en <h4>
     content = content.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
+
     // Convertir les ### Titre en <h3>
     content = content.replace(/^### (.*$)/gm, '<h3>$1</h3>');
     
