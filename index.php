@@ -167,7 +167,7 @@
                     <i class="bi bi-sun" id="toggle-mode-icon"></i>
                 </button>
                 <a
-                    href="#"
+                    href="/auth.php"
                     aria-label="Try OneTapAI Playground"
                     class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform 
                                     tw-duration-[0.3s] hover:tw-translate-x-2">
@@ -248,7 +248,7 @@
 
                     <a
                         class="btn tw-group max-lg:!tw-w-[160px] tw-flex tw-gap-2 tw-shadow-lg !tw-w-[170px] !tw-rounded-xl !tw-py-4 max-lg:!tw-py-2 tw-transition-transform tw-duration-[0.3s] hover:tw-scale-x-[1.03]"
-                        href="#">
+                        href="/auth.php">
                         <span>Get started</span>
                         <i class="bi bi-arrow-right group-hover:tw-translate-x-1 tw-duration-300"></i>
                     </a>
@@ -296,7 +296,7 @@
                                     Join Ben and 20,000+ users using OneTapAI
                                 </div>
 
-                                <a href="#" class="btn">
+                                <a href="/auth.php" class="btn">
                                     Sign up
                                 </a>
 
@@ -338,7 +338,7 @@
                                 </div>
 
                                 <div class="tw-mt-auto tw-w-full tw-flex tw-px-6 tw-place-content-center">
-                                    <a href="#sign-up" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
+                                    <a href="/auth.php" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
                                                                 hover:!tw-bg-black hover:!tw-text-white
                                                                 dark:hover:!tw-bg-white dark:hover:!tw-text-black
                                                                 !tw-border-[1px] !tw-border-black !tw-text-black
@@ -471,7 +471,7 @@
                             </div>
                             <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Unified interface</h2>
                             <p class="tw-text-base tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                Our's is the only unified AI Interface tool brings together all your favorite chat models into one seamless platform. No more juggling between different AI systems—easily manage and interact with multiple chatbots from a single interface.
+                                Our unified AI Interface tool brings together all your favorite chat models into one seamless platform. No more juggling between different AI systems—easily manage and interact with multiple chatbots from a single interface.
                             </p>
                             <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                 <span>Learn more</span>
@@ -482,7 +482,7 @@
 
 
                     <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full">
-                        <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                        <a href="" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                             <div class="tw-w-full tw-min-h-[180px] tw-h-[180px] tw-overflow-hidden">
@@ -492,6 +492,7 @@
                             </div>
                             <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">API Access</h2>
                             <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
+                            OneTapAI offers advanced summarization, text generation and question answering functions. Integration is easy with support for JSON, HTML, Markdown and plain text, enabling you to enhance your applications with powerful linguistic tools.
                             </p>
                             <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                 <span>Learn more</span>
@@ -502,7 +503,7 @@
 
 
                     <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full">
-                        <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                        <a href="" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                             <div class="tw-w-full tw-flex tw-place-contet-center tw-min-h-[180px] tw-h-[180px] tw-rounded-xl tw-overflow-hidden">
@@ -511,6 +512,7 @@
                             </div>
                             <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Pre-built Tools</h2>
                             <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
+                                OneTapAI offers pre-built AI integrations for diverse creative tasks including image, video, music, and PDF generation, simplifying advanced feature integration into your apps.
                             </p>
                             <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                 <span>Learn more</span>
@@ -521,7 +523,7 @@
                 </div>
 
                 <div class="reveal-up tw-w-full md:tw-h-[350px] max-md:tw-min-h-[350px] tw-flex">
-                    <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                    <a href="" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                             max-md:tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                             hover:tw-scale-[1.02]">
                         <div class="tw-text-6xl tw-overflow-hidden tw-rounded-xl tw-w-full tw-h-full max-md:tw-h-[180px]">
@@ -532,6 +534,7 @@
                         <div class="tw-flex tw-flex-col tw-gap-4">
                             <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
                             <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
+                                OneTapAI supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
                             </p>
                             <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                 <span>Learn more</span>
@@ -562,7 +565,7 @@
                         Pre-built AI Tools
                     </h2>
 
-                    <a href="http://" class="btn !tw-mt-8 !tw-bg-transparent !tw-text-black 
+                    <a href="/auth.php" class="btn !tw-mt-8 !tw-bg-transparent !tw-text-black 
                                                 !tw-border-[1px] !tw-border-black 
                                                 dark:!tw-border-white dark:!tw-text-white">
                         Start Chat
@@ -1346,8 +1349,6 @@
                     <h2 class="tw-text-xl">Resources</h2>
                     <div class="tw-flex tw-flex-col tw-gap-3">
                         <a href="#" class="footer-link">Getting started</a>
-                        <a href="#" class="footer-link">API Docs</a>
-                        <a href="#" class="footer-link">API Endpoints</a>
                         <a href="#" class="footer-link">Health status</a>
                         <a href="#" class="footer-link">Pricing</a>
                     </div>
@@ -1359,7 +1360,6 @@
                     <div class="tw-flex tw-flex-col tw-gap-3">
                         <a href="#" class="footer-link">Support channels</a>
                         <a href="#" class="footer-link">Systems</a>
-                        <a href="https://twitter.com/" class="footer-link">Twitter</a>
                         <a href="https://github.com/TheClems" class="footer-link">Github</a>
                     </div>
                 </div>
