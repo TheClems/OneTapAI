@@ -15,6 +15,26 @@ if (isset($_SESSION['user_id'])) {
     $userId = null;
 }
 
+// Fonction pour récupérer l'historique des messages d'un channel
+function getChannelHistory($channelId) {
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("
+            SELECT role, content, created_at 
+            FROM chat_messages 
+            WHERE chat_channel_id = ? 
+            ORDER BY created_at ASC
+        ");
+        $stmt->execute([$channelId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Erreur récupération historique: " . $e->getMessage());
+        return [];
+    }
+}
+
+$channelHistory = [];
+$currentChannelId = null;
 
 if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     // Pas de paramètre id_channel ou id_channel vide => création d'un nouveau chat
@@ -34,10 +54,12 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     header("Location: ?id_channel=" . $id);
     exit;
+} else {
+    // Channel existant, récupérer l'historique
+    $currentChannelId = $_GET['id_channel'];
+    $channelHistory = getChannelHistory($currentChannelId);
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -74,16 +96,12 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             margin-left: 17rem;
         }
 
-
-
         .chat-container.collapsed {
             margin-left: 2rem;
-            
         }
 
         .chat-container.mobile {
             margin-left: 0rem;
-
         }
 
         .header {
@@ -389,12 +407,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         </div>
 
         <div class="chat-messages" id="chatMessages">
-            <div class="message ai">
-                <div class="message-content">
-                    Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+            <?php if (empty($channelHistory)): ?>
+                <!-- Message de bienvenue seulement si pas d'historique -->
+                <div class="message ai">
+                    <div class="message-content">
+                        Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+                    </div>
+                    <div class="message-time" id="welcomeTime"></div>
                 </div>
-                <div class="message-time" id="welcomeTime"></div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <div class="loading" id="loading">
@@ -423,14 +444,60 @@ const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const loading = document.getElementById('loading');
 
-// Historique des messages
-let messageHistory = [];
+// Historique des messages depuis PHP
+let messageHistory = <?php echo json_encode(array_map(function($msg) {
+    return [
+        'role' => $msg['role'],
+        'content' => $msg['content']
+    ];
+}, $channelHistory)); ?>;
 
-// Afficher l'heure de bienvenue
-document.getElementById('welcomeTime').textContent = new Date().toLocaleTimeString('fr-FR', {
-    hour: '2-digit',
-    minute: '2-digit'
-});
+// Historique des messages depuis la base de données
+const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+
+// Fonction pour formater l'heure
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Charger l'historique existant
+function loadHistoryMessages() {
+    if (channelHistoryFromDB && channelHistoryFromDB.length > 0) {
+        // Vider le conteneur (enlever le message de bienvenue)
+        chatMessages.innerHTML = '';
+        
+        channelHistoryFromDB.forEach((message, index) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.role === 'user' ? 'user' : 'ai'}`;
+            
+            const timeString = formatTime(message.created_at);
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${message.content}</div>
+                <div class="message-time">${timeString}</div>
+            `;
+            
+            // Ajouter un délai pour l'animation
+            setTimeout(() => {
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, index * 100);
+        });
+    } else {
+        // Pas d'historique, afficher l'heure de bienvenue
+        const welcomeTimeEl = document.getElementById('welcomeTime');
+        if (welcomeTimeEl) {
+            welcomeTimeEl.textContent = new Date().toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    }
+}
 
 // Créer les particules d'arrière-plan
 function createParticles() {
@@ -587,23 +654,28 @@ messageInput.focus();
 // Créer les particules
 createParticles();
 
-// Effet de frappe automatique pour le message de bienvenue
-setTimeout(() => {
-    const welcomeMessage = document.querySelector('.message.ai .message-content');
-    if (welcomeMessage) {
-        const text = welcomeMessage.textContent;
-        welcomeMessage.textContent = '';
+// Charger l'historique au démarrage
+loadHistoryMessages();
 
-        let i = 0;
-        const typeInterval = setInterval(() => {
-            welcomeMessage.textContent += text[i];
-            i++;
-            if (i >= text.length) {
-                clearInterval(typeInterval);
-            }
-        }, 50);
-    }
-}, 500);
+// Effet de frappe automatique pour le message de bienvenue (seulement si pas d'historique)
+if (channelHistoryFromDB.length === 0) {
+    setTimeout(() => {
+        const welcomeMessage = document.querySelector('.message.ai .message-content');
+        if (welcomeMessage) {
+            const text = welcomeMessage.textContent;
+            welcomeMessage.textContent = '';
+
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                welcomeMessage.textContent += text[i];
+                i++;
+                if (i >= text.length) {
+                    clearInterval(typeInterval);
+                }
+            }, 50);
+        }
+    }, 500);
+}
     </script>
 </body>
 
