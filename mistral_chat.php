@@ -484,18 +484,25 @@ if ($currentChannelId !== null) {
         window.location.href = currentUrl.toString();
     });
 
-    // Gestion des clics sur l'historique avec préservation du modèle
-    document.querySelectorAll('.chat-item').forEach(item => {
+// Gestion des clics sur l'historique avec préservation du modèle
+document.querySelectorAll('.chat-item').forEach(item => {
     item.addEventListener('click', function() {
         const channelId = this.dataset.channelId;
-        const model = this.dataset.model || ''; // Récupère le modèle spécifique au channel
+        const model = this.dataset.model; // Récupère le modèle spécifique au channel
         const currentUrl = new URL(window.location);
         currentUrl.searchParams.set('id_channel', channelId);
-        if (model) {
+        
+        // Si le channel a un modèle défini, on l'utilise
+        // Sinon, on garde le modèle actuellement sélectionné
+        if (model && model !== '' && model !== 'null') {
             currentUrl.searchParams.set('model', model);
         } else {
-            currentUrl.searchParams.delete('model');
+            // Utiliser le modèle actuellement sélectionné comme fallback
+            if (selectedModel && selectedModel !== '') {
+                currentUrl.searchParams.set('model', selectedModel);
+            }
         }
+        
         window.location.href = currentUrl.toString();
     });
 });
