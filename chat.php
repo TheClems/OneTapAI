@@ -464,7 +464,7 @@ if ($currentChannelId !== null) {
         <div class="chat-container">
             <div class="header">
                 <div class="header-content">
-                    <h1>🤖 Mistral AI Chat</h1>
+                    <h1>🤖 <?php echo $selectedModel ? $availableModels[$selectedModel]['name'] : 'IA'; ?> Chat</h1>
                 </div>
             </div>
 
