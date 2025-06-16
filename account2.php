@@ -506,14 +506,12 @@ $user = getCurrentUser();
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-label">
-                            <i data-lucide="user"></i>
                             Nom d'utilisateur
                         </div>
                         <div class="info-value"><?php echo htmlspecialchars($user['username']); ?></div>
                     </div>
                     <div class="info-row">
                         <div class="info-label">
-                            <i data-lucide="mail"></i>
                             Email
                         </div>
                         <div class="info-value"><?php echo htmlspecialchars($user['email']); ?></div>
@@ -523,7 +521,6 @@ $user = getCurrentUser();
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-label">
-                            <i data-lucide="coins"></i>
                             Crédits actuels
                         </div>
                         <div class="info-value credits"><?php echo number_format($user['credits']); ?></div>
@@ -533,14 +530,12 @@ $user = getCurrentUser();
                 <div class="info-card">
                     <div class="info-row">
                         <div class="info-label">
-                            <i data-lucide="calendar"></i>
                             Date d'inscription
                         </div>
                         <div class="info-value"><?php echo date('d/m/Y à H:i', strtotime($user['date_inscription'])); ?></div>
                     </div>
                     <div class="info-row">
                         <div class="info-label">
-                            <i data-lucide="clock"></i>
                             Dernière connexion
                         </div>
                         <div class="info-value">14/06/2025 14:32</div>
@@ -552,15 +547,12 @@ $user = getCurrentUser();
                 <h3>Actions du compte</h3>
                 <div class="actions-grid">
                     <button class="btn btn-primary" id="profileBtn" onclick="window.location.href = 'auth.php?mode=edit_profile';">
-                        <i data-lucide="edit"></i>
                         Modifier profil
                     </button>
                     <button class="btn btn-secondary" id="logoutBtn" onclick="window.location.href = 'logout.php';">
-                        <i data-lucide="log-out"></i>
                         Se déconnecter
                     </button>
                     <button class="btn btn-danger" id="deleteBtn" onclick="showDeleteModal()">
-                        <i data-lucide="trash-2"></i>
                         Supprimer compte
                     </button>
                 </div>
