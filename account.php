@@ -17,6 +17,14 @@ $user = getCurrentUser();
 <body class="body_account">
     <?php require_once 'nav.php'; ?>
 
+    <div class="animated-bg" id="animatedBg"></div>
+
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
     <div class="main-content">
         
         <h1>Mon Compte</h1>
