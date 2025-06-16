@@ -251,7 +251,7 @@ body.light-mode .main-content {
 }
 
 .sidebar.collapsed+.main-content {
-    margin-left: 8.5px;
+    margin-left: 8.5rem;
 }
 
 .content-card {
