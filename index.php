@@ -57,14 +57,13 @@
                     tw-text-gray-700 tw-bg-white dark:tw-text-gray-200 dark:tw-bg-[#17181b] tw-px-[3%] tw-rounded-md lg:tw-max-w-5xl tw-shadow-md dark:tw-shadow-gray-700
                     lg:tw-justify-around lg:!tw-backdrop-blur-lg lg:tw-opacity-[0.99]">
         <a class="tw-flex tw-p-[4px] tw-gap-2 tw-place-items-center" href="#">
-
-
             <div class="tw-h-[30px] tw-max-w-[100px]">
                 <img
                     src="./assets/logo/logo.png"
                     alt="logo"
                     class="tw-object-contain tw-h-full tw-w-full dark:tw-invert" />
             </div>
+            <span class="tw-text-base tw-font-medium">OneTapAI</span>
         </a>
         <div
             class="collapsible-header animated-collapse max-lg:tw-shadow-md"
@@ -473,10 +472,6 @@
                             <p class="tw-text-base tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 Our unified AI Interface tool brings together all your favorite chat models into one seamless platform. No more juggling between different AI systems—easily manage and interact with multiple chatbots from a single interface.
                             </p>
-                            <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                            </div>
                         </a>
                     </div>
 
@@ -494,10 +489,6 @@
                             <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                             OneTapAI offers advanced summarization, text generation and question answering functions. Integration is easy with support for JSON, HTML, Markdown and plain text, enabling you to enhance your applications with powerful linguistic tools.
                             </p>
-                            <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                            </div>
                         </a>
                     </div>
 
@@ -514,10 +505,6 @@
                             <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 OneTapAI offers pre-built AI integrations for diverse creative tasks including image, video, music, and PDF generation, simplifying advanced feature integration into your apps.
                             </p>
-                            <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                            </div>
                         </a>
                     </div>
                 </div>
@@ -536,10 +523,6 @@
                             <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 OneTapAI supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
                             </p>
-                            <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
@@ -580,7 +563,7 @@
                              max-lg:tw-px-4 max-lg:tw-gap-3 max-lg:tw-w-full lg:tw-top-[20%]
                              tw-place-items-center
                              ">
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl 
                                     hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all
@@ -596,17 +579,11 @@
                             <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
                                 AI code generation tools to create code from natural language or patterns, streamlining development and improving efficiency.
                             </p>
-
-                            <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl
                                  hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all tw-p-8 tw-group/card">
@@ -622,16 +599,11 @@
                                 Use AI tools to automate PDF creation and content extraction, improving document management and data processing.
                             </p>
 
-                            <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl hover:tw-shadow-lg tw-duration-300 
                                 tw-transition-all dark:tw-shadow-[#171717] tw-p-8 tw-group/card">
@@ -647,16 +619,11 @@
                                 Prebuilt AI tools for image generation create visuals from text or patterns, enhancing design and creative projects.
                             </p>
 
-                            <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full dark:tw-shadow-[#171717] tw-h-full tw-gap-8 tw-rounded-xl  hover:tw-shadow-lg tw-duration-300 
                             tw-transition-all tw-p-8 tw-group/card">
@@ -672,16 +639,11 @@
                                 Our AI analytics tools analyze data patterns and trends, providing actionable insights and enhancing decision-making.
                             </p>
 
-                            <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl dark:tw-shadow-[#171717] hover:tw-shadow-lg tw-duration-300 
                                 tw-transition-all tw-p-8 tw-group/card">
@@ -698,16 +660,11 @@
                                 from input parameters, enabling effortless music creation for various needs.
                             </p>
 
-                            <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
+                <div class="reveal-up tw-h-[200px] tw-w-[450px] max-md:tw-w-full">
                     <a href="#"
                         class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl 
                                     hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all tw-p-8 tw-group/card">
@@ -723,11 +680,6 @@
                                 Use our AI video generation tools create videos from text or templates, streamlining content creation and production.
                             </p>
 
-                            <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                <span>Learn more</span>
-                                <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                            </div>
                         </div>
                     </a>
                 </div>
@@ -1325,12 +1277,12 @@
                 <!-- <div class="tw-mt-3 tw-text-lg tw-font-semibold">Follow us</div> -->
                 <div class="tw-flex tw-gap-4 tw-text-lg">
                     <a
-                        href="https://github.com/PaulleDemon/"
+                        href="https://github.com/TheClems/"
                         aria-label="Github">
                         <i class="bi bi-github"></i>
                     </a>
                     <a
-                        href="https://twitter.com/pauls_freeman"
+                        href="https://twitter.com/"
                         aria-label="Twitter">
                         <i class="bi bi-twitter"></i>
                     </a>
