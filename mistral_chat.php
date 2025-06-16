@@ -16,7 +16,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Gestion du modèle sélectionné
-$selectedModel = isset($_GET['model']) ? $_GET['model'] : 'mistral-large';
+$selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
 $_SESSION['selected_model'] = $selectedModel;
 
 // Liste des modèles disponibles
