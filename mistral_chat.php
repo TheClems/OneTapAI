@@ -387,6 +387,9 @@ if ($currentChannelId !== null) {
                             <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                         </div>
                         <div class="chat-time">
+                            <?php echo $channel['model']; ?>
+                        </div>
+                        <div class="chat-time">
                             🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
                         </div>
                     </div>
