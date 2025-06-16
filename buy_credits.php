@@ -152,6 +152,5 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
     });
 });
     </script>
+    <script type="text/javascript" src="scripts/nav.js"></script>
 </body>
-
-<script type="text/javascript" src="scripts/nav.js"></script>
