@@ -390,18 +390,19 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
             <div class="input-container">
                 <div class="input-group">
-                                        <!-- Sélecteur de modèle -->
-                                        <div class="model-selector">
+                    <!-- Sélecteur de modèle -->
+                    <div class="model-selector">
                         <select id="modelSelect" class="model-select">
+                            <option value="" disabled selected>-- Choisir un modèle --</option>
                             <?php foreach ($availableModels as $modelKey => $modelInfo): ?>
-                                <option value="<?php echo $modelKey; ?>" 
-                                        <?php echo ($selectedModel === $modelKey) ? 'selected' : ''; ?>>
+                                <option value="<?php echo $modelKey; ?>"
+                                    <?php echo ($selectedModel === $modelKey) ? 'selected' : ''; ?>>
                                     <?php echo $modelInfo['icon'] . ' ' . $modelInfo['name']; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
                     </div>
+
                     <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off" style="display: <?php echo $display_chat; ?>;">
                     <button class="send-button" id="sendButton" style="display: <?php echo $display_chat; ?>;">
                         <span>Envoyer</span>
