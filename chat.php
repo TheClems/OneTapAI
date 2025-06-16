@@ -171,6 +171,18 @@ if ($currentChannelId !== null) {
     }
 }
 
+function deleteChannelEmpty(){
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("DELETE FROM chat_channels WHERE model='' AND id_user=".$_SESSION['user_id']." "); 
+        $stmt->execute();
+    } catch (PDOException $e) {
+        error_log("Erreur lors du comptage des messages : " . $e->getMessage());
+    }
+}
+deleteChannelEmpty();
+
+
 ?>
 
 <!DOCTYPE html>
