@@ -31,7 +31,7 @@ $user = getCurrentUser();
     <div class="container">
         <div class="header">
             <div class="user-info">
-                <h1 class="welcome">Bienvenue <?php echo htmlspecialchars($user['Fullname']); ?></h1>
+                <h1 class="welcome">Bienvenue <?php echo htmlspecialchars($user['fullname']); ?></h1>
             </div>
         </div>
 
