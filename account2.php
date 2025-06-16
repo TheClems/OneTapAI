@@ -6,11 +6,11 @@ $user = getCurrentUser();
 ?>
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="frs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Compte - OneTapAI</title>
+    <title>Account - OneTapAI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <style>
         * {
@@ -479,18 +479,7 @@ $user = getCurrentUser();
 <body class="body_account">
     <?php require_once 'nav.php'; ?>
 
-    <div class="floating-elements">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
-
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <i data-lucide="sun" id="theme-icon"></i>
-    </button>
-
     <div class="main-content">
-        <a href="dashboard.php" class="back-link">Retour au dashboard</a>
         
         <h1>Mon Compte</h1>
         <p class="subtitle">Gérez votre profil et vos paramètres</p>
@@ -623,46 +612,6 @@ $user = getCurrentUser();
                 lucide.createIcons();
             }
         });
-
-        // Effet de parallaxe sur les éléments flottants
-        document.addEventListener('mousemove', function(e) {
-            const floatingElements = document.querySelectorAll('.floating-element');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            
-            floatingElements.forEach((element, index) => {
-                const speed = (index + 1) * 0.5;
-                const xPos = x * speed * 20;
-                const yPos = y * speed * 20;
-                
-                element.style.transform = `translate(${xPos}px, ${yPos}px)`;
-            });
-        });
-
-        // Particules
-        function createParticles(button) {
-            const rect = button.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = centerX + 'px';
-                particle.style.top = centerY + 'px';
-                
-                const angle = (Math.PI * 2 * i) / 8;
-                const velocity = 2;
-                particle.style.setProperty('--dx', Math.cos(angle) * velocity * 100 + 'px');
-                particle.style.setProperty('--dy', Math.sin(angle) * velocity * 100 + 'px');
-                
-                document.body.appendChild(particle);
-                
-                setTimeout(() => {
-                    particle.remove();
-                }, 2000);
-            }
-        }
 
         // Gestion des boutons avec effets
         function handleButtonClick(button, loadingText, successText, successColor) {
