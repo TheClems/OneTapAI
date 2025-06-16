@@ -269,7 +269,10 @@ h3.light-mode {
     padding: 20px;
     background: black;
     scrollbar-width: thin;
-    scrollbar-color: #6366f1 transparent;
+    scrollbar-color: #ffffff transparent;
+}
+.chat-messages.light-mode{
+    background: white;
 }
 
 .chat-messages::-webkit-scrollbar {
