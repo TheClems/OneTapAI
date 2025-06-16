@@ -161,7 +161,7 @@ $stmt_count->execute([$chatChannelId]);
 $result = $stmt_count->fetch(PDO::FETCH_ASSOC);
 $totalMessages = $result['total'];
 
-if ($totalMessages < 1 && isset($_GET['model'])) {
+if ($totalMessages < 3 && isset($_GET['model'])) {
     $stmt = $pdo->prepare("UPDATE chat_channels SET model = ? WHERE id = ?");
     $stmt->execute([$_GET['model'], $chatChannelId]);
 }
