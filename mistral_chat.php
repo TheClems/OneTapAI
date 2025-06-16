@@ -377,6 +377,7 @@ if ($currentChannelId !== null) {
                     ➕ Nouveau
                 </button>
             </div>
+            <pre><?php print_r($userChannels); ?></pre>
 
             <div class="chat-list" id="chatList" >
                 <?php foreach ($userChannels as $channel): ?>
