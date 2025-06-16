@@ -31,6 +31,7 @@ if (!isset($data['theme'])) {
 
 $user_id = $_SESSION['user_id'];
 $theme = intval($data['theme']); // 0 = dark, 1 = light
+$pdo = getDBConnection();
 
 // Mise à jour du thème dans la base
 $sql = "UPDATE users SET dark_mode = ? WHERE id = ?";
