@@ -71,11 +71,12 @@ function getUserChannels($userId)
             SELECT 
                 cc.id, 
                 cc.created_at,
-                cc.model,  -- On ajoute le champ model ici
+                cc.model,
                 COALESCE(
                     (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
                     'Nouveau chat'
-                ) as first_message
+                ) as first_message,
+                (SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = cc.id) as message_count
             FROM chat_channels cc 
             WHERE cc.id_user = ? 
             ORDER BY cc.created_at DESC
@@ -88,66 +89,129 @@ function getUserChannels($userId)
     }
 }
 
+// Fonction améliorée pour supprimer les channels vides
+function cleanupEmptyChannels($userId, $currentChannelId = null) {
+    if (!$userId) return;
+
+    $pdo = getDBConnection();
+    try {
+        // Supprimer tous les channels sans messages ET sans modèle défini
+        // En excluant le channel actuel si spécifié
+        $sql = "
+            DELETE cc FROM chat_channels cc 
+            LEFT JOIN chat_messages cm ON cc.id = cm.chat_channel_id 
+            WHERE cc.id_user = ? 
+            AND (cc.model IS NULL OR cc.model = '' OR cc.model = 'null')
+            AND cm.id IS NULL
+        ";
+        $params = [$userId];
+        
+        if ($currentChannelId) {
+            $sql .= " AND cc.id != ?";
+            $params[] = $currentChannelId;
+        }
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        
+        $deletedCount = $stmt->rowCount();
+        if ($deletedCount > 0) {
+            error_log("Supprimé $deletedCount channels vides pour l'utilisateur $userId");
+        }
+        
+    } catch (PDOException $e) {
+        error_log("Erreur lors du nettoyage des channels : " . $e->getMessage());
+    }
+}
+
+// Fonction pour vérifier si un channel existe et appartient à l'utilisateur
+function verifyChannelOwnership($channelId, $userId) {
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("SELECT id_user FROM chat_channels WHERE id = ?");
+        $stmt->execute([$channelId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result && $result['id_user'] === $userId;
+    } catch (PDOException $e) {
+        error_log("Erreur vérification propriété channel: " . $e->getMessage());
+        return false;
+    }
+}
+
+// NETTOYER D'ABORD les channels vides avant tout traitement
+cleanupEmptyChannels($userId);
+
 $channelHistory = [];
 $currentChannelId = null;
-$userChannels = getUserChannels($userId);
 
 if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
-    // Pas de paramètre id_channel ou id_channel vide => création d'un nouveau chat
-
+    // Pas de paramètre id_channel => création d'un nouveau chat
+    
+    // Nettoyer encore une fois avant de créer un nouveau channel
+    cleanupEmptyChannels($userId);
+    
     $id = uniqid('chat_', true); // ID unique
-
     $createdAt = date('Y-m-d H:i:s');
     $pdo = getDBConnection();
 
-    $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at) VALUES (:id, :id_user, :created_at)");
-    $stmt->execute([
-        ':id' => $id,
-        ':id_user' => $userId,
-        ':created_at' => $createdAt
-    ]);
-    $_SESSION['id_channel'] = $id;
+    try {
+        $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at, model) VALUES (:id, :id_user, :created_at, :model)");
+        $stmt->execute([
+            ':id' => $id,
+            ':id_user' => $userId,
+            ':created_at' => $createdAt,
+            ':model' => $selectedModel ?: '' // Définir le modèle dès la création si disponible
+        ]);
+        $_SESSION['id_channel'] = $id;
 
-    // Préserver le modèle sélectionné lors de la redirection
-    $modelParam = isset($_GET['model']) ? '&model=' . urlencode($_GET['model']) : '';
-    header("Location: ?id_channel=" . $id . $modelParam);
-    exit;
+        // Préserver le modèle sélectionné lors de la redirection
+        $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
+        header("Location: ?id_channel=" . $id . $modelParam);
+        exit;
+        
+    } catch (PDOException $e) {
+        error_log("Erreur création channel: " . $e->getMessage());
+        // Rediriger vers une page d'erreur ou la page d'accueil
+        header("Location: chat.php");
+        exit;
+    }
+    
 } else {
-
     $currentChannelId = $_GET['id_channel'];
 
-    // Vérifie si ce chat appartient à l'utilisateur connecté
-    $pdo = getDBConnection();
-    $stmt = $pdo->prepare("SELECT id_user FROM chat_channels WHERE id = ?");
-    $stmt->execute([$currentChannelId]);
-    $channelOwner = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$channelOwner || $channelOwner['id_user'] !== $userId) {
-        // Soit le chat n'existe pas, soit il n'appartient pas à cet utilisateur
-        header("Location: chat.php"); // ou page d'accueil, ou 403.php
+    // Vérifier si ce channel appartient à l'utilisateur
+    if (!verifyChannelOwnership($currentChannelId, $userId)) {
+        // Channel n'existe pas ou n'appartient pas à cet utilisateur
+        cleanupEmptyChannels($userId);
+        header("Location: chat.php");
         exit;
     }
 
-    // Sinon on récupère l'historique normalement
+    // Récupérer l'historique
     $channelHistory = getChannelHistory($currentChannelId);
-
 }
 
+// Récupérer la liste des channels APRÈS le nettoyage
+$userChannels = getUserChannels($userId);
+
+// Gestion de la mise à jour du modèle
 if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels)) {
     $display_chat = "block";
     if ($currentChannelId !== null) {
         $pdo = getDBConnection();
         try {
-            $stmt = $pdo->prepare("UPDATE chat_channels SET model = ? WHERE id = ?");
-            $stmt->execute([$_GET['model'], $currentChannelId]);
+            $stmt = $pdo->prepare("UPDATE chat_channels SET model = ? WHERE id = ? AND id_user = ?");
+            $stmt->execute([$_GET['model'], $currentChannelId, $userId]);
         } catch (PDOException $e) {
-            error_log("Erreur lors de la mise à jour model_valid : " . $e->getMessage());
+            error_log("Erreur lors de la mise à jour du modèle : " . $e->getMessage());
         }
     }
 } else {
     $display_chat = "none";
 }
 
+// Fonction pour compter les messages dans un channel
 function countMessagesInChannel($channelId) {
     $pdo = getDBConnection();
     try {
@@ -159,35 +223,18 @@ function countMessagesInChannel($channelId) {
         return 0;
     }
 }
+
+$display_list = "block"; // Par défaut, afficher la liste des modèles
+
 if ($currentChannelId !== null) {
     $messageCount = countMessagesInChannel($currentChannelId);
 
-    if ($messageCount > 1) {
-        // Ici tu mets ce que tu veux faire si plus de 1 message
-        // Par exemple afficher un message, modifier une variable, etc.
+    if ($messageCount > 0) {
+        // Si il y a des messages, cacher la liste des modèles
         $display_list = "none";
-    } else {
-        $display_list = "block";
     }
 }
 
-function deleteChannelEmpty($currentChannelId) {
-    if (!isset($_SESSION['user_id']) || empty($currentChannelId)) return;
-
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("
-            DELETE FROM chat_channels 
-            WHERE (model = '' OR model IS NULL) 
-            AND id_user = ? 
-            AND id != ?
-        ");
-        $stmt->execute([$_SESSION['user_id'], $currentChannelId]);
-    } catch (PDOException $e) {
-        error_log("Erreur lors de la suppression des channels : " . $e->getMessage());
-    }
-}
-deleteChannelEmpty($currentChannelId);
 ?>
 
 <!DOCTYPE html>
@@ -196,7 +243,7 @@ deleteChannelEmpty($currentChannelId);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mistral AI Chat - <?php echo $availableModels[$selectedModel]['name']; ?></title>
+    <title>Mistral AI Chat<?php echo $selectedModel ? ' - ' . $availableModels[$selectedModel]['name'] : ''; ?></title>
     <link rel="stylesheet" href="css/chat.css">
 </head>
 <style>
@@ -397,19 +444,21 @@ deleteChannelEmpty($currentChannelId);
 
             <div class="chat-list" id="chatList" >
                 <?php foreach ($userChannels as $channel): ?>
-                    <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
-                        data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>" 
-                        data-model="<?php echo htmlspecialchars($channel['model']); ?>"> 
-                        <div class="chat-preview">
-                            <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
+                    <?php if ($channel['message_count'] > 0): // Afficher seulement les channels avec des messages ?>
+                        <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
+                            data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>" 
+                            data-model="<?php echo htmlspecialchars($channel['model']); ?>"> 
+                            <div class="chat-preview">
+                                <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
+                            </div>
+                            <div class="chat-model">
+                                <?php echo $channel['model']; ?>
+                            </div>
+                            <div class="chat-time">
+                                🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
+                            </div>
                         </div>
-                        <div class="chat-model">
-                            <?php echo $channel['model']; ?>
-                        </div>
-                        <div class="chat-time">
-                            🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
-                        </div>
-                    </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -419,8 +468,6 @@ deleteChannelEmpty($currentChannelId);
             <div class="header">
                 <div class="header-content">
                     <h1>🤖 Mistral AI Chat</h1>
-                    
-
                 </div>
             </div>
 
@@ -429,7 +476,7 @@ deleteChannelEmpty($currentChannelId);
                     <!-- Message de bienvenue seulement si pas d'historique -->
                     <div class="message ai">
                         <div class="message-content">
-                            Salut ! Je suis <?php echo $availableModels[$selectedModel]['name']; ?>. Comment puis-je t'aider aujourd'hui ? 🚀
+                            Salut ! Je suis votre assistant IA. Choisissez un modèle pour commencer ! 🚀
                         </div>
                         <div class="message-time" id="welcomeTime"></div>
                     </div>
@@ -442,7 +489,7 @@ deleteChannelEmpty($currentChannelId);
                     <div class="loading-dot"></div>
                     <div class="loading-dot"></div>
                 </div>
-                <p><?php echo $availableModels[$selectedModel]['name']; ?> réfléchit...</p>
+                <p><?php echo $selectedModel ? $availableModels[$selectedModel]['name'] : 'IA'; ?> réfléchit...</p>
             </div>
 
             <div class="input-container">
@@ -485,7 +532,7 @@ let messageHistory = <?php echo json_encode(array_map(function ($msg) {
 const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
 
 // Modèle sélectionné - avec une valeur par défaut si null
-const selectedModel = '';
+const selectedModel = '<?php echo $selectedModel ?: ''; ?>';
 
 console.log('Modèle sélectionné au chargement:', selectedModel);
 
@@ -499,6 +546,9 @@ document.getElementById('modelSelect').addEventListener('change', function() {
 
 // Gestion du nouveau chat avec préservation du modèle
 document.getElementById('newChatBtn').addEventListener('click', function() {
+    // Empêcher les clics multiples rapides
+    this.disabled = true;
+    
     const currentUrl = new URL(window.location);
     currentUrl.searchParams.delete('id_channel');
     
@@ -512,6 +562,10 @@ document.getElementById('newChatBtn').addEventListener('click', function() {
 // Gestion des clics sur l'historique avec préservation du modèle
 document.querySelectorAll('.chat-item').forEach(item => {
     item.addEventListener('click', function() {
+        // Empêcher les clics multiples
+        if (this.classList.contains('loading')) return;
+        this.classList.add('loading');
+        
         const channelId = this.dataset.channelId;
         const channelModel = this.dataset.model;
         
@@ -552,4 +606,3 @@ document.querySelectorAll('.chat-item').forEach(item => {
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
 <script type="text/javascript" src="scripts/account.js"></script>
-
