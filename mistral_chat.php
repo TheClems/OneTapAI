@@ -447,7 +447,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             }
         }
 
-        // Ajouter un message au chat
+        // Ajouter un message au chat ET à l'historique
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
@@ -491,7 +491,10 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             const message = messageInput.value.trim();
             if (!message) return;
 
-            // Ajouter le message utilisateur
+            // Éviter les doubles soumissions
+            if (sendButton.disabled) return;
+
+            // Ajouter le message utilisateur à l'affichage ET à l'historique
             addMessage(message, true);
             messageInput.value = '';
 
@@ -502,11 +505,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
             try {
                 // Préparer les messages pour l'API (garder les 10 derniers)
+                // IMPORTANT : Utiliser une copie de l'historique, pas l'original
                 const messages = messageHistory.slice(-10);
-                messages.push({
-                    role: 'user',
-                    content: message
-                });
 
                 const response = await fetch('mistral_api.php', {
                     method: 'POST',
@@ -521,6 +521,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 const data = await response.json();
 
                 if (data.success) {
+                    // Ajouter la réponse de l'IA
                     addMessage(data.content);
                 } else {
                     showError(data.error || 'Erreur inconnue');
@@ -556,17 +557,19 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         // Effet de frappe automatique pour le message de bienvenue
         setTimeout(() => {
             const welcomeMessage = document.querySelector('.message.ai .message-content');
-            const text = welcomeMessage.textContent;
-            welcomeMessage.textContent = '';
+            if (welcomeMessage) {
+                const text = welcomeMessage.textContent;
+                welcomeMessage.textContent = '';
 
-            let i = 0;
-            const typeInterval = setInterval(() => {
-                welcomeMessage.textContent += text[i];
-                i++;
-                if (i >= text.length) {
-                    clearInterval(typeInterval);
-                }
-            }, 50);
+                let i = 0;
+                const typeInterval = setInterval(() => {
+                    welcomeMessage.textContent += text[i];
+                    i++;
+                    if (i >= text.length) {
+                        clearInterval(typeInterval);
+                    }
+                }, 50);
+            }
         }, 500);
     </script>
 </body>
