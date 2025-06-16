@@ -94,6 +94,13 @@
   animation: glow-text 2s ease-in-out infinite alternate;
 }
 
+.header h1.light-mode {
+  background: #0f0f23;
+  color: #000;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 @keyframes glow-text {
   from {
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);

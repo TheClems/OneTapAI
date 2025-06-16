@@ -20,6 +20,7 @@ const demoNotice = document.querySelector('.demo-notice');
 const chatContainer = document.querySelector('.chat-container');
 const body_buy_credits = document.querySelector('.body_buy_credits');
 const body_account = document.querySelector('.body_account');
+const h1 = document.querySelector('.header h1');
 // Gestion du thème
 let isDarkMode = true;
 
@@ -27,26 +28,26 @@ let isDarkMode = true;
 function saveTheme() {
     if (typeof currentUserId !== 'undefined') {
         const selectedTheme = isDarkMode ? 0 : 1;
-        
+
         fetch('https://onetapai.ctts.fr/theme.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ theme: selectedTheme, user_id: currentUserId })
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Erreur réseau');
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                console.log('Thème mis à jour en base');
-            } else {
-                console.error('Erreur serveur:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Fetch failed:', error);
-        });
+            .then(response => {
+                if (!response.ok) throw new Error('Erreur réseau');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log('Thème mis à jour en base');
+                } else {
+                    console.error('Erreur serveur:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch failed:', error);
+            });
     }
 }
 
@@ -68,7 +69,8 @@ if (themeToggle) {
             ...packages,
             featuredPackage,
             currentCredits,
-            demoNotice
+            demoNotice,
+            h1
         ];
 
         elementsToToggle.forEach(el => {
@@ -83,7 +85,7 @@ if (themeToggle) {
                 themeIcon.innerHTML = '<path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>';
             }
         }
-        
+
         // Sauvegarder le thème
         saveTheme();
     });
@@ -102,43 +104,43 @@ if (toggleBtn) {
 // Gestion des liens actifs - VERSION CORRIGÉE
 document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     // Fonction pour définir le lien actif
     function setActiveLink() {
         const currentPath = window.location.pathname;
         const currentFile = currentPath.split('/').pop();
-        
+
         console.log('=== DEBUG NAVIGATION ===');
         console.log('Chemin:', currentPath);
         console.log('Fichier:', currentFile);
-        
+
         // Supprimer toutes les classes active
         navLinks.forEach(l => l.classList.remove('active'));
-        
+
         // Trouver et activer le lien correspondant
         let linkFound = false;
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
-            
-            if (href === currentFile || 
-                href === currentPath || 
+
+            if (href === currentFile ||
+                href === currentPath ||
                 currentPath.endsWith('/' + href) ||
                 (currentFile === '' && href === 'test.php')) {
-                
+
                 link.classList.add('active');
                 console.log('✅ Lien activé:', href);
                 linkFound = true;
             }
         });
-        
+
         if (!linkFound) {
             console.log('❌ Aucun lien actif trouvé');
         }
     }
-    
+
     // Définir le lien actif au chargement
     setActiveLink();
-    
+
     // Gestion des clics
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -153,9 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
     if (!particlesContainer) return; // Éviter les erreurs si l'élément n'existe pas
-    
+
     const particleCount = 15;
-    
+
     for (let i = 0; i < particleCount; i++) {
         setTimeout(() => {
             const particle = document.createElement('div');
@@ -164,7 +166,7 @@ function createParticles() {
             particle.style.animationDelay = Math.random() * 6 + 's';
             particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
             particlesContainer.appendChild(particle);
-            
+
             // Supprimer la particule après l'animation
             setTimeout(() => {
                 if (particle.parentNode) {
