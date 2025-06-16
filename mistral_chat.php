@@ -454,49 +454,79 @@ if ($currentChannelId !== null) {
 
 </html>
 <script>
-    // Historique des messages depuis PHP
-    let messageHistory = <?php echo json_encode(array_map(function ($msg) {
-                                return [
-                                    'role' => $msg['role'],
-                                    'content' => $msg['content']
-                                ];
-                            }, $channelHistory)); ?>;
+// Historique des messages depuis PHP
+let messageHistory = <?php echo json_encode(array_map(function ($msg) {
+                            return [
+                                'role' => $msg['role'],
+                                'content' => $msg['content']
+                            ];
+                        }, $channelHistory)); ?>;
 
-    // Historique des messages depuis la base de données
-    const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+// Historique des messages depuis la base de données
+const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+
+// Modèle sélectionné - avec une valeur par défaut si null
+const selectedModel = '<?php echo $selectedModel ?: "mistral-large"; ?>';
+
+console.log('Modèle sélectionné au chargement:', selectedModel);
+
+// Gestion du changement de modèle
+document.getElementById('modelSelect').addEventListener('change', function() {
+    const newModel = this.value;
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('model', newModel);
+    window.location.href = currentUrl.toString();
+});
+
+// Gestion du nouveau chat avec préservation du modèle
+document.getElementById('newChatBtn').addEventListener('click', function() {
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.delete('id_channel');
     
-    // Modèle sélectionné
-    const selectedModel = '<?php echo $selectedModel; ?>';
+    // Utiliser le modèle actuellement sélectionné ou un défaut
+    const modelToUse = selectedModel || 'mistral-large';
+    currentUrl.searchParams.set('model', modelToUse);
+    
+    window.location.href = currentUrl.toString();
+});
 
-    // Gestion du changement de modèle
-    document.getElementById('modelSelect').addEventListener('change', function() {
-        const newModel = this.value;
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('model', newModel);
-        window.location.href = currentUrl.toString();
-    });
-
-    // Gestion du nouveau chat avec préservation du modèle
-    document.getElementById('newChatBtn').addEventListener('click', function() {
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.delete('id_channel');
-        currentUrl.searchParams.set('model', selectedModel);
-        window.location.href = currentUrl.toString();
-    });
-
-    // Gestion des clics sur l'historique avec préservation du modèle
-    document.querySelectorAll('.chat-item').forEach(item => {
+// Gestion des clics sur l'historique avec préservation du modèle
+document.querySelectorAll('.chat-item').forEach(item => {
     item.addEventListener('click', function() {
         const channelId = this.dataset.channelId;
-        const model = this.dataset.model || ''; // Récupère le modèle spécifique au channel
+        const channelModel = this.dataset.model;
+        
+        console.log('Clic sur chat item:', {
+            channelId: channelId,
+            channelModel: channelModel,
+            selectedModel: selectedModel
+        });
+        
         const currentUrl = new URL(window.location);
         currentUrl.searchParams.set('id_channel', channelId);
-        if (model) {
-            currentUrl.searchParams.set('model', model);
+        
+        // Priorité 1: Modèle du channel s'il existe et est valide
+        // Priorité 2: Modèle sélectionné actuellement
+        // Priorité 3: Modèle par défaut
+        let modelToUse;
+        
+        if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
+            modelToUse = channelModel;
+            console.log('Utilisation du modèle du channel:', modelToUse);
+        } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
+            modelToUse = selectedModel;
+            console.log('Utilisation du modèle sélectionné:', modelToUse);
         } else {
-            currentUrl.searchParams.delete('model');
+            modelToUse = 'mistral-large';
+            console.log('Utilisation du modèle par défaut:', modelToUse);
         }
-        window.location.href = currentUrl.toString();
+        
+        currentUrl.searchParams.set('model', modelToUse);
+        
+        const finalUrl = currentUrl.toString();
+        console.log('URL finale:', finalUrl);
+        
+        window.location.href = finalUrl;
     });
 });
 </script>
