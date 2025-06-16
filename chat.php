@@ -170,14 +170,13 @@ if ($currentChannelId !== null) {
         $display_list = "block";
     }
 }
-
-function deleteChannelEmpty(){
+function deleteChannelEmpty() {
     $pdo = getDBConnection();
     try {
-        $stmt = $pdo->prepare("DELETE FROM chat_channels WHERE model='' AND id_user =".$_SESSION['user_id']." AND id != ". $_GET['id_channel']);
-        $stmt->execute();
+        $stmt = $pdo->prepare("DELETE FROM chat_channels WHERE model = '' AND id_user = ? AND id != ?");
+        $stmt->execute([$_SESSION['user_id'], $_GET['id_channel']]);
     } catch (PDOException $e) {
-        error_log("Erreur lors du comptage des messages : " . $e->getMessage());
+        error_log("Erreur lors de la suppression des channels : " . $e->getMessage());
     }
 }
 deleteChannelEmpty();
