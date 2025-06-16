@@ -52,7 +52,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/buy_credits.css" />
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <title>Acheter des crédits - OneTapAI</title>
+    <title>Buy credits - OneTapAI</title>
 
 </head>
 
@@ -70,17 +70,17 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="container">
         <div class="header">
-            <h1>Acheter des crédits</h1>
-            <p class="subtitle">Boostez votre créativité avec nos packs de crédits IA</p>
+            <h1>Buy credits</h1>
+            <p class="subtitle">Boost your creativity with our AI credit packs</p>
         </div>
 
         <div class="demo-notice">
-            <strong>⚡ Mode démo</strong> : Les achats sont fictifs, les crédits seront ajoutés immédiatement sans paiement réel.
+            <strong>⚡ Demo mode</strong> : Purchases are simulated, credits will be added immediately without real payment.
         </div>
 
         <div class="current-credits">
             <div class="current-credits-content">
-                <p>Vos crédits actuels</p>
+                <p>Your current credits</p>
                 <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
             </div>
         </div>
@@ -100,7 +100,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
-                        Acheter
+                        Buy
                     </button>
                     <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
                 </div>
@@ -108,7 +108,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="back-link">
-            <a href="dashboard.php">← Retour au tableau de bord</a>
+            <a href="dashboard.php">← Back to dashboard</a>
         </div>
     </div>
 
