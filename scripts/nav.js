@@ -141,8 +141,9 @@ if (toggleBtn) {
         if (chatContainer) chatContainer.classList.toggle('collapsed');
         if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
         if (body_account) body_account.classList.toggle('collapsed');
-        if (chatHistoryPanel) chatHistoryPanel.classList.toggle('collapsed');
         if (toggleBtn2) toggleBtn2.classList.toggle('collapsed');
+
+        if (chatHistoryPanel) chatHistoryPanel.classList.toggle('collapsed');
     });
 }
 
