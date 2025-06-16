@@ -28,18 +28,34 @@ body {
 }
 
 h1 {
-    font-size: 3rem;
+    font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 700;
     text-align: center;
     margin-bottom: 1rem;
     color: #fff;
+    animation: glow-text 2s ease-in-out infinite alternate;
+}
+
+h1.light-mode {
+    color: #000;
+}
+
+@keyframes glow-text {
+    from {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    to {
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+    }
 }
 
 .subtitle {
     text-align: center;
     color: #888;
     margin-bottom: 3rem;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    font-weight: 300;
 }
 
 .account-container {
