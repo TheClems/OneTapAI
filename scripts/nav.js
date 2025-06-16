@@ -26,8 +26,8 @@ const actionsSection = document.querySelector('.actions-section');
 const actionsSectionH3 = document.querySelector('.actions-section h3');
 const toggleBtn2 = document.querySelector('.toggle-btn');
 const chatHistoryPanel2 = document.querySelector('.chat-history-panel');
-const chatList = document.querySelector('.chat-list');
-const chatItem = document.querySelector('.chat-item');
+const chatList = document.querySelectorAll('.chat-list');
+const chatItem = document.querySelectorAll('.chat-item');
 const chatPreview = document.querySelectorAll('.chat-preview');
 const chatModel = document.querySelectorAll('.chat-model');
 const chatTime = document.querySelectorAll('.chat-time');
@@ -53,8 +53,8 @@ const elementsToToggle = [
     actionsSectionH3,
     toggleBtn2,
     chatHistoryPanel2,
-    chatList,
-    chatItem,
+    ...chatList,
+    ...chatItem,
     ...chatPreview,
     ...chatModel,
     ...chatTime,
