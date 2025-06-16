@@ -313,7 +313,7 @@ if ($currentChannelId !== null) {
 
 .model-select option {
     background: #2d3748;
-    color: white;
+    color: #000;
     padding: 0.5rem;
     font-weight: 500;
 }
