@@ -109,10 +109,7 @@ h1 {
     font-weight: 700;
     text-align: center;
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, #00ff94, #00d4aa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: #fff;
 }
 
 .subtitle {
@@ -197,9 +194,11 @@ h1 {
     padding: 1.5rem;
     backdrop-filter: blur(10px);
 }
+
 .info-card.light-mode {
     background: rgba(234, 229, 229, 0.05);
 }
+
 .info-row {
     display: flex;
     justify-content: space-between;
@@ -228,6 +227,7 @@ h1 {
     font-weight: 600;
     color: #fff;
 }
+
 .info-value.light-mode {
     color: #000;
 }
@@ -243,6 +243,7 @@ h1 {
     padding: 2rem;
     backdrop-filter: blur(10px);
 }
+
 .actions-section.light-mode {
     background: rgba(234, 229, 229, 0.05);
 }
@@ -252,6 +253,7 @@ h1 {
     color: #fff;
     font-size: 1.3rem;
 }
+
 .actions-section h3.light-mode {
     color: #000;
 }
@@ -431,13 +433,13 @@ body.dark-mode .actions-section {
 }
 
 
-.h2_name{
+.h2_name {
     font-size: 2rem;
     margin-bottom: 0.5rem;
     color: #ffffff;
 }
 
-.h2_name.light-mode{
+.h2_name.light-mode {
     color: #000;
 }
 
