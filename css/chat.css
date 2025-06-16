@@ -433,7 +433,7 @@ body {
 
 .send-button {
     padding: 15px 25px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: #1c7c64;
     border: none;
     border-radius: 25px;
     color: white;
@@ -446,7 +446,7 @@ body {
 
 .send-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 10px 30px rgba(62, 243, 199, 0.15);
 }
 
 .send-button:active {
