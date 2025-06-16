@@ -492,90 +492,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 opacity: 0;
             }
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            gap: 20px;
-        }
-
-        .chat-history-sidebar {
-            width: 300px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-
-        .chat-history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-
-        .chat-history-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-
-        .toggle-history-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        .toggle-history-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .chat-history-list {
-            height: calc(100vh - 200px);
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .chat-history-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-history-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .chat-history-item .preview {
-            flex: 1;
-            margin-right: 10px;
-        }
-
-        .chat-history-item .delete-btn {
-            background: none;
-            border: none;
-            color: #ff4444;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-        .chat-history-item .delete-btn:hover {
-            background: rgba(255, 68, 68, 0.1);
-        }
     </style>
 </head>
 
@@ -584,55 +500,43 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     <div class="particles" id="particles"></div>
 
-    <div class="container">
-        <aside class="chat-history-sidebar" id="chatHistorySidebar">
-            <div class="chat-history-header">
-                <h3>Historique des chats</h3>
-                <button id="toggleHistory" class="toggle-history-btn">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-            </div>
-            <div class="chat-history-list" id="chatHistoryList">
-                <!-- Les chats seront chargés ici via JavaScript -->
-            </div>
-        </aside>
-        <div class="chat-container">
-            <div class="header">
-                <h1>🤖 Mistral AI Chat</h1>
-            </div>
-
-            <div class="chat-messages" id="chatMessages">
-                <?php if (empty($channelHistory)): ?>
-                    <!-- Message de bienvenue seulement si pas d'historique -->
-                    <div class="message ai">
-                        <div class="message-content">
-                            Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
-                        </div>
-                        <div class="message-time" id="welcomeTime"></div>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <div class="loading" id="loading">
-                <div class="loading-dots">
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                </div>
-                <p>Mistral réfléchit...</p>
-            </div>
-
-            <div class="input-container">
-                <div class="input-group">
-                    <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
-                    <button class="send-button" id="sendButton">
-                        <span>Envoyer</span>
-                    </button>
-                </div>
-            </div>
+    <div class="chat-container">
+        <div class="header">
+            <h1>🤖 Mistral AI Chat</h1>
         </div>
 
-        <script>
+        <div class="chat-messages" id="chatMessages">
+            <?php if (empty($channelHistory)): ?>
+                <!-- Message de bienvenue seulement si pas d'historique -->
+                <div class="message ai">
+                    <div class="message-content">
+                        Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+                    </div>
+                    <div class="message-time" id="welcomeTime"></div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+            <p>Mistral réfléchit...</p>
+        </div>
+
+        <div class="input-container">
+            <div class="input-group">
+                <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
+                <button class="send-button" id="sendButton">
+                    <span>Envoyer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
 // Configuration
 const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
@@ -923,87 +827,6 @@ if (channelHistoryFromDB.length === 0) {
         }
     }, 500);
 }
-
-// Fonction pour charger les chats de l'historique
-async function loadChatHistory() {
-    try {
-        const response = await fetch('ajax/get_user_chats.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userId: <?php echo $userId ?? 'null'; ?> })
-        });
-        
-        const chats = await response.json();
-        const chatHistoryList = document.getElementById('chatHistoryList');
-        chatHistoryList.innerHTML = '';
-
-        chats.forEach(chat => {
-            const chatItem = document.createElement('div');
-            chatItem.className = 'chat-history-item';
-            chatItem.innerHTML = `
-                <div class="preview">
-                    <p>${chat.first_message.substring(0, 50)}...</p>
-                    <small>${new Date(chat.created_at).toLocaleDateString()}</small>
-                </div>
-                <button class="delete-btn" onclick="deleteChat(${chat.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            `;
-            chatItem.onclick = () => loadChatMessages(chat.id);
-            chatHistoryList.appendChild(chatItem);
-        });
-    } catch (error) {
-        console.error('Erreur lors du chargement de l\'historique:', error);
-    }
-}
-
-// Fonction pour charger les messages d'un chat spécifique
-function loadChatMessages(chatId) {
-    // Ici, vous pouvez implémenter la logique pour charger les messages du chat
-    console.log('Chargement des messages du chat:', chatId);
-}
-
-// Fonction pour supprimer un chat
-async function deleteChat(chatId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce chat ?')) {
-        return;
-    }
-
-    try {
-        const response = await fetch('ajax/delete_chat.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ chatId: chatId })
-        });
-        
-        if (response.ok) {
-            loadChatHistory(); // Recharger l'historique après suppression
-        }
-    } catch (error) {
-        console.error('Erreur lors de la suppression du chat:', error);
-    }
-}
-
-// Gestion du toggle de l'historique
-document.getElementById('toggleHistory').onclick = () => {
-    const sidebar = document.getElementById('chatHistorySidebar');
-    const chatContainer = document.querySelector('.chat-container');
-    
-    if (sidebar.style.transform === 'translateX(-100%)') {
-        sidebar.style.transform = 'translateX(0)';
-        chatContainer.style.width = 'calc(100% - 320px)';
-    } else {
-        sidebar.style.transform = 'translateX(-100%)';
-        chatContainer.style.width = '100%';
-    }
-};
-
-// Charger l'historique au chargement de la page
-loadChatHistory();
     </script>
 </body>
 
