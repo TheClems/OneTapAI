@@ -143,7 +143,6 @@ if (toggleBtn) {
         if (body_account) body_account.classList.toggle('collapsed');
         if (toggleBtn2) toggleBtn2.classList.toggle('collapsed');
 
-        if (chatHistoryPanel) chatHistoryPanel.classList.toggle('collapsed');
     });
 }
 
