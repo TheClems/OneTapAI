@@ -129,7 +129,11 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     // Sinon on récupère l'historique normalement
     $channelHistory = getChannelHistory($currentChannelId);
-
+    if(!isset($_GET['model'])){
+        $display_chat="none";
+    }else{
+        $display_chat="block";
+    }
 }
 ?>
 
@@ -398,8 +402,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                         </select>
 
                     </div>
-                    <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
-                    <button class="send-button" id="sendButton">
+                    <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off" style="display: <?php echo $display_chat; ?>;">
+                    <button class="send-button" id="sendButton" style="display: <?php echo $display_chat; ?>;">
                         <span>Envoyer</span>
                     </button>
                 </div>
