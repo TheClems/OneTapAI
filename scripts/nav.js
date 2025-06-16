@@ -32,6 +32,7 @@ const chatPreview = document.querySelectorAll('.chat-preview');
 const chatModel = document.querySelectorAll('.chat-model');
 const chatTime = document.querySelectorAll('.chat-time');
 const h3 = document.querySelectorAll('h3');
+const historyHeader = document.querySelectorAll('.history-header');
 
 
 
@@ -58,7 +59,8 @@ const elementsToToggle = [
     ...chatPreview,
     ...chatModel,
     ...chatTime,
-    ...h3
+    ...h3,
+    ...historyHeader
 ];
 
 
