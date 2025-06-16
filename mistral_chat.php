@@ -134,8 +134,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
 if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels)) {
     $display_chat = "block";
-} else {
-    $display_chat = "none";
     if ($currentChannelId !== null) {
         $pdo = getDBConnection();
         try {
@@ -145,13 +143,14 @@ if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels))
             error_log("Erreur lors de la mise à jour model_valid : " . $e->getMessage());
         }
     }
+} else {
+    $display_chat = "none";
 }
 
 function countMessagesInChannel($channelId) {
     $pdo = getDBConnection();
     try {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = ?");
-        echo $stmt;
         $stmt->execute([$channelId]);
         return (int) $stmt->fetchColumn();
     } catch (PDOException $e) {
