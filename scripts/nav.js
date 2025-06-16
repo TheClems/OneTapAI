@@ -24,6 +24,8 @@ const h1 = document.querySelector('.header h1');
 const profileHeader = document.querySelector('.profile-header');
 const actionsSection = document.querySelector('.actions-section');
 const actionsSectionH3 = document.querySelector('.actions-section h3');
+
+const chatHistoryPanel = document.querySelector('.chat-history-panel');
 const elementsToToggle = [
     ...infoValues,
     ...infoCards,
@@ -139,6 +141,7 @@ if (toggleBtn) {
         if (chatContainer) chatContainer.classList.toggle('collapsed');
         if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
         if (body_account) body_account.classList.toggle('collapsed');
+        if (chatHistoryPanel) chatHistoryPanel.classList.toggle('collapsed');
     });
 }
 
