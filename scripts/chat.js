@@ -64,8 +64,40 @@ document.addEventListener('click', (e) => {
     const chatItem = e.target.closest('.chat-item');
     if (chatItem) {
         const channelId = chatItem.dataset.channelId;
+        const channelModel = chatItem.dataset.model;
+        
         if (channelId) {
-            window.location.href = `?id_channel=${channelId}`;
+            console.log('Clic sur chat item:', {
+                channelId: channelId,
+                channelModel: channelModel,
+                selectedModel: typeof selectedModel !== 'undefined' ? selectedModel : null
+            });
+            
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('id_channel', channelId);
+            
+            // Priorité 1: Modèle du channel s'il existe et est valide
+            // Priorité 2: Modèle sélectionné actuellement
+            // Priorité 3: Modèle par défaut
+            let modelToUse;
+            
+            if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
+                modelToUse = channelModel;
+                console.log('Utilisation du modèle du channel:', modelToUse);
+            } else if (typeof selectedModel !== 'undefined' && selectedModel && selectedModel !== '' && selectedModel !== 'null') {
+                modelToUse = selectedModel;
+                console.log('Utilisation du modèle sélectionné:', modelToUse);
+            } else {
+                modelToUse = 'mistral-large';
+                console.log('Utilisation du modèle par défaut:', modelToUse);
+            }
+            
+            currentUrl.searchParams.set('model', modelToUse);
+            
+            const finalUrl = currentUrl.toString();
+            console.log('URL finale:', finalUrl);
+            
+            window.location.href = finalUrl;
         }
     }
 });
