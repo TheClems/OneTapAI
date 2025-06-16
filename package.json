@@ -22,8 +22,10 @@
   },
   "dependencies": {
     "@prettier/plugin-php": "^0.22.4",
+    "chokidar": "^4.0.3",
     "postcss": "^8.4.33",
     "postcss-simple-vars": "^7.0.1",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "simple-git": "^3.28.0"
   }
 }
