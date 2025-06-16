@@ -82,9 +82,24 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     header("Location: ?id_channel=" . $id);
     exit;
 } else {
-    // Channel existant, récupérer l'historique
+
     $currentChannelId = $_GET['id_channel'];
+
+    // Vérifie si ce chat appartient à l'utilisateur connecté
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT id_user FROM chat_channels WHERE id = ?");
+    $stmt->execute([$currentChannelId]);
+    $channelOwner = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$channelOwner || $channelOwner['id_user'] !== $userId) {
+        // Soit le chat n'existe pas, soit il n'appartient pas à cet utilisateur
+        header("Location: unauthorized.php"); // ou page d'accueil, ou 403.php
+        exit;
+    }
+
+    // Sinon on récupère l'historique normalement
     $channelHistory = getChannelHistory($currentChannelId);
+
 }
 ?>
 
