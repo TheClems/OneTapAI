@@ -15,6 +15,34 @@ if (isset($_SESSION['user_id'])) {
     $userId = null;
 }
 
+// Gestion du modèle sélectionné
+$selectedModel = isset($_GET['model']) ? $_GET['model'] : 'mistral-large';
+$_SESSION['selected_model'] = $selectedModel;
+
+// Liste des modèles disponibles
+$availableModels = [
+    'mistral-large' => [
+        'name' => 'Mistral Large',
+        'icon' => '🚀',
+        'description' => 'Le plus puissant'
+    ],
+    'mistral-medium' => [
+        'name' => 'Mistral Medium', 
+        'icon' => '⚡',
+        'description' => 'Équilibré'
+    ],
+    'mistral-small' => [
+        'name' => 'Mistral Small',
+        'icon' => '💨',
+        'description' => 'Rapide et efficace'
+    ],
+    'codestral' => [
+        'name' => 'Codestral',
+        'icon' => '💻',
+        'description' => 'Spécialisé code'
+    ]
+];
+
 // Fonction pour récupérer l'historique des messages d'un channel
 function getChannelHistory($channelId)
 {
@@ -79,7 +107,9 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     ]);
     $_SESSION['id_channel'] = $id;
 
-    header("Location: ?id_channel=" . $id);
+    // Préserver le modèle sélectionné lors de la redirection
+    $modelParam = isset($_GET['model']) ? '&model=' . urlencode($_GET['model']) : '';
+    header("Location: ?id_channel=" . $id . $modelParam);
     exit;
 } else {
 
@@ -109,10 +139,184 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mistral AI Chat</title>
+    <title>Mistral AI Chat - <?php echo $availableModels[$selectedModel]['name']; ?></title>
     <link rel="stylesheet" href="css/chat.css">
 </head>
+<style>
+/* Styles pour le sélecteur de modèle */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.model-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    min-width: 200px;
+}
+
+.model-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.25rem;
+}
+
+.model-select {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    min-width: 200px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.model-select:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.model-select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.model-select option {
+    background: #2d3748;
+    color: white;
+    padding: 0.5rem;
+    font-weight: 500;
+}
+
+.model-description {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-style: italic;
+    text-align: right;
+    margin-top: 0.25rem;
+    min-height: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Animation pour la description */
+.model-description {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .header-content h1 {
+        font-size: 1.5rem;
+    }
+
+    .model-selector {
+        align-items: center;
+        width: 100%;
+    }
+
+    .model-select {
+        min-width: 250px;
+        max-width: 100%;
+    }
+
+    .model-description {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 1rem;
+    }
+
+    .model-select {
+        min-width: 200px;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+    }
+
+    .header-content h1 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Style amélioré pour les options du select */
+.model-select option[value="mistral-large"] {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+}
+
+.model-select option[value="mistral-medium"] {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+}
+
+.model-select option[value="mistral-small"] {
+    background: linear-gradient(135deg, #45b7d1, #3498db);
+}
+
+.model-select option[value="codestral"] {
+    background: linear-gradient(135deg, #96ceb4, #85c9a0);
+}
+
+/* Effet de glow subtil pour le select */
+.model-select:focus {
+    box-shadow: 
+        0 0 0 3px rgba(255, 255, 255, 0.2),
+        0 0 20px rgba(255, 255, 255, 0.1),
+        0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Animation au survol de la description */
+.model-selector:hover .model-description {
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.05);
+}
+</style>
 <body>
     <?php require_once 'nav.php'; ?>
 
@@ -152,7 +356,25 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         <!-- Zone de chat principale -->
         <div class="chat-container">
             <div class="header">
-                <h1>🤖 Mistral AI Chat</h1>
+                <div class="header-content">
+                    <h1>🤖 Mistral AI Chat</h1>
+                    
+                    <!-- Sélecteur de modèle -->
+                    <div class="model-selector">
+                        <label for="modelSelect" class="model-label">Modèle :</label>
+                        <select id="modelSelect" class="model-select">
+                            <?php foreach ($availableModels as $modelKey => $modelInfo): ?>
+                                <option value="<?php echo $modelKey; ?>" 
+                                        <?php echo ($selectedModel === $modelKey) ? 'selected' : ''; ?>>
+                                    <?php echo $modelInfo['icon'] . ' ' . $modelInfo['name']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="model-description">
+                            <?php echo $availableModels[$selectedModel]['description']; ?>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="chat-messages" id="chatMessages">
@@ -160,7 +382,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                     <!-- Message de bienvenue seulement si pas d'historique -->
                     <div class="message ai">
                         <div class="message-content">
-                            Salut ! Je suis Mistral AI. Comment puis-je t'aider aujourd'hui ? 🚀
+                            Salut ! Je suis <?php echo $availableModels[$selectedModel]['name']; ?>. Comment puis-je t'aider aujourd'hui ? 🚀
                         </div>
                         <div class="message-time" id="welcomeTime"></div>
                     </div>
@@ -173,7 +395,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                     <div class="loading-dot"></div>
                     <div class="loading-dot"></div>
                 </div>
-                <p>Mistral réfléchit...</p>
+                <p><?php echo $availableModels[$selectedModel]['name']; ?> réfléchit...</p>
             </div>
 
             <div class="input-container">
@@ -186,7 +408,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             </div>
         </div>
     </div>
-
 
 </body>
 
@@ -202,6 +423,36 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     // Historique des messages depuis la base de données
     const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+    
+    // Modèle sélectionné
+    const selectedModel = '<?php echo $selectedModel; ?>';
+
+    // Gestion du changement de modèle
+    document.getElementById('modelSelect').addEventListener('change', function() {
+        const newModel = this.value;
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('model', newModel);
+        window.location.href = currentUrl.toString();
+    });
+
+    // Gestion du nouveau chat avec préservation du modèle
+    document.getElementById('newChatBtn').addEventListener('click', function() {
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.delete('id_channel');
+        currentUrl.searchParams.set('model', selectedModel);
+        window.location.href = currentUrl.toString();
+    });
+
+    // Gestion des clics sur l'historique avec préservation du modèle
+    document.querySelectorAll('.chat-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const channelId = this.dataset.channelId;
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('id_channel', channelId);
+            currentUrl.searchParams.set('model', selectedModel);
+            window.location.href = currentUrl.toString();
+        });
+    });
 </script>
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
