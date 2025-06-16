@@ -44,7 +44,7 @@ let isDarkMode = true;
 
 // Fonction pour sauvegarder le thème (avec vérification si currentUserId existe)
 function saveTheme() {
-        const selectedTheme = isDarkMode ? 0 : 1;
+        const selectedTheme = isDarkMode ? 1 : 0;
 
         fetch('https://onetapai.ctts.fr/theme.php', {
             method: 'POST',
