@@ -250,9 +250,7 @@ body.light-mode .main-content {
     color: #334155;
 }
 
-.sidebar.collapsed+.main-content {
-    margin-left: 8.5rem;
-}
+
 
 .content-card {
     background: rgba(62, 243, 199, 0.1);
