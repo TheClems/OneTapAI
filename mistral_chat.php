@@ -378,10 +378,12 @@ if ($currentChannelId !== null) {
                 </button>
             </div>
 
-            <div class="chat-list" id="chatList" >
+            <div class="chat-list" id="chatList">
                 <?php foreach ($userChannels as $channel): ?>
                     <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
-                        data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>">
+                        data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
+                        data-model="<?php echo htmlspecialchars($channel['model']); ?>">
+                        
                         <div class="chat-preview">
                             <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                         </div>
