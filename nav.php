@@ -3,7 +3,7 @@ require_once 'config.php';
 requireLogin();
 
 $user = getCurrentUser();
-$isDarkMode = $user['dark_mode'] == 0 ? 'true' : 'false';
+$isDarkMode = $user['dark_mode'] == 1 ? 'true' : 'false';
 ?>
 <script>
     const isDarkModeFromServer = <?= $isDarkMode ?>;
