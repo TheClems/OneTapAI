@@ -56,7 +56,7 @@ toggleHistoryBtn.addEventListener('click', () => {
 
 // Créer un nouveau chat
 newChatBtn.addEventListener('click', () => {
-    window.location.href = window.location.pathname; // Retour à la page sans paramètres
+    window.location.href = "chat.php"; // Retour à la page sans paramètres
 });
 
 // Gérer les clics sur les éléments de chat
