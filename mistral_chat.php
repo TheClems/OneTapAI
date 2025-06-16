@@ -359,21 +359,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 <div class="header-content">
                     <h1>🤖 Mistral AI Chat</h1>
                     
-                    <!-- Sélecteur de modèle -->
-                    <div class="model-selector">
-                        <label for="modelSelect" class="model-label">Modèle :</label>
-                        <select id="modelSelect" class="model-select">
-                            <?php foreach ($availableModels as $modelKey => $modelInfo): ?>
-                                <option value="<?php echo $modelKey; ?>" 
-                                        <?php echo ($selectedModel === $modelKey) ? 'selected' : ''; ?>>
-                                    <?php echo $modelInfo['icon'] . ' ' . $modelInfo['name']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="model-description">
-                            <?php echo $availableModels[$selectedModel]['description']; ?>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
@@ -400,6 +386,21 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
             <div class="input-container">
                 <div class="input-group">
+                                        <!-- Sélecteur de modèle -->
+                                        <div class="model-selector">
+                        <label for="modelSelect" class="model-label">Modèle :</label>
+                        <select id="modelSelect" class="model-select">
+                            <?php foreach ($availableModels as $modelKey => $modelInfo): ?>
+                                <option value="<?php echo $modelKey; ?>" 
+                                        <?php echo ($selectedModel === $modelKey) ? 'selected' : ''; ?>>
+                                    <?php echo $modelInfo['icon'] . ' ' . $modelInfo['name']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="model-description">
+                            <?php echo $availableModels[$selectedModel]['description']; ?>
+                        </div>
+                    </div>
                     <input type="text" class="message-input" id="messageInput" placeholder="Tapez votre message..." autocomplete="off">
                     <button class="send-button" id="sendButton">
                         <span>Envoyer</span>
