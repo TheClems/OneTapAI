@@ -3,6 +3,7 @@ const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleBtn');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
+const chatMessages = document.querySelector('.chat-messages');
 const body = document.body;
 
 // Éléments avec vérification d'existence (évite les erreurs si certains éléments n'existent pas)
@@ -33,7 +34,6 @@ const chatModel = document.querySelectorAll('.chat-model');
 const chatTime = document.querySelectorAll('.chat-time');
 const h3 = document.querySelectorAll('h3');
 const historyHeader = document.querySelectorAll('.history-header');
-const chatMessages = document.querySelector('.chat-messages');
 
 
 const elementsToToggle = [
