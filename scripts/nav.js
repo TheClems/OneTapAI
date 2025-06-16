@@ -21,7 +21,10 @@ const chatContainer = document.querySelector('.chat-container');
 const body_buy_credits = document.querySelector('.body_buy_credits');
 const body_account = document.querySelector('.body_account');
 const h1 = document.querySelector('.header h1');
-
+const profileHeader = document.querySelector('.profile-header');
+const profileInfoH2 = document.querySelector('.profile-info h2');
+const actionsSection = document.querySelector('.actions-section');
+const actionsSectionH3 = document.querySelector('.actions-section h3');
 const elementsToToggle = [
     ...infoValues,
     ...infoCards,
@@ -34,7 +37,11 @@ const elementsToToggle = [
     featuredPackage,
     currentCredits,
     demoNotice,
-    h1
+    h1,
+    profileHeader,
+    profileInfoH2,
+    actionsSection,
+    actionsSectionH3
 ];
 
 
