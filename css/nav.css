@@ -66,21 +66,21 @@ body.light-mode .sidebar::before {
     transform: translateY(-50%);
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    background: linear-gradient(135deg, #64ffda, #1de9b6);
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 10px 25px rgba(62, 243, 199, 0.3);
     transition: all 0.3s ease;
     z-index: 1001;
 }
 
 body.light-mode .toggle-btn {
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
+    background: linear-gradient(135deg, #64ffda, #1de9b6);
+    box-shadow: 0 10px 25px rgba(62, 243, 199, 0.2);
 }
 
 .toggle-btn:hover {
@@ -104,7 +104,7 @@ body.light-mode .toggle-btn {
 
 .nav-header {
     padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    border-bottom: 1px solid rgba(62, 243, 199, 0.2);
     position: relative;
     display: flex;
     justify-content: center;
@@ -112,7 +112,7 @@ body.light-mode .toggle-btn {
 }
 
 body.light-mode .nav-header {
-    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    border-bottom: 1px solid rgba(62, 243, 199, 0.2);
 }
 
 .logo {
@@ -122,7 +122,6 @@ body.light-mode .nav-header {
     background: #fff;
     background-clip: text;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     text-align: left;
     flex-grow: 1;
 }
@@ -149,7 +148,7 @@ body.light-mode .theme-toggle {
 }
 
 .theme-toggle:hover {
-    background: rgba(124, 58, 237, 0.1);
+    background: rgba(62, 243, 199, 0.1);
     transform: scale(1.1);
 }
 
@@ -202,14 +201,14 @@ body.light-mode .nav-link {
 
 .nav-link:hover {
     color: #e2e8f0;
-    background: rgba(124, 58, 237, 0.1);
+    background: rgba(62, 243, 199, 0.1);
     transform: translateX(8px);
     max-width: 97%;
 }
 
 body.light-mode .nav-link:hover {
     color: #334155;
-    background: rgba(124, 58, 237, 0.05);
+    background: rgba(62, 243, 199, 0.05);
 }
 
 .nav-link.active {
@@ -256,17 +255,17 @@ body.light-mode .main-content {
 }
 
 .content-card {
-    background: rgba(124, 58, 237, 0.1);
+    background: rgba(62, 243, 199, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 2rem;
-    border: 1px solid rgba(124, 58, 237, 0.2);
-    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(62, 243, 199, 0.2);
+    box-shadow: 0 20px 40px rgba(62, 243, 199, 0.1);
 }
 
 body.light-mode .content-card {
     background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(62, 243, 199, 0.2);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
