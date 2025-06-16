@@ -136,6 +136,15 @@ if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels))
     $display_chat = "block";
 } else {
     $display_chat = "none";
+    if ($currentChannelId !== null) {
+        $pdo = getDBConnection();
+        try {
+            $stmt = $pdo->prepare("UPDATE chat_channels SET model = ? WHERE id = ?");
+            $stmt->execute([$_GET['model'], $currentChannelId]);
+        } catch (PDOException $e) {
+            error_log("Erreur lors de la mise à jour model_valid : " . $e->getMessage());
+        }
+    }
 }
 
 function countMessagesInChannel($channelId) {
