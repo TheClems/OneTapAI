@@ -3,7 +3,6 @@ const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleBtn');
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
-const chatMessages = document.getElementById('chatMessages');
 const body = document.body;
 
 // Éléments avec vérification d'existence (évite les erreurs si certains éléments n'existent pas)
@@ -61,7 +60,6 @@ const elementsToToggle = [
     ...chatTime,
     ...h3,
     ...historyHeader,
-    chatMessages
 ];
 
 
