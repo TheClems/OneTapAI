@@ -193,7 +193,7 @@ body {
 }
 
 .header {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    background: rgb(18 45 39);
     padding: 20px;
     text-align: center;
     position: relative;
