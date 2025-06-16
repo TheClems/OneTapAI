@@ -66,21 +66,21 @@ body.light-mode .sidebar::before {
     transform: translateY(-50%);
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    background: linear-gradient(135deg, #64ffda, #1de9b6);
     border: none;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 10px 25px rgba(62, 243, 199, 0.3);
     transition: all 0.3s ease;
     z-index: 1001;
 }
 
 body.light-mode .toggle-btn {
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
+    background: linear-gradient(135deg, #64ffda, #1de9b6);
+    box-shadow: 0 10px 25px rgba(62, 243, 199, 0.2);
 }
 
 .toggle-btn:hover {
@@ -104,7 +104,7 @@ body.light-mode .toggle-btn {
 
 .nav-header {
     padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    border-bottom: 1px solid rgba(62, 243, 199, 0.2);
     position: relative;
     display: flex;
     justify-content: center;
@@ -112,7 +112,7 @@ body.light-mode .toggle-btn {
 }
 
 body.light-mode .nav-header {
-    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+    border-bottom: 1px solid rgba(62, 243, 199, 0.2);
 }
 
 .logo {
