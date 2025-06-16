@@ -171,16 +171,23 @@ if ($currentChannelId !== null) {
     }
 }
 
+function deleteChannelEmpty($currentChannelId) {
+    if (!isset($_SESSION['user_id']) || empty($currentChannelId)) return;
 
-function deleteChannelEmpty() {
     $pdo = getDBConnection();
     try {
-        $stmt = $pdo->prepare("DELETE FROM chat_channels WHERE model = '' AND id_user = ? AND id != ?");
-        $stmt->execute([$_SESSION['user_id'], $_GET['id_channel']]);
+        $stmt = $pdo->prepare("
+            DELETE FROM chat_channels 
+            WHERE (model = '' OR model IS NULL) 
+            AND id_user = ? 
+            AND id != ?
+        ");
+        $stmt->execute([$_SESSION['user_id'], $currentChannelId]);
     } catch (PDOException $e) {
         error_log("Erreur lors de la suppression des channels : " . $e->getMessage());
     }
 }
+deleteChannelEmpty($currentChannelId);
 ?>
 
 <!DOCTYPE html>
@@ -546,4 +553,3 @@ document.querySelectorAll('.chat-item').forEach(item => {
 <script type="text/javascript" src="scripts/nav.js"></script>
 <script type="text/javascript" src="scripts/account.js"></script>
 
-<?php deleteChannelEmpty(); ?>
