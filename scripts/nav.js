@@ -26,12 +26,12 @@ const actionsSection = document.querySelector('.actions-section');
 const actionsSectionH3 = document.querySelector('.actions-section h3');
 const toggleBtn2 = document.querySelector('.toggle-btn');
 const chatHistoryPanel2 = document.querySelector('.chat-history-panel');
-const chatList = document.querySelector('.chat-list');
-const chatItem = document.querySelector('.chat-item');
-const chatPreview = document.querySelector('.chat-preview');
-const chatModel = document.querySelector('.chat-model');
-const chatTime = document.querySelector('.chat-time');
-const h3 = document.querySelector('h3');
+const chatList = document.querySelectorAll('.chat-list');
+const chatItem = document.querySelectorAll('.chat-item');
+const chatPreview = document.querySelectorAll('.chat-preview');
+const chatModel = document.querySelectorAll('.chat-model');
+const chatTime = document.querySelectorAll('.chat-time');
+const h3 = document.querySelectorAll('h3');
 
 
 
@@ -51,12 +51,14 @@ const elementsToToggle = [
     profileHeader,
     actionsSection,
     actionsSectionH3,
-    chatList,
-    chatItem,
-    chatPreview,
-    chatModel,
-    chatTime,
-    h3
+    toggleBtn2,
+    chatHistoryPanel2,
+    ...chatList,
+    ...chatItem,
+    ...chatPreview,
+    ...chatModel,
+    ...chatTime,
+    ...h3
 ];
 
 
