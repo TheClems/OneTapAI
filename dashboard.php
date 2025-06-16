@@ -29,45 +29,6 @@ $user = getCurrentUser();
         <div class="floating-element"></div>
     </div>
     <div class="container">
-        <div class="header">
-            <div class="user-info">
-                <h1 class="welcome">Bienvenue, <?php echo htmlspecialchars($user['username']); ?></h1>
-            </div>
-        </div>
-
-        <div class="credits-box">
-            <h2>Vos crédits</h2>
-            <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
-            <span class="credits-text">crédits disponibles</span>
-        </div>
-
-        <div class="actions">
-            <a href="buy_credits.php" class="btn btn-success">Acheter des crédits</a>
-
-            <a href="new_chat.php" class="btn btn-primary">Créer un nouveau chat</a>
-        </div>
-
-        <div class="section account-info">
-            <h3>Informations du compte</h3>
-            <div class="info-group">
-                <div class="info-item">
-                    <span class="label">Nom d'utilisateur :</span>
-                    <span class="value"><?php echo htmlspecialchars($user['username']); ?></span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Email :</span>
-                    <span class="value"><?php echo htmlspecialchars($user['email']); ?></span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Date d'inscription :</span>
-                    <span class="value"><?php echo date('d/m/Y à H:i', strtotime($user['date_inscription'])); ?></span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Crédits :</span>
-                    <span class="value"><?php echo number_format($user['credits']); ?></span>
-                </div>
-            </div>
-        </div>
 
         <div class="section features">
             <h3>Fonctionnalités disponibles</h3>
