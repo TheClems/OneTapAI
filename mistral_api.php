@@ -16,6 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
+// Configuration de la base de données
+$dbConfig = [
+    'host' => 'localhost',
+    'dbname' => 'votre_base_de_donnees',
+    'username' => 'votre_username',
+    'password' => 'votre_password',
+    'charset' => 'utf8mb4'
+];
+
 // Fonction pour envoyer une réponse JSON et arrêter l'exécution
 function sendJsonResponse($data, $httpCode = 200)
 {
@@ -28,6 +37,89 @@ function sendJsonResponse($data, $httpCode = 200)
 function logError($message)
 {
     error_log(date('[Y-m-d H:i:s] ') . $message . PHP_EOL, 3, 'mistral_errors.log');
+}
+
+// Fonction pour se connecter à la base de données
+function getDatabaseConnection($config)
+{
+    try {
+        $dsn = "mysql:host={$config['host']};dbname={$config['dbname']};charset={$config['charset']}";
+        $pdo = new PDO($dsn, $config['username'], $config['password'], [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false
+        ]);
+        return $pdo;
+    } catch (PDOException $e) {
+        logError("Database connection error: " . $e->getMessage());
+        return null;
+    }
+}
+
+// Fonction pour sauvegarder un message en base
+function saveMessageToDatabase($pdo, $chatChannelId, $role, $content)
+{
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO chat_messages (chat_channel_id, role, content, created_at) 
+            VALUES (?, ?, ?, NOW())
+        ");
+        
+        return $stmt->execute([$chatChannelId, $role, $content]);
+    } catch (PDOException $e) {
+        logError("Database insert error: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Fonction pour récupérer l'historique des messages
+function getMessageHistory($pdo, $chatChannelId, $limit = 10)
+{
+    try {
+        $stmt = $pdo->prepare("
+            SELECT role, content 
+            FROM chat_messages 
+            WHERE chat_channel_id = ? 
+            ORDER BY created_at ASC 
+            LIMIT ?
+        ");
+        
+        $stmt->execute([$chatChannelId, $limit]);
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        logError("Database select error: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Extraire le chat_channel_id de l'URL ou des paramètres
+$chatChannelId = null;
+
+// Vérifier dans les paramètres GET
+if (isset($_GET['id_channel'])) {
+    $chatChannelId = $_GET['id_channel'];
+}
+
+// Vérifier dans les paramètres POST
+if (!$chatChannelId && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $rawInput = file_get_contents('php://input');
+    if ($rawInput !== false) {
+        $input = json_decode($rawInput, true);
+        if (isset($input['chat_channel_id'])) {
+            $chatChannelId = $input['chat_channel_id'];
+        }
+    }
+}
+
+// Si pas trouvé, vérifier dans l'URL de référence
+if (!$chatChannelId && isset($_SERVER['HTTP_REFERER'])) {
+    if (preg_match('/id_channel=([^&]+)/', $_SERVER['HTTP_REFERER'], $matches)) {
+        $chatChannelId = $matches[1];
+    }
+}
+
+if (!$chatChannelId) {
+    sendJsonResponse(['success' => false, 'error' => 'ID de canal de chat manquant'], 400);
 }
 
 // Clé API Mistral
@@ -53,6 +145,15 @@ if (!$input || !isset($input['messages']) || !is_array($input['messages'])) {
 }
 
 $messages = $input['messages'];
+
+// Connexion à la base de données
+$pdo = getDatabaseConnection($dbConfig);
+if (!$pdo) {
+    sendJsonResponse(['success' => false, 'error' => 'Erreur de connexion à la base de données']);
+}
+
+// Récupérer l'historique depuis la base de données
+$dbHistory = getMessageHistory($pdo, $chatChannelId, 20);
 
 // Validation et nettoyage des messages
 $cleanMessages = [];
@@ -80,6 +181,15 @@ foreach ($messages as $message) {
 
 if (empty($cleanMessages)) {
     sendJsonResponse(['success' => false, 'error' => 'Aucun message valide trouvé']);
+}
+
+// Sauvegarder le message utilisateur en base (le dernier message est normalement celui de l'utilisateur)
+$lastMessage = end($cleanMessages);
+if ($lastMessage['role'] === 'user') {
+    $saveResult = saveMessageToDatabase($pdo, $chatChannelId, $lastMessage['role'], $lastMessage['content']);
+    if (!$saveResult) {
+        logError("Failed to save user message to database");
+    }
 }
 
 // Préparer les données pour l'API Mistral
@@ -189,14 +299,22 @@ if (empty($content)) {
     sendJsonResponse(['success' => false, 'error' => 'Réponse vide de l\'API']);
 }
 
+// Sauvegarder la réponse de l'assistant en base
+$saveAssistantResult = saveMessageToDatabase($pdo, $chatChannelId, 'assistant', $content);
+if (!$saveAssistantResult) {
+    logError("Failed to save assistant message to database");
+}
+
 // Formater la réponse (convertir les retours à la ligne en <br>)
-$content = nl2br(htmlspecialchars($content, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+$formattedContent = nl2br(htmlspecialchars($content, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
 // Envoyer la réponse finale
 sendJsonResponse([
     'success' => true,
-    'content' => $content,
+    'content' => $formattedContent,
     'model' => $result['model'] ?? 'mistral-medium',
     'usage' => $result['usage'] ?? null,
-    'timestamp' => date('c')
+    'timestamp' => date('c'),
+    'chat_channel_id' => $chatChannelId
 ]);
+?>
