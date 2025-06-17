@@ -277,12 +277,12 @@ async function sendMessage() {
 
         const urlParams = new URLSearchParams(window.location.search);
         const chatChannelId = urlParams.get('id_channel');
-        const model = urlParams.get('model') || 'mistral'; // Par défaut, "mistral"
+        const model = urlParams.get('model') || 'mistral-medium'; // Par défaut, "mistral-medium"
 
         let apiEndpoint = '';
         let requestBody = {};
 
-        if (model === 'mistral') {
+        if (model === 'mistral-medium') {
             apiEndpoint = 'mistral_api.php';
             requestBody = {
                 messages: messagesToSend,
