@@ -16,6 +16,7 @@ if ($_POST) {
     $tags = trim($_POST['tags']);
     $model = trim($_POST['model']);
     $instructions = trim($_POST['instructions']);
+    $nom = trim($_POST['nom']);
     
     // Validation des données
     $erreurs = [];
@@ -48,12 +49,16 @@ if ($_POST) {
         $erreurs[] = "Les instructions sont requises";
     }
     
+    if (empty($nom)) {
+        $erreurs[] = "Le nom est requis";
+    }
+    
     // Si pas d'erreurs, insertion en base
     if (empty($erreurs)) {
         try {
-            $sql = "INSERT INTO personas (logo, description, categorie, sous_categorie, tags, model, instructions) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO personas (logo, nom, description, categorie, sous_categorie, tags, model, instructions) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$logo, $description, $categorie, $sous_categorie, $tags, $model, $instructions]);
+            $stmt->execute([$logo, $nom, $description, $categorie, $sous_categorie, $tags, $model, $instructions]);
             
             $message = "<div class='alert alert-success'>Données enregistrées avec succès !</div>";
             
@@ -183,7 +188,10 @@ if ($_POST) {
                 <label for="logo">Logo <span class="required">*</span></label>
                 <input type="text" id="logo" name="logo" value="<?php echo isset($_POST['logo']) ? htmlspecialchars($_POST['logo']) : ''; ?>" required>
             </div>
-            
+            <div class="form-group">
+                <label for="nom">Nom <span class="required">*</span></label>
+                <input type="text" id="nom" name="nom" value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>" required>
+            </div>
             <div class="form-group">
                 <label for="description">Description <span class="required">*</span></label>
                 <input type="text" id="description" name="description" value="<?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?>" required>
