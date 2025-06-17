@@ -250,7 +250,7 @@ $data = [
 ];
 
 // URL de l'API Gemini
-$apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" . $apiKey;
+$apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key" . $apiKey;
 
 // Initialiser cURL
 $ch = curl_init();
