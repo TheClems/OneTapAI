@@ -26,7 +26,6 @@ session_start();  // Toujours démarrer la session en début de script
 
         .body_job {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
             color: #ffffff;
             min-height: 100vh;
             line-height: 1.6;
