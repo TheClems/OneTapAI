@@ -246,104 +246,103 @@ function showError(message) {
     }, 5000);
 }
 
+function getSelectedModel() {
+    // Méthode 1: Depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    let model = urlParams.get('model');
+    
+    // Méthode 2: Depuis la variable PHP globale (si disponible)
+    if (!model && typeof selectedModel !== 'undefined') {
+        model = selectedModel;
+    }
+    
+    // Méthode 3: Depuis le select (si visible)
+    if (!model) {
+        const modelSelect = document.getElementById('modelSelect');
+        if (modelSelect && modelSelect.value) {
+            model = modelSelect.value;
+        }
+    }
+    
+    return model || 'mistral-medium'; // Valeur par défaut
+}
+
+
 // Envoyer un message
 async function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const chatMessages = document.getElementById('chatMessages');
+    const loading = document.getElementById('loading');
+
     const message = messageInput.value.trim();
     if (!message) return;
 
-    if (sendButton.disabled) return;
+    // Récupérer le modèle sélectionné
+    const selectedModel = getSelectedModel(); // Cette fonction doit être définie
 
-    displayMessage(message, true);
-    messageInput.value = '';
+    // Déterminer quel script API utiliser
+    let apiEndpoint;
+    if (selectedModel === 'gemini') {
+        apiEndpoint = 'gemini_api.php';
+    } else {
+        // Pour tous les autres modèles (mistral-large, mistral-medium, etc.)
+        apiEndpoint = 'mistral_api.php'; // ou le nom de votre script Mistral
+    }
 
-    sendButton.disabled = true;
+    // Désactiver l'interface pendant l'envoi
     messageInput.disabled = true;
+    sendButton.disabled = true;
     loading.style.display = 'block';
 
+    // Ajouter le message utilisateur à l'affichage
+    addMessage('user', message);
+    messageInput.value = '';
+
+    // Ajouter le message à l'historique
+    messageHistory.push({
+        role: 'user',
+        content: message
+    });
+
     try {
-        const currentMessages = [
-            ...messageHistory,
-            {
-                role: 'user',
-                content: message
-            }
-        ];
-
-        const messagesToSend = currentMessages.slice(-10);
-
-        console.log('=== DEBUG ===');
-        console.log('Historique avant envoi:', messageHistory);
-        console.log('Messages envoyés à l\'API:', messagesToSend);
-
+        // Récupérer l'ID du channel depuis l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const chatChannelId = urlParams.get('id_channel');
-        const model = urlParams.get('model') || 'mistral-medium'; // Par défaut, "mistral-medium"
-
-        let apiEndpoint = '';
-        let requestBody = {};
-
-        if (model === 'mistral-medium') {
-            apiEndpoint = 'mistral_api.php';
-            requestBody = {
-                messages: messagesToSend,
-                chat_channel_id: chatChannelId
-            };
-        } else if (model === 'gemini') {
-            apiEndpoint = 'gemini_api.php';
-            requestBody = {
-                history: messagesToSend,
-                channel_id: chatChannelId
-            };
-        } else {
-            throw new Error('Modèle non supporté: ' + model);
-        }
 
         const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify({
+                messages: messageHistory,
+                chat_channel_id: chatChannelId
+            })
         });
 
         const data = await response.json();
 
         if (data.success) {
-            displayMessage(data.content);
-
-            messageHistory.push(
-                {
-                    role: 'user',
-                    content: message
-                },
-                {
-                    role: 'assistant',
-                    content: data.content
-                }
-            );
-
-            if (messageHistory.length > 20) {
-                messageHistory = messageHistory.slice(-20);
-            }
-
-            console.log('Historique après mise à jour:', messageHistory);
-            console.log('=== FIN DEBUG ===');
-
-            if (messageHistory.length === 2) {
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
-            }
-
+            // Ajouter la réponse de l'IA
+            addMessage('ai', data.content);
+            
+            // Ajouter à l'historique
+            messageHistory.push({
+                role: 'assistant',
+                content: data.content.replace(/<br\s*\/?>/gi, '\n') // Convertir les <br> en retours à la ligne
+            });
         } else {
-            showError(data.error || 'Erreur inconnue');
+            throw new Error(data.error || 'Erreur inconnue');
         }
 
     } catch (error) {
-        showError('Erreur de connexion: ' + error.message);
+        console.error('Erreur:', error);
+        addMessage('ai', `Désolé, une erreur s'est produite : ${error.message}`);
     } finally {
-        sendButton.disabled = false;
+        // Réactiver l'interface
         messageInput.disabled = false;
+        sendButton.disabled = false;
         loading.style.display = 'none';
         messageInput.focus();
     }
