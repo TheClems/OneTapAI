@@ -2,7 +2,8 @@
 
 
 require_once 'config.php';
-getConnection();
+require_once 'api_config.php';
+getDatabaseConnection();
 
 $message = '';
 
