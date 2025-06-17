@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Ta clé API OpenAI (à garder secrète)
 $api_key = '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';
 
