@@ -284,9 +284,6 @@ if ($currentChannelId !== null) {
 </head>
 <style>
     /* Styles pour le sélecteur de modèle */
-
-
-
     .model-selector {
         display: flex;
         flex-direction: column;
@@ -303,7 +300,7 @@ if ($currentChannelId !== null) {
     }
 
     .model-select {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(0, 0, 0);
         border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 12px;
         color: white;
