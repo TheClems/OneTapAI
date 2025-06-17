@@ -482,4 +482,4 @@
     </script>
 </body>
 </html>
-<script src="js/nav.js"></script>
+<script src="scripts/nav.js"></script>
