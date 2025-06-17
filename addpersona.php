@@ -81,18 +81,19 @@ if ($_POST) {
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #000;
+            color : #fff;
         }
         
         .form-container {
-            background: white;
+            background: #000;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         h1 {
-            color: #333;
+            color: #fff;
             text-align: center;
             margin-bottom: 30px;
         }
