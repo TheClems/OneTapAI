@@ -45,6 +45,11 @@ $availableModels = [
         'name' => 'Gemini',
         'icon' => '🤖',
         'description' => 'Intelligence de Google'
+    ],
+    'openrouter' => [
+        'name' => 'OpenRouter',
+        'icon' => '🤖',
+        'description' => 'Intelligence de Google'
     ]
 ];
 
@@ -411,6 +416,10 @@ if ($currentChannelId !== null) {
     }
 
     .model-select option[value="gemini"] {
+        background: linear-gradient(135deg, #96ceb4, #85c9a0);
+    }
+
+    .model-select option[value="openrouter"] {
         background: linear-gradient(135deg, #96ceb4, #85c9a0);
     }
 
