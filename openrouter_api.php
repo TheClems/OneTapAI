@@ -38,9 +38,9 @@ function processOpenRouterApi($cleanMessages, $chatChannelId)
     $apiUrl = "https://openrouter.ai/api/v1/chat/completions";
     $headers = [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . OPENROUTER_API_KEY
+        'Authorization: Bearer ' . OPENROUTER_API_KEY,
+        'HTTP-Referer: http://localhost' // <-- obligatoire pour certains modèles
     ];
-
     $ch = initializeCurl($apiUrl, $data, $headers);
     $curlResult = executeCurlRequest($ch, 'OpenRouter');
 
