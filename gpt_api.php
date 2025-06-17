@@ -5,7 +5,7 @@ require_once 'api_config.php';
 
 // Configuration spécifique à ChatGPT
 const CHATGPT_API_KEY = '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';
-const CHATGPT_MODEL = 'gpt-3.5-turbo';
+const CHATGPT_MODEL = 'gpt-4o-mini';
 
 /**
  * Convertir les messages au format ChatGPT
