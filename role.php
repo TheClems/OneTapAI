@@ -1,28 +1,28 @@
 <?php
-// Exemple de structure des rôles (en temps réel, ça peut venir d'une base de données)
 $roles = [
     [
         'name' => 'Écrivain',
         'category' => 'Créatif',
         'model' => 'gpt-3.5-turbo',
-        'instructions' => 'Tu es un écrivain professionnel. Tu aides à rédiger des histoires, romans, articles.'
+        'instructions' => 'Tu es un écrivain professionnel. Tu aides à rédiger des histoires, romans, articles.',
+        'icon' => '✍️'
     ],
     [
         'name' => 'Développeur web',
         'category' => 'Technique',
         'model' => 'claude-3-opus',
-        'instructions' => 'Tu es un développeur web expert. Tu aides à coder, déboguer, et conseiller en dev.'
+        'instructions' => 'Tu es un développeur web expert. Tu aides à coder, déboguer, et conseiller en dev.',
+        'icon' => '💻'
     ],
     [
         'name' => 'Traducteur',
         'category' => 'Linguistique',
         'model' => 'gpt-4',
-        'instructions' => 'Tu es un traducteur professionnel. Tu traduis des textes avec précision.'
+        'instructions' => 'Tu es un traducteur professionnel. Tu traduis des textes avec précision.',
+        'icon' => '🌐'
     ],
-    // ... ajoute ici jusqu'à 40 rôles avec leurs infos ...
+    // Ajoute 37 autres rôles ici avec icônes si tu veux
 ];
-
-// On peut grouper les rôles par catégorie si tu veux une UI plus claire
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -32,26 +32,24 @@ $roles = [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-100 p-6" x-data="{ search: '', selectedRole: null }">
+<body class="bg-gray-100 p-6" x-data="roleSearch()">
 
     <h1 class="text-3xl font-bold mb-6">Choisir un rôle pour l'IA</h1>
 
-    <!-- Barre de recherche -->
-    <input type="text" x-model="search" placeholder="Rechercher un métier..."
-        class="w-full mb-6 p-3 rounded border border-gray-300 shadow" />
+    <input type="text" x-model="search"
+           placeholder="Rechercher un métier..."
+           class="w-full mb-6 p-3 rounded border border-gray-300 shadow" />
 
-    <!-- Liste des rôles -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <?php foreach ($roles as $role): ?>
-            <div
-                class="bg-white p-4 rounded-lg shadow hover:bg-blue-50 cursor-pointer"
-                x-show="search === '' || '<?= strtolower($role['name']) ?>'.includes(search.toLowerCase())"
-                @click="selectedRole = <?= htmlspecialchars(json_encode($role)) ?>">
-
-                <h2 class="text-xl font-semibold"><?= htmlspecialchars($role['name']) ?></h2>
-                <p class="text-gray-500"><?= htmlspecialchars($role['category']) ?></p>
+        <template x-for="role in filteredRoles" :key="role.name">
+            <div @click="selectedRole = role"
+                 class="bg-white p-4 rounded-lg shadow hover:bg-blue-50 cursor-pointer">
+                <h2 class="text-xl font-semibold">
+                    <span x-text="role.icon"></span> <span x-text="role.name"></span>
+                </h2>
+                <p class="text-gray-500" x-text="role.category"></p>
             </div>
-        <?php endforeach; ?>
+        </template>
     </div>
 
     <!-- Modal -->
@@ -63,7 +61,9 @@ $roles = [
             <button @click="selectedRole = null"
                     class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl">&times;</button>
 
-            <h2 class="text-2xl font-bold mb-2" x-text="selectedRole.name"></h2>
+            <h2 class="text-2xl font-bold mb-2">
+                <span x-text="selectedRole.icon"></span> <span x-text="selectedRole.name"></span>
+            </h2>
             <p class="text-sm text-gray-400 mb-4" x-text="'Catégorie : ' + selectedRole.category"></p>
 
             <div class="mb-4">
@@ -82,6 +82,27 @@ $roles = [
             </a>
         </div>
     </div>
+
+<script>
+function roleSearch() {
+    const roles = <?php echo json_encode($roles); ?>;
+
+    const normalize = str =>
+        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+    return {
+        search: '',
+        selectedRole: null,
+        get filteredRoles() {
+            if (!this.search) return roles;
+            const query = normalize(this.search);
+            return roles.filter(role =>
+                normalize(role.name).includes(query)
+            );
+        }
+    };
+}
+</script>
 
 </body>
 </html>
