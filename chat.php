@@ -40,6 +40,11 @@ $availableModels = [
         'name' => 'Codestral',
         'icon' => '💻',
         'description' => 'Spécialisé code'
+    ],
+    'gemini' => [
+        'name' => 'Gemini',
+        'icon' => '🤖',
+        'description' => 'Intelligence de Google'
     ]
 ];
 
@@ -402,6 +407,10 @@ if ($currentChannelId !== null) {
     }
 
     .model-select option[value="codestral"] {
+        background: linear-gradient(135deg, #96ceb4, #85c9a0);
+    }
+
+    .model-select option[value="gemini"] {
         background: linear-gradient(135deg, #96ceb4, #85c9a0);
     }
 
