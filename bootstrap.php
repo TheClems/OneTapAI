@@ -481,23 +481,20 @@
         
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
+                // e.preventDefault(); // ➜ désactivé pour laisser le lien fonctionner normalement
+
                 // Supprimer la classe active de tous les liens
                 navLinks.forEach(l => l.classList.remove('active'));
-                
+
                 // Ajouter la classe active au lien cliqué
                 link.classList.add('active');
-                
-                const page = link.getAttribute('data-page');
-                console.log('Navigation vers:', page);
-                
                 // Fermer la sidebar sur mobile
                 if (window.innerWidth <= 768) {
                     sidebar.classList.remove('mobile-open');
                     mobileOverlay.classList.remove('show');
                 }
             });
+
         });
 
         // Création des particules flottantes
