@@ -1,5 +1,6 @@
 <?php
 require_once 'api_config.php';
+$cleanMessages = $_POST['messages'] ?? [];  // ou depuis la source appropriée
 
 
 // Clé API Mistral
