@@ -15,7 +15,6 @@ session_start();  // Toujours démarrer la session en début de script
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Métiers IA - Portfolio Professionnel</title>
-    <link rel="stylesheet" href="css/chat.css">
 
     <style>
         * {
