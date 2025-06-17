@@ -205,7 +205,7 @@ if (isset($_GET['forgot']) && $_GET['forgot'] == 1) {
                 <h1>Forgot Password ?</h1>
 
                 <span>Enter your email or username</span>
-                <input id="email" name="email" placeholder="Email" required="">
+                <input id="email" name="email" placeholder="Email/Username" required="">
 
 
                 <button>Send code</button>
