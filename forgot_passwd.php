@@ -4,6 +4,43 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require_once 'config.php';
 
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
+    $email = htmlspecialchars($_POST['email']); // Sécurisation de la donnée
+
+    $pdo = getDBConnection(); // Tu dois avoir défini cette fonction ailleurs
+
+    // Vérifie si l'utilisateur existe par email OU username
+    $stmt = $pdo->prepare("SELECT id, email, password, username FROM users WHERE email = ? OR username = ?");
+    $stmt->execute([$email, $email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        // ✅ L'utilisateur existe
+        $emailExists = true;
+
+        $to = $user['email']; // On utilise le mail de l'utilisateur trouvé
+        $subject = "Mot de passe oublié";
+        $message = "Bonjour " . htmlspecialchars($user['username']) . ",\n\nVoici un lien pour réinitialiser votre mot de passe : ...";
+        $headers = "From: contact@tonsite.com";
+
+        if (mail($to, $subject, $message, $headers)) {
+            $mailSent = true;
+        } else {
+            $mailSent = false;
+        }
+
+    } else {
+        // ❌ L'utilisateur n'existe pas
+        $emailExists = false;
+        // Tu peux afficher un message ou enregistrer l’erreur
+        // Exemple :
+        $errorMessage = "Aucun compte trouvé avec cette adresse ou ce nom d'utilisateur.";
+    }
+}
+?>
+
+?>
 
 
 ?>
