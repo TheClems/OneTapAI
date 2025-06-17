@@ -45,6 +45,8 @@ function processOpenRouterApi($cleanMessages, $chatChannelId)
     $curlResult = executeCurlRequest($ch, 'OpenRouter');
 
     $response = $curlResult['response'];
+    logError("Réponse brute OpenRouter : " . $response, 'openrouter_debug.log');
+
     $httpCode = $curlResult['httpCode'];
 
     if ($httpCode !== 200) {
