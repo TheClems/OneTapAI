@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Ta clé API OpenAI (à garder secrète)
-$api_key = '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';
+$api_key = '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';
 
 // Le message que tu veux envoyer à ChatGPT
 $prompt = "Explique-moi la différence entre HTML et PHP.";
