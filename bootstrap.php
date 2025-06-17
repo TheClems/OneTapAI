@@ -400,12 +400,7 @@
         </div>
     </nav>
 
-    <!-- Main content -->
-    <main class="main-content" id="mainContent">
-        <div class="container-fluid">
-            
-        </div>
-    </main>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
