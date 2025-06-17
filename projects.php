@@ -371,6 +371,9 @@
     </style>
 </head>
 <body>
+<?php require_once 'nav.php'; ?>
+
+<div class="particles" id="particles"></div>
     <div class="container">
         <div class="header">
             <h1>Portfolio Métiers IA</h1>
