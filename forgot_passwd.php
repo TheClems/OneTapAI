@@ -79,22 +79,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
 
 
 <body>
+    <?php if(!isset($_GET['token'])){
+    ?>
     <div class="container" id="container">
 
-        <div class="form-container sign-in-container">
-            <form method="POST">
-                <h1>Forgot Password ?</h1>
-
-                <span>Enter your email or username</span>
-                <input id="email" name="email" placeholder="Email/Username" required="">
-
-
-                <button>Send code</button>
-            </form>
+            <div class="form-container sign-in-container">
+                <form method="POST">
+                    <h1>Forgot Password ?</h1>
+    
+                    <span>Enter your email or username</span>
+                    <input id="email" name="email" placeholder="Email/Username" required="">
+    
+    
+                    <button>Send code</button>
+                </form>
+            </div>
+    
         </div>
+    <?php }else{
+    ?>
+    <div class="container" id="container">
 
-    </div>
+            <div class="form-container sign-in-container">
+                <form method="POST">
+                    <h1>Enter your new password</h1>
+    
+                    <input id="password" name="password" placeholder="Password" required="">
+                    <input id="password" name="password" placeholder="Confirm Password" required="">
 
+    
+                    <button>Change password</button>
+                </form>
+            </div>
+    
+        </div>
+    <?php }?>
+
+    
     <script type="text/javascript" src="scripts/auth.js"></script>
     <script>
         function delayedRedirect(url) {
