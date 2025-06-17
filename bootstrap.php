@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
+<html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OneTapAI - Navigation Bootstrap</title>
@@ -345,15 +343,15 @@
         }
     </style>
 </head>
-<body>
+<body style="opacity: 1;" class="">
     <!-- Mobile overlay -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <!-- Sidebar -->
     <nav class="custom-sidebar" id="sidebar">
-        <div class="floating-particles" id="particles"></div>
+        <div class="floating-particles" id="particles"><div class="particle" style="left: 75.5721%; animation-delay: 1.48516s; animation-duration: 6.6939s;"></div><div class="particle" style="left: 55.4085%; animation-delay: 5.66206s; animation-duration: 4.22237s;"></div><div class="particle" style="left: 65.1327%; animation-delay: 4.29028s; animation-duration: 6.89319s;"></div><div class="particle" style="left: 62.6426%; animation-delay: 4.10263s; animation-duration: 5.0728s;"></div><div class="particle" style="left: 20.0034%; animation-delay: 5.51666s; animation-duration: 6.71599s;"></div><div class="particle" style="left: 8.22361%; animation-delay: 3.18846s; animation-duration: 6.84553s;"></div><div class="particle" style="left: 72.9416%; animation-delay: 5.66247s; animation-duration: 5.92555s;"></div><div class="particle" style="left: 45.0734%; animation-delay: 4.24518s; animation-duration: 5.98917s;"></div><div class="particle" style="left: 46.4026%; animation-delay: 5.28092s; animation-duration: 6.39751s;"></div><div class="particle" style="left: 15.3951%; animation-delay: 2.03072s; animation-duration: 5.59476s;"></div><div class="particle" style="left: 94.0191%; animation-delay: 2.51104s; animation-duration: 6.71406s;"></div><div class="particle" style="left: 57.6945%; animation-delay: 3.28049s; animation-duration: 6.95067s;"></div><div class="particle" style="left: 69.3706%; animation-delay: 2.03498s; animation-duration: 5.75292s;"></div><div class="particle" style="left: 69.1463%; animation-delay: 4.22628s; animation-duration: 6.51942s;"></div><div class="particle" style="left: 15.4825%; animation-delay: 4.31005s; animation-duration: 5.21828s;"></div><div class="particle" style="left: 7.67477%; animation-delay: 5.64657s; animation-duration: 4.44043s;"></div><div class="particle" style="left: 23.5732%; animation-delay: 1.1055s; animation-duration: 4.98487s;"></div><div class="particle" style="left: 47.6458%; animation-delay: 4.16662s; animation-duration: 4.91975s;"></div><div class="particle" style="left: 23.4239%; animation-delay: 0.732651s; animation-duration: 6.60658s;"></div><div class="particle" style="left: 3.87215%; animation-delay: 3.08753s; animation-duration: 5.6337s;"></div></div>
         
-        <button class="toggle-btn" id="toggleBtn"></button>
+        <button class="toggle-btn collapsed" id="toggleBtn"></button>
 
         <div class="nav-header">
             <div class="logo">OneTapAI</div>
@@ -364,13 +362,13 @@
 
         <div class="nav-menu">
             <div class="nav-item">
-                <a href="#" class="nav-link-custom active" data-page="home">
+                <a href="#" class="nav-link-custom" data-page="home">
                     <i class="bi bi-house-fill nav-icon"></i>
                     <span class="nav-text">Home</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link-custom" data-page="projects">
+                <a href="#" class="nav-link-custom active" data-page="projects">
                     <i class="bi bi-check-circle-fill nav-icon"></i>
                     <span class="nav-text">Projects</span>
                 </a>
@@ -405,42 +403,7 @@
     <!-- Main content -->
     <main class="main-content" id="mainContent">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="content-card">
-                        <h1 class="mb-4">Bienvenue sur OneTapAI</h1>
-                        <p class="lead">Cette navigation Bootstrap conserve tout le design et les fonctionnalités de votre version originale :</p>
-                        
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <h3>Fonctionnalités</h3>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Thème sombre/clair</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Sidebar collapsible</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Navigation active</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Particules animées</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Design responsive</li>
-                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Animations fluides</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h3>Technologies</h3>
-                                <ul class="list-unstyled">
-                                    <li><i class="bi bi-bootstrap-fill text-primary me-2"></i>Bootstrap 5.3.2</li>
-                                    <li><i class="bi bi-palette-fill text-info me-2"></i>Bootstrap Icons</li>
-                                    <li><i class="bi bi-code-square text-warning me-2"></i>CSS personnalisé</li>
-                                    <li><i class="bi bi-lightning-fill text-danger me-2"></i>JavaScript ES6</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="alert alert-info mt-4" role="alert">
-                            <i class="bi bi-info-circle-fill me-2"></i>
-                            Testez le bouton de thème et le toggle de la sidebar pour voir toutes les animations !
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </main>
 
@@ -611,5 +574,5 @@
             handleResize();
         });
     </script>
-</body>
-</html>
+
+</body></html>
