@@ -251,58 +251,66 @@ async function sendMessage() {
     const message = messageInput.value.trim();
     if (!message) return;
 
-    // Éviter les doubles soumissions
     if (sendButton.disabled) return;
 
-    // Afficher le message utilisateur
     displayMessage(message, true);
     messageInput.value = '';
 
-    // Désactiver l'interface
     sendButton.disabled = true;
     messageInput.disabled = true;
     loading.style.display = 'block';
 
     try {
-        // Préparer les messages pour l'API
-        // Inclure l'historique complet + le nouveau message utilisateur
         const currentMessages = [
-            ...messageHistory,  // Historique complet
+            ...messageHistory,
             {
                 role: 'user',
                 content: message
             }
         ];
 
-        // Garder seulement les 10 derniers messages pour l'API
         const messagesToSend = currentMessages.slice(-10);
 
         console.log('=== DEBUG ===');
         console.log('Historique avant envoi:', messageHistory);
         console.log('Messages envoyés à l\'API:', messagesToSend);
 
-        // Extraire le chat_channel_id de l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const chatChannelId = urlParams.get('id_channel');
+        const model = urlParams.get('model') || 'mistral'; // Par défaut, "mistral"
 
-        const response = await fetch('mistral_api.php', {
+        let apiEndpoint = '';
+        let requestBody = {};
+
+        if (model === 'mistral') {
+            apiEndpoint = 'mistral_api.php';
+            requestBody = {
+                messages: messagesToSend,
+                chat_channel_id: chatChannelId
+            };
+        } else if (model === 'gemini') {
+            apiEndpoint = 'gemini_api.php';
+            requestBody = {
+                history: messagesToSend,
+                channel_id: chatChannelId
+            };
+        } else {
+            throw new Error('Modèle non supporté: ' + model);
+        }
+
+        const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                messages: messagesToSend,
-                chat_channel_id: chatChannelId
-            })
+            body: JSON.stringify(requestBody)
         });
 
         const data = await response.json();
 
         if (data.success) {
-            // Formater et afficher la réponse de l'IA
             displayMessage(data.content);
-            
-            // Mettre à jour l'historique avec BOTH messages
+
             messageHistory.push(
                 {
                     role: 'user',
@@ -314,7 +322,6 @@ async function sendMessage() {
                 }
             );
 
-            // Garder seulement les 20 derniers messages dans l'historique
             if (messageHistory.length > 20) {
                 messageHistory = messageHistory.slice(-20);
             }
@@ -322,7 +329,6 @@ async function sendMessage() {
             console.log('Historique après mise à jour:', messageHistory);
             console.log('=== FIN DEBUG ===');
 
-            // Rafraîchir la liste des chats si c'est le premier message
             if (messageHistory.length === 2) {
                 setTimeout(() => {
                     location.reload();
@@ -336,13 +342,13 @@ async function sendMessage() {
     } catch (error) {
         showError('Erreur de connexion: ' + error.message);
     } finally {
-        // Réactiver l'interface
         sendButton.disabled = false;
         messageInput.disabled = false;
         loading.style.display = 'none';
         messageInput.focus();
     }
 }
+
 
 // Gestionnaires d'événements
 sendButton.addEventListener('click', sendMessage);
