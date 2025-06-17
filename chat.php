@@ -50,6 +50,11 @@ $availableModels = [
         'name' => 'OpenRouter',
         'icon' => '🤖',
         'description' => 'Intelligence de Google'
+    ],
+    'deepseek' => [
+        'name' => 'DeepSeek',
+        'icon' => '🤖',
+        'description' => 'Intelligence de Chine'
     ]
 ];
 
@@ -420,6 +425,10 @@ if ($currentChannelId !== null) {
     }
 
     .model-select option[value="openrouter"] {
+        background: linear-gradient(135deg, #96ceb4, #85c9a0);
+    }
+
+    .model-select option[value="deepseek"] {
         background: linear-gradient(135deg, #96ceb4, #85c9a0);
     }
 
