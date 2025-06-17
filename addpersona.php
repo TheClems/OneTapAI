@@ -72,7 +72,7 @@ if ($_POST) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire de contact</title>
+    <title>Ajout Persona</title>
     <style>
         body {
             font-family: Arial, sans-serif;
