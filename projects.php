@@ -36,6 +36,11 @@ session_start();  // Toujours démarrer la session en début de script
             margin-left: 0;
         }
 
+        .body_job.mobile {
+            margin-left: 0;
+
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
