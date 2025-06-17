@@ -1,6 +1,7 @@
 <?php
 require_once 'api_config.php';
-require_once 'config.php';
+
+$cleanMessages = $_POST['messages'] ?? [];  // ou depuis la source appropriée
 
 function convertMessagesToGeminiFormat($messages)
 {
