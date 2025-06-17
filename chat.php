@@ -285,8 +285,6 @@ if ($currentChannelId !== null) {
 <style>
     /* Styles pour le sélecteur de modèle */
 
-
-
     .model-selector {
         display: flex;
         flex-direction: column;
@@ -303,7 +301,7 @@ if ($currentChannelId !== null) {
     }
 
     .model-select {
-        background: rgba(255, 255, 255, 0.15);
+        background: #2d3748;
         border: 2px solid rgba(255, 255, 255, 0.2);
         border-radius: 12px;
         color: white;
@@ -318,7 +316,7 @@ if ($currentChannelId !== null) {
     }
 
     .model-select:hover {
-        background: rgba(255, 255, 255, 0.25);
+        background: #2d3748;
         border-color: rgba(255, 255, 255, 0.4);
         transform: translateY(-1px);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -326,7 +324,7 @@ if ($currentChannelId !== null) {
 
     .model-select:focus {
         outline: none;
-        background: rgba(255, 255, 255, 0.25);
+        background: #2d3748;
         border-color: rgba(255, 255, 255, 0.6);
         box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
     }
