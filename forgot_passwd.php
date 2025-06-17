@@ -2,55 +2,52 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 require_once 'config.php';
 
+// On initialise les variables pour éviter les warnings
+$error = "";
+$success = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
-    $email = htmlspecialchars($_POST['email']); // Sécurisation de la donnée
+    $email = htmlspecialchars($_POST['email']);
 
-    $pdo = getDBConnection(); // Tu dois avoir défini cette fonction ailleurs
+    $pdo = getDBConnection();
 
-    // Vérifie si l'utilisateur existe par email OU username
     $stmt = $pdo->prepare("SELECT id, email, password, username FROM users WHERE email = ? OR username = ?");
     $stmt->execute([$email, $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
-        // ✅ L'utilisateur existe
-        $emailExists = true;
-
-        $to = $user['email']; // On utilise le mail de l'utilisateur trouvé
+        $to = $user['email'];
         $subject = "Mot de passe oublié";
         $message = "Bonjour " . htmlspecialchars($user['username']) . ",\n\nVoici un lien pour réinitialiser votre mot de passe : ...";
-        $headers = "From: contact@tonsite.com";
+        $headers = "From: contact@ctts.fr";
 
         if (mail($to, $subject, $message, $headers)) {
-            $mailSent = true;
+            $success = "Un e-mail de réinitialisation a été envoyé à l'adresse : " . htmlspecialchars($to);
         } else {
-            $mailSent = false;
+            $error = "Une erreur est survenue lors de l'envoi de l'e-mail.";
         }
 
     } else {
-        // ❌ L'utilisateur n'existe pas
-        $emailExists = false;
-        // Tu peux afficher un message ou enregistrer l’erreur
-        // Exemple :
-        $errorMessage = "Aucun compte trouvé avec cette adresse ou ce nom d'utilisateur.";
+        $error = "Aucun compte trouvé avec cette adresse ou ce nom d'utilisateur.";
     }
 }
 ?>
 
-?>
-
-
-?>
 <link rel="stylesheet" href="css/auth.css" />
 
-<?php if ($error): ?>
-    <div class="alert alert-error" style="color: red; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"><?php echo htmlspecialchars($error); ?></div>
+<?php if (!empty($error)): ?>
+    <div class="alert alert-error" style="color: red; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+        <?php echo htmlspecialchars($error); ?>
+    </div>
 <?php endif; ?>
 
-<?php if ($success): ?>
-    <div class="alert alert-success" style="color: green; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"><?php echo htmlspecialchars($success); ?></div>
+<?php if (!empty($success)): ?>
+    <div class="alert alert-success" style="color: green; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+        <?php echo htmlspecialchars($success); ?>
+    </div>
 <?php endif; ?>
 
 <html>
