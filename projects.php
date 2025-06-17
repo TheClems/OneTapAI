@@ -876,3 +876,5 @@
             filterByCategory
         };
     </script>
+
+    <script src="scripts/nav.js"></script>
