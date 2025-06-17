@@ -36,6 +36,8 @@ const historyHeader = document.querySelectorAll('.history-header');
 const chatMessages2 = document.querySelector('.chat-messages');
 const inputContainer = document.querySelector('.input-container');
 const messageAi = document.querySelector('.message-content');
+
+const body_job = document.querySelector('.body_job');
 const elementsToToggle = [
     ...infoValues,
     ...infoCards,
@@ -166,6 +168,7 @@ if (toggleBtn) {
         if (toggleBtn2) toggleBtn2.classList.toggle('collapsed');
 
         if (chatHistoryPanel2) chatHistoryPanel2.classList.toggle('collapsed');
+        if (body_job) body_job.classList.toggle('collapsed');
     });
 }
 
