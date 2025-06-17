@@ -56,8 +56,8 @@ function processOpenRouterApi($cleanMessages, $chatChannelId)
 
     $result = json_decode($response, true);
     if (!$result || !isset($result['choices'][0]['message']['content'])) {
-        logError("Invalid API response: $response", 'openrouter_errors.log');
-        sendJsonResponse(['success' => false, 'error' => 'Réponse invalide de l’IA']);
+        logError("Réponse inattendue : " . json_encode($result), 'openrouter_errors.log');
+        sendJsonResponse(['success' => false, 'error' => 'Format de réponse inattendu']);
     }
 
     $content = trim($result['choices'][0]['message']['content']);
