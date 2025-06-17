@@ -68,6 +68,7 @@ function processOpenRouterApi($cleanMessages, $chatChannelId)
         'usage' => $result['usage'] ?? null
     ];
 }
+logError("Réponse brute OpenRouter : " . $response, 'openrouter_debug.log');
 
 // Point d'entrée
 processApiRequest('processOpenRouterApi');
