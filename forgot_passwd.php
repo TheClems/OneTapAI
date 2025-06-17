@@ -187,7 +187,13 @@ if (isset($_GET['forgot']) && $_GET['forgot'] == 1) {
         width: 100%;
 
     }
+    h1{
+        margin-bottom: 30px;
+    }
 
+    button{
+        margin-top: 30px;
+    }
 </style>
 
 
