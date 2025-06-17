@@ -585,3 +585,4 @@ if ($currentChannelId !== null) {
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
 <script type="text/javascript" src="scripts/account.js"></script>
+
