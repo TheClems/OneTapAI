@@ -285,9 +285,10 @@ async function sendMessage() {
     let apiEndpoint;
     if (selectedModel === 'gemini') {
         apiEndpoint = 'gemini_api.php';
-    } else {
-        // Pour tous les autres modèles (mistral-large, mistral-medium, etc.)
-        apiEndpoint = 'mistral_api.php'; // ou le nom de votre script Mistral
+    } else if (selectedModel === 'openrouter') {
+        apiEndpoint = 'openrouter_api.php';
+    } else if (selectedModel === 'mistral') {
+        apiEndpoint = 'mistral_api.php';
     }
 
     // Désactiver l'interface pendant l'envoi
