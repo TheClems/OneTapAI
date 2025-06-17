@@ -173,62 +173,34 @@ if (isset($_GET['forgot']) && $_GET['forgot'] == 1) {
     <div class="alert alert-success" style="color: green; font-weight: bold; font-size: 16px; margin-bottom: 10px; text-align: center; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"><?php echo htmlspecialchars($success); ?></div>
 <?php endif; ?>
 
-<div class="<?php echo $mode_panel; ?>" id="container">
-    <div class="form-container sign-up-container">
-        <form method="POST" class="auth-form">
-            <h1>Create Account</h1>
-            <div class="social-container">
-                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-            <span>or use your email for registration</span>
-            <input type="text" id="name" name="name" placeholder="Name"
-                value="<?php echo isset($user) ? htmlspecialchars($user['full_name']) : ''; ?>" required />
+<html><head><link rel="stylesheet" href="css/auth.css">
 
-            <input type="text" id="username" name="username" placeholder="Username"
-                value="<?php echo isset($user) ? htmlspecialchars($user['username']) : ''; ?>" required />
 
-            <input type="email" id="email" name="email" placeholder="Email"
-                value="<?php echo isset($user) ? htmlspecialchars($user['email']) : ''; ?>" required />
 
-            <input type="password" id="password" name="password" placeholder="Password" <?php echo $passwd_required; ?> />
-
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" <?php echo $passwd_required; ?> />
-
-            <button type="submit">Sign Up</button>
-        </form>
-    </div>
+</head><body><div class="container" id="container">
+    
     <div class="form-container sign-in-container">
         <form method="POST">
-            <h1>Sign in</h1>
-            <div class="social-container">
-                <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-                <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-            <span>or use your account</span>
-            <input id="email" name="email" placeholder="Email" required />
-            <input type="password" id="password" name="password" placeholder="Password" required />
-            <a href="forgot_passwd.php">Forgot your password?</a>
-            <button>Sign In</button>
+            <h1>Forgot Password ?</h1>
+            
+            <span>Enter your email or username</span>
+            <input id="email" name="email" placeholder="Email" required="">
+            
+            
+            <button>Send code</button>
         </form>
     </div>
-    <div class="overlay-container">
-        <div class="overlay">
-            <div class="overlay-panel overlay-left">
-                <h1>Welcome Back!</h1>
-                <p>To keep connected with us please login with your personal info</p>
-                <button class="ghost" id="signIn" onclick="delayedRedirect('auth.php?mode=login')">Sign In</button>
-            </div>
-            <div class="overlay-panel overlay-right">
-                <h1>Hello, Friend!</h1>
-                <p>Enter your personal details and start journey with us</p>
-                <button class="ghost" id="signUp" onclick="delayedRedirect('auth.php?mode=register')">Sign Up</button>
-            </div>
-        </div>
-    </div>
+    
 </div>
+
+<script type="text/javascript" src="scripts/auth.js"></script>
+<script>
+    function delayedRedirect(url) {
+        setTimeout(function() {
+            window.location.href = url;
+        }, 800);
+    }
+</script></body></html>
 
 <script type="text/javascript" src="scripts/auth.js"></script>
 <script>
