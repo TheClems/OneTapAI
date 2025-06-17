@@ -291,6 +291,8 @@ async function sendMessage() {
         apiEndpoint = 'mistral_api.php';
     } else if (selectedModel === 'deepseek') {
         apiEndpoint = 'deepseek_api.php';
+    } else if (selectedModel === 'gpt') {
+        apiEndpoint = 'gpt_api.php';
     }
 
     // Désactiver l'interface pendant l'envoi
