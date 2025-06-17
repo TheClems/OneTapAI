@@ -145,6 +145,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
+if (isset($_GET['forgot']) && $_GET['forgot'] == 1) {
+
+    $to = "destinataire@example.com";          // Adresse e-mail du destinataire
+    $subject = "Mot de passe oublié";          // Sujet de l'e-mail
+    $message = "Voici un lien pour réinitialiser votre mot de passe : ...";  // Contenu de l'e-mail
+    $headers = "From: contact@ctts.fr";    // Adresse de l'expéditeur
+
+    // Envoi de l'e-mail
+    if (mail($to, $subject, $message, $headers)) {
+        echo "E-mail envoyé avec succès.";
+    } else {
+        echo "Échec de l'envoi de l'e-mail.";
+    }
+}
+
+
 ?>
 <link rel="stylesheet" href="css/auth.css" />
 
@@ -193,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <span>or use your account</span>
             <input id="email" name="email" placeholder="Email" required />
             <input type="password" id="password" name="password" placeholder="Password" required />
-            <a href="#">Forgot your password?</a>
+            <a href="forgot_passwd.php">Forgot your password?</a>
             <button>Sign In</button>
         </form>
     </div>
