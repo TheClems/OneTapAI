@@ -374,25 +374,25 @@
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link-custom" data-page="chat">
+                <a href="chat.php" class="nav-link-custom" data-page="chat">
                     <i class="bi bi-chat-dots-fill nav-icon"></i>
                     <span class="nav-text">Chat</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link-custom" data-page="dashboard">
+                <a href="dashboard.php" class="nav-link-custom" data-page="dashboard">
                     <i class="bi bi-grid-3x3-gap-fill nav-icon"></i>
                     <span class="nav-text">Dashboard</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link-custom" data-page="credits">
+                <a href="buy_credits.php" class="nav-link-custom" data-page="credits">
                     <i class="bi bi-credit-card-fill nav-icon"></i>
                     <span class="nav-text">Buy credits</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link-custom" data-page="account">
+                <a href="account.php" class="nav-link-custom" data-page="account">
                     <i class="bi bi-gear-fill nav-icon"></i>
                     <span class="nav-text">Account</span>
                 </a>
