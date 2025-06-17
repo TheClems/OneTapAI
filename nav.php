@@ -38,7 +38,7 @@ $isDarkMode = $user['dark_mode'] == 1 ? 'true' : 'false';
             </a>
         </li>
         <li class="nav-item">
-            <a href="" class="nav-link pulse-effect">
+            <a href="projects.php" class="nav-link pulse-effect">
                 <svg class="nav-icon" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
