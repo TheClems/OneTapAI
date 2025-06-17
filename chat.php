@@ -55,6 +55,11 @@ $availableModels = [
         'name' => 'DeepSeek',
         'icon' => '🤖',
         'description' => 'Intelligence de Chine'
+    ],
+    'gpt' => [
+        'name' => 'GPT',
+        'icon' => '🤖',
+        'description' => 'Intelligence de OpenAI'
     ]
 ];
 
@@ -429,6 +434,10 @@ if ($currentChannelId !== null) {
     }
 
     .model-select option[value="deepseek"] {
+        background: linear-gradient(135deg, #96ceb4, #85c9a0);
+    }
+
+    .model-select option[value="gpt"] {
         background: linear-gradient(135deg, #96ceb4, #85c9a0);
     }
 
