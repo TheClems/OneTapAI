@@ -19,13 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
+        $token = bin2hex(random_bytes(32)); // 64 caractères hexadécimaux (256 bits)
+
         $to = $user['email'];
         $subject = "Mot de passe oublié";
-        $message = "Bonjour " . htmlspecialchars($user['username']) . ",\n\nVoici un lien pour réinitialiser votre mot de passe : ...";
+        $message = "Bonjour " . htmlspecialchars($user['username']) . ",\n\nVoici un lien pour réinitialiser votre mot de passe : https://onetapai.ctts.fr/forgot_passwd.php?token=" . $token;
         $headers = "From: contact@ctts.fr";
 
         if (mail($to, $subject, $message, $headers)) {
             $success = "Un e-mail de réinitialisation a été envoyé à l'adresse : " . htmlspecialchars($to);
+            $stmt = $pdo->prepare("UPDATE users SET forgot_password_id = ? WHERE id = ?");
+            $stmt->execute([$token, $user['id']]);
         } else {
             $error = "Une erreur est survenue lors de l'envoi de l'e-mail.";
         }
