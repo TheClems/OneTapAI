@@ -287,7 +287,7 @@ async function sendMessage() {
         apiEndpoint = 'gemini_api.php';
     } else if (selectedModel === 'openrouter') {
         apiEndpoint = 'openrouter_api.php';
-    } else if (selectedModel === 'mistral') {
+    } else if (selectedModel === 'mistral-medium') {
         apiEndpoint = 'mistral_api.php';
     } else if (selectedModel === 'deepseek') {
         apiEndpoint = 'deepseek_api.php';
