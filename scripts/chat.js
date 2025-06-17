@@ -289,6 +289,8 @@ async function sendMessage() {
         apiEndpoint = 'openrouter_api.php';
     } else if (selectedModel === 'mistral') {
         apiEndpoint = 'mistral_api.php';
+    } else if (selectedModel === 'deepseek') {
+        apiEndpoint = 'deepseek_api.php';
     }
 
     // Désactiver l'interface pendant l'envoi
