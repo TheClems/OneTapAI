@@ -21,44 +21,29 @@ $_SESSION['selected_model'] = $selectedModel;
 
 // Liste des modèles disponibles
 $availableModels = [
-    'mistral-large' => [
-        'name' => 'Mistral Large',
-        'icon' => '🚀',
-        'description' => 'Le plus puissant'
-    ],
     'mistral-medium' => [
         'name' => 'Mistral Medium',
-        'icon' => '⚡',
+        'icon' => '',
         'description' => 'Équilibré'
-    ],
-    'mistral-small' => [
-        'name' => 'Mistral Small',
-        'icon' => '💨',
-        'description' => 'Rapide et efficace'
-    ],
-    'codestral' => [
-        'name' => 'Codestral',
-        'icon' => '💻',
-        'description' => 'Spécialisé code'
     ],
     'gemini' => [
         'name' => 'Gemini',
-        'icon' => '🤖',
+        'icon' => '',
         'description' => 'Intelligence de Google'
     ],
     'openrouter' => [
         'name' => 'OpenRouter',
-        'icon' => '🤖',
+        'icon' => '',
         'description' => 'Intelligence de Google'
     ],
     'deepseek' => [
         'name' => 'DeepSeek',
-        'icon' => '🤖',
+        'icon' => '',
         'description' => 'Intelligence de Chine'
     ],
     'gpt' => [
         'name' => 'GPT',
-        'icon' => '🤖',
+        'icon' => '',
         'description' => 'Intelligence de OpenAI'
     ]
 ];
@@ -279,7 +264,7 @@ if ($currentChannelId !== null) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mistral AI Chat<?php echo $selectedModel ? ' - ' . $availableModels[$selectedModel]['name'] : ''; ?></title>
+    <title>OneTap AI Chat<?php echo $selectedModel ? ' - ' . $availableModels[$selectedModel]['name'] : ''; ?></title>
     <link rel="stylesheet" href="css/chat.css">
 </head>
 <style>
@@ -406,51 +391,12 @@ if ($currentChannelId !== null) {
         }
     }
 
-    /* Style amélioré pour les options du select */
-    .model-select option[value="mistral-large"] {
-        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-    }
-
-    .model-select option[value="mistral-medium"] {
-        background: linear-gradient(135deg, #4ecdc4, #44a08d);
-    }
-
-    .model-select option[value="mistral-small"] {
-        background: linear-gradient(135deg, #45b7d1, #3498db);
-    }
-
-    .model-select option[value="codestral"] {
-        background: linear-gradient(135deg, #96ceb4, #85c9a0);
-    }
-
-    .model-select option[value="gemini"] {
-        background: linear-gradient(135deg, #96ceb4, #85c9a0);
-    }
-
-    .model-select option[value="openrouter"] {
-        background: linear-gradient(135deg, #96ceb4, #85c9a0);
-    }
-
-    .model-select option[value="deepseek"] {
-        background: linear-gradient(135deg, #96ceb4, #85c9a0);
-    }
-
-    .model-select option[value="gpt"] {
-        background: linear-gradient(135deg, #96ceb4, #85c9a0);
-    }
-
     /* Effet de glow subtil pour le select */
     .model-select:focus {
         box-shadow:
             0 0 0 3px rgba(255, 255, 255, 0.2),
             0 0 20px rgba(255, 255, 255, 0.1),
             0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Animation au survol de la description */
-    .model-selector:hover .model-description {
-        color: rgba(255, 255, 255, 1);
-        transform: scale(1.05);
     }
 </style>
 
