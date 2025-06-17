@@ -6,7 +6,14 @@ error_reporting(E_ALL);
 require_once 'config.php';
 $pdo = getDBConnection();
 $message = '';
-
+// Récupérer le nombre de lignes dans la table personas
+$count = 0;
+try {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM personas");
+    $count = $stmt->fetchColumn();
+} catch(PDOException $e) {
+    $message .= "<div class='alert alert-error'>Erreur lors du comptage : " . $e->getMessage() . "</div>";
+}
 // Traitement du formulaire
 if ($_POST) {
     $logo = trim($_POST['logo']);
