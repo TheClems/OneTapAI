@@ -147,7 +147,7 @@ if (!$chatChannelId) {
 }
 
 // Clé API Gemini - Remplacez par votre vraie clé API
-$apiKey = 'AIzaSyCCi1o7eOxryROJIG26YS3vlR1tKC1dFcc';
+$apiKey = 'AIzaSyBs7CiasxHyT2IrrZiiBPsUMeKaBcFCA7A';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sendJsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
