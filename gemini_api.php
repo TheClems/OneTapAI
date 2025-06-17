@@ -111,16 +111,32 @@ if (!$pdo) {
 $dbHistory = getMessageHistory($pdo, $chatChannelId, 20);
 
 $cleanMessages = [];
+
+// Intégrer l'historique de la BDD
+foreach ($dbHistory as $message) {
+    $role = trim($message['role']);
+    $content = trim($message['content']);
+    if (!empty($role) && !empty($content)) {
+        $cleanMessages[] = [
+            'role' => $role,
+            'parts' => [$content]
+        ];
+    }
+}
+
+// Ajouter les messages envoyés dans cette requête (nouvelle interaction)
 foreach ($messages as $message) {
     if (!isset($message['role']) || !isset($message['content'])) continue;
     $role = trim($message['role']);
     $content = trim($message['content']);
-    if (empty($role) || empty($content)) continue;
-    $cleanMessages[] = [
-        'role' => $role,
-        'parts' => [$content]
-    ];
+    if (!empty($role) && !empty($content)) {
+        $cleanMessages[] = [
+            'role' => $role,
+            'parts' => [$content]
+        ];
+    }
 }
+
 
 if (empty($cleanMessages)) {
     sendJsonResponse(['success' => false, 'error' => 'Aucun message valide trouvé']);
