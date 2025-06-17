@@ -1,4 +1,4 @@
-<?phpAdd commentMore actions
+<?php
 // Désactiver l'affichage des erreurs pour éviter de corrompre le JSON
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
@@ -283,3 +283,5 @@ sendJsonResponse([
     'timestamp' => date('c'),
     'chat_channel_id' => $chatChannelId
 ]);
+
+?>
