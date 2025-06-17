@@ -3,76 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar Bootstrap</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>OneTapAI - Navigation Bootstrap</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-color: #3ef3c7;
             --primary-rgb: 62, 243, 199;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: all 0.3s ease;
+            background: #000;
+            min-height: 100vh;
             overflow-x: hidden;
+            transition: all 0.3s ease;
         }
 
-        .dark-theme {
-            background: black !important;
-            color: #e2e8f0 !important;
+        body.light-mode {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         }
 
-        .light-theme {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
-            color: #334155 !important;
-        }
-
-        /* Sidebar personnalisé */
+        /* Sidebar personnalisée */
         .custom-sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            width: 280px;
+            width: var(--sidebar-width);
             height: 100vh;
-            z-index: 1000;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            background: rgba(12, 12, 12, 0.92);
             backdrop-filter: blur(20px);
             border-right: 1px solid rgba(var(--primary-rgb), 0.2);
+            transform: translateX(0);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 1000;
             box-shadow: 0 25px 50px -12px rgba(var(--primary-rgb), 0.25);
         }
 
-        .dark-theme .custom-sidebar {
-            background: rgba(12, 12, 12, 0.92);
-        }
-
-        .light-theme .custom-sidebar {
+        body.light-mode .custom-sidebar {
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
         }
 
-        .sidebar-collapsed {
+        .custom-sidebar.collapsed {
             transform: translateX(-280px);
         }
 
-        .custom-sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-        }
-
-        .light-theme .custom-sidebar::before {
-            background: linear-gradient(180deg,
-                rgba(124, 58, 237, 0.05) 0%,
-                rgba(168, 85, 247, 0.05) 50%,
-                rgba(147, 51, 234, 0.05) 100%);
-        }
-
-        /* Bouton toggle */
+        /* Toggle button */
         .toggle-btn {
             position: absolute;
             right: -20px;
@@ -80,7 +68,7 @@
             transform: translateY(-50%);
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #64ffda, #1de9b6);
+            background: linear-gradient(135deg, var(--primary-color), #1de9b6);
             border: none;
             border-radius: 50%;
             cursor: pointer;
@@ -111,29 +99,26 @@
             transition: all 0.3s ease;
         }
 
-        .sidebar-collapsed .toggle-btn::before {
+        .custom-sidebar.collapsed .toggle-btn::before {
             transform: rotate(180deg);
         }
 
-        /* Header de navigation */
+        /* Header */
         .nav-header {
             padding: 2rem 1.5rem;
             border-bottom: 1px solid rgba(var(--primary-rgb), 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
+            color: #e2e8f0;
             font-size: 1.5rem;
             font-weight: 700;
-            background: #fff;
-            background-clip: text;
-            -webkit-background-clip: text;
         }
 
-        .dark-theme .logo {
-            color: #e2e8f0;
-        }
-
-        .light-theme .logo {
+        body.light-mode .logo {
             color: #334155;
         }
 
@@ -143,14 +128,14 @@
             cursor: pointer;
             padding: 8px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease;
-        }
-
-        .dark-theme .theme-toggle {
             color: #e2e8f0;
         }
 
-        .light-theme .theme-toggle {
+        body.light-mode .theme-toggle {
             color: #334155;
         }
 
@@ -159,20 +144,24 @@
             transform: scale(1.1);
         }
 
-        /* Menu de navigation */
+        /* Navigation */
+        .nav-menu {
+            padding: 2rem 0;
+        }
+
         .nav-link-custom {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: rgba(226, 232, 240, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
-            border-radius: 0;
             margin: 0.5rem 0;
         }
 
-        .dark-theme .nav-link-custom {
-            color: rgba(226, 232, 240, 0.7);
-        }
-
-        .light-theme .nav-link-custom {
+        body.light-mode .nav-link-custom {
             color: rgba(51, 65, 85, 0.7);
         }
 
@@ -194,31 +183,24 @@
         }
 
         .nav-link-custom:hover {
-            background: rgba(var(--primary-rgb), 0.1) !important;
-            transform: translateX(8px);
-            max-width: 97%;
-        }
-
-        .dark-theme .nav-link-custom:hover {
             color: #e2e8f0;
+            background: rgba(var(--primary-rgb), 0.1);
+            transform: translateX(8px);
         }
 
-        .light-theme .nav-link-custom:hover {
+        body.light-mode .nav-link-custom:hover {
             color: #334155;
-            background: rgba(var(--primary-rgb), 0.05) !important;
+            background: rgba(var(--primary-rgb), 0.05);
         }
 
         .nav-link-custom.active {
-            background: rgba(var(--primary-rgb), 0.15) !important;
-        }
-
-        .dark-theme .nav-link-custom.active {
             color: #e2e8f0;
+            background: rgba(var(--primary-rgb), 0.15);
         }
 
-        .light-theme .nav-link-custom.active {
+        body.light-mode .nav-link-custom.active {
             color: #334155;
-            background: rgba(var(--primary-rgb), 0.1) !important;
+            background: rgba(var(--primary-rgb), 0.1);
         }
 
         .nav-icon {
@@ -234,33 +216,84 @@
             transform: scale(1.1);
         }
 
-        /* Contenu principal */
-        .main-content {
-            transition: margin-left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            margin-left: 280px;
+        .nav-text {
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
-        .main-content.expanded {
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: margin-left 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        body.light-mode .main-content {
+            color: #334155;
+        }
+
+        .main-content.collapsed {
             margin-left: 0;
         }
 
         .content-card {
+            background: rgba(var(--primary-rgb), 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
+            padding: 2rem;
             border: 1px solid rgba(var(--primary-rgb), 0.2);
-        }
-
-        .dark-theme .content-card {
-            background: rgba(var(--primary-rgb), 0.1);
             box-shadow: 0 20px 40px rgba(var(--primary-rgb), 0.1);
         }
 
-        .light-theme .content-card {
+        body.light-mode .content-card {
             background: rgba(255, 255, 255, 0.8);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
         }
 
-        /* Animations */
+        /* Particules flottantes */
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(var(--primary-rgb), 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        body.light-mode .particle {
+            background: rgba(var(--primary-rgb), 0.2);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Animations d'entrée */
         .nav-item {
             opacity: 0;
             transform: translateY(20px);
@@ -281,227 +314,302 @@
             }
         }
 
-        /* Particules flottantes */
-        .floating-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            animation: float 6s infinite linear;
-        }
-
-        .dark-theme .particle {
-            background: rgba(var(--primary-rgb), 0.3);
-        }
-
-        .light-theme .particle {
-            background: rgba(var(--primary-rgb), 0.2);
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% {
-                transform: translateY(-100px) scale(1);
-                opacity: 0;
-            }
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .custom-sidebar {
                 transform: translateX(-280px);
             }
-            
+
             .custom-sidebar.mobile-open {
                 transform: translateX(0);
             }
-            
+
             .main-content {
                 margin-left: 0;
+            }
+
+            .mobile-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+
+            .mobile-overlay.show {
+                display: block;
             }
         }
     </style>
 </head>
-<body class="dark-theme">
+<body>
+    <!-- Mobile overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <!-- Sidebar -->
     <nav class="custom-sidebar" id="sidebar">
-        <button class="toggle-btn" id="toggleBtn"></button>
+        <div class="floating-particles" id="particles"></div>
         
-        <!-- Header avec logo et toggle theme -->
-        <div class="nav-header d-flex justify-content-between align-items-center">
-            <div class="logo">MonApp</div>
+        <button class="toggle-btn" id="toggleBtn"></button>
+
+        <div class="nav-header">
+            <div class="logo">OneTapAI</div>
             <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-sun theme-icon"></i>
+                <i class="bi bi-moon-fill" id="themeIcon"></i>
             </button>
         </div>
 
-        <!-- Menu de navigation -->
-        <ul class="nav flex-column p-0 mt-4">
-            <li class="nav-item px-3">
-                <a class="nav-link nav-link-custom d-flex align-items-center py-3 active" href="#">
-                    <i class="fas fa-home nav-icon"></i>
-                    <span class="nav-text">Accueil</span>
+        <div class="nav-menu">
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom active" data-page="home">
+                    <i class="bi bi-house-fill nav-icon"></i>
+                    <span class="nav-text">Home</span>
                 </a>
-            </li>
-            <li class="nav-item px-3">
-                <a class="nav-link nav-link-custom d-flex align-items-center py-3" href="#">
-                    <i class="fas fa-chart-bar nav-icon"></i>
-                    <span class="nav-text">Tableau de bord</span>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom" data-page="projects">
+                    <i class="bi bi-check-circle-fill nav-icon"></i>
+                    <span class="nav-text">Projects</span>
                 </a>
-            </li>
-            <li class="nav-item px-3">
-                <a class="nav-link nav-link-custom d-flex align-items-center py-3" href="#">
-                    <i class="fas fa-users nav-icon"></i>
-                    <span class="nav-text">Utilisateurs</span>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom" data-page="chat">
+                    <i class="bi bi-chat-dots-fill nav-icon"></i>
+                    <span class="nav-text">Chat</span>
                 </a>
-            </li>
-            <li class="nav-item px-3">
-                <a class="nav-link nav-link-custom d-flex align-items-center py-3" href="#">
-                    <i class="fas fa-cog nav-icon"></i>
-                    <span class="nav-text">Paramètres</span>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom" data-page="dashboard">
+                    <i class="bi bi-grid-3x3-gap-fill nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
                 </a>
-            </li>
-            <li class="nav-item px-3">
-                <a class="nav-link nav-link-custom d-flex align-items-center py-3" href="#">
-                    <i class="fas fa-envelope nav-icon"></i>
-                    <span class="nav-text">Messages</span>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom" data-page="credits">
+                    <i class="bi bi-credit-card-fill nav-icon"></i>
+                    <span class="nav-text">Buy credits</span>
                 </a>
-            </li>
-            <li class="nav-item px-3">
-                <a class="nav-link nav-link-custom d-flex align-items-center py-3" href="#">
-                    <i class="fas fa-sign-out-alt nav-icon"></i>
-                    <span class="nav-text">Déconnexion</span>
+            </div>
+            <div class="nav-item">
+                <a href="#" class="nav-link-custom" data-page="account">
+                    <i class="bi bi-gear-fill nav-icon"></i>
+                    <span class="nav-text">Account</span>
                 </a>
-            </li>
-        </ul>
-
-        <!-- Particules flottantes -->
-        <div class="floating-particles" id="particles"></div>
+            </div>
+        </div>
     </nav>
 
-    <!-- Contenu principal -->
-    <main class="main-content p-4" id="mainContent">
+    <!-- Main content -->
+    <main class="main-content" id="mainContent">
         <div class="container-fluid">
-            <div class="content-card p-4">
-                <h1 class="h2 mb-4">Bienvenue sur votre tableau de bord</h1>
-                <p class="lead">Cette sidebar Bootstrap reproduit fidèlement le design original avec :</p>
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Mode sombre/clair</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Animations fluides</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Effets glassmorphism</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Responsive design</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Particules animées</li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Sidebar rétractable</li>
-                        </ul>
+            <div class="row">
+                <div class="col-12">
+                    <div class="content-card">
+                        <h1 class="mb-4">Bienvenue sur OneTapAI</h1>
+                        <p class="lead">Cette navigation Bootstrap conserve tout le design et les fonctionnalités de votre version originale :</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <h3>Fonctionnalités</h3>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Thème sombre/clair</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Sidebar collapsible</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Navigation active</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Particules animées</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Design responsive</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Animations fluides</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h3>Technologies</h3>
+                                <ul class="list-unstyled">
+                                    <li><i class="bi bi-bootstrap-fill text-primary me-2"></i>Bootstrap 5.3.2</li>
+                                    <li><i class="bi bi-palette-fill text-info me-2"></i>Bootstrap Icons</li>
+                                    <li><i class="bi bi-code-square text-warning me-2"></i>CSS personnalisé</li>
+                                    <li><i class="bi bi-lightning-fill text-danger me-2"></i>JavaScript ES6</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-4" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            Testez le bouton de thème et le toggle de la sidebar pour voir toutes les animations !
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Gestion du toggle sidebar
-        const toggleBtn = document.getElementById('toggleBtn');
+        // Variables globales
         const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
         const mainContent = document.getElementById('mainContent');
-
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('sidebar-collapsed');
-            toggleBtn.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
-        });
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const body = document.body;
 
         // Gestion du thème
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        const themeIcon = themeToggle.querySelector('.theme-icon');
+        let isDarkMode = true;
 
-        themeToggle.addEventListener('click', () => {
-            if (body.classList.contains('dark-theme')) {
-                body.classList.remove('dark-theme');
-                body.classList.add('light-theme');
-                themeIcon.className = 'fas fa-moon theme-icon';
+        // Fonction pour sauvegarder le thème (simulation)
+        function saveTheme() {
+            const selectedTheme = isDarkMode ? 1 : 0;
+            console.log('Thème sauvegardé:', selectedTheme ? 'Sombre' : 'Clair');
+            // Ici vous pouvez ajouter votre appel AJAX vers theme.php
+            /*
+            fetch('https://onetapai.ctts.fr/theme.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ theme: selectedTheme })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Thème mis à jour en base');
+                } else {
+                    console.error('Erreur serveur:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch failed:', error);
+            });
+            */
+        }
+
+        // Initialisation du thème
+        function initTheme() {
+            if (isDarkMode) {
+                body.classList.remove('light-mode');
+                themeIcon.className = 'bi bi-moon-fill';
             } else {
-                body.classList.remove('light-theme');
-                body.classList.add('dark-theme');
-                themeIcon.className = 'fas fa-sun theme-icon';
+                body.classList.add('light-mode');
+                themeIcon.className = 'bi bi-sun-fill';
             }
+        }
+
+        // Toggle du thème
+        themeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            body.classList.toggle('light-mode');
+
+            // Changer l'icône
+            if (isDarkMode) {
+                themeIcon.className = 'bi bi-moon-fill';
+            } else {
+                themeIcon.className = 'bi bi-sun-fill';
+            }
+
+            saveTheme();
         });
 
-        // Gestion des liens de navigation
+        // Toggle de la sidebar
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('collapsed');
+            toggleBtn.classList.toggle('collapsed');
+        });
+
+        // Gestion des liens actifs
         const navLinks = document.querySelectorAll('.nav-link-custom');
+        
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                
+                // Supprimer la classe active de tous les liens
                 navLinks.forEach(l => l.classList.remove('active'));
+                
+                // Ajouter la classe active au lien cliqué
                 link.classList.add('active');
+                
+                const page = link.getAttribute('data-page');
+                console.log('Navigation vers:', page);
+                
+                // Fermer la sidebar sur mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('mobile-open');
+                    mobileOverlay.classList.remove('show');
+                }
             });
         });
 
         // Création des particules flottantes
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            
-            setInterval(() => {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                particle.style.animationDelay = Math.random() * 2 + 's';
-                
-                particlesContainer.appendChild(particle);
-                
+            if (!particlesContainer) return;
+
+            const particleCount = 15;
+
+            for (let i = 0; i < particleCount; i++) {
                 setTimeout(() => {
-                    particle.remove();
-                }, 8000);
-            }, 300);
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 6 + 's';
+                    particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                    particlesContainer.appendChild(particle);
+
+                    // Supprimer la particule après l'animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 8000);
+                }, i * 400);
+            }
         }
 
         // Gestion responsive
         function handleResize() {
             if (window.innerWidth <= 768) {
-                sidebar.classList.add('sidebar-collapsed');
-                mainContent.classList.add('expanded');
+                // Mode mobile
+                if (!sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('collapsed');
+                }
             } else {
+                // Mode desktop
                 sidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('show');
             }
         }
 
+        // Gestion du clic sur l'overlay mobile
+        mobileOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            mobileOverlay.classList.remove('show');
+        });
+
+        // Toggle mobile (clic sur le bouton toggle en mode mobile)
+        toggleBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-open');
+                mobileOverlay.classList.toggle('show');
+            }
+        });
+
         // Event listeners
         window.addEventListener('resize', handleResize);
-        
-        // Mobile menu toggle
-        if (window.innerWidth <= 768) {
-            toggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('mobile-open');
-            });
-        }
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+            createParticles();
+            setInterval(createParticles, 6000);
+        });
 
         // Initialisation
-        handleResize();
-        createParticles();
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            handleResize();
+        });
     </script>
 </body>
 </html>
