@@ -1,6 +1,6 @@
 <?php
 require_once 'api_config.php';
-
+require_once 'config.php';
 
 function convertMessagesToGeminiFormat($messages)
 {
