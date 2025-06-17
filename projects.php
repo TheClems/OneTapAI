@@ -193,8 +193,8 @@
     </style>
 </head>
 <body>
-    <?php include 'nav.php'; ?>
-    <div class="container">
+<?php require_once 'nav.php'; ?>
+<div class="container">
         <div class="header">
             <h1>Portfolio Métiers IA</h1>
             <p>Découvrez une sélection d'experts IA spécialisés dans différents domaines du marketing digital et de l'entrepreneuriat</p>
