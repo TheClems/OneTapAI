@@ -362,7 +362,7 @@
 
         <div class="nav-menu">
             <div class="nav-item">
-                <a href="#" class="nav-link-custom" data-page="home">
+                <a href="index.php" class="nav-link-custom" data-page="home">
                     <i class="bi bi-house-fill nav-icon"></i>
                     <span class="nav-text">Home</span>
                 </a>
