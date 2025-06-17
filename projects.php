@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Métiers IA - Portfolio Professionnel</title>
+    <link rel="stylesheet" href="css/chat.css">
+
     <style>
         * {
             margin: 0;
