@@ -30,6 +30,11 @@ session_start();  // Toujours démarrer la session en début de script
             color: #ffffff;
             min-height: 100vh;
             line-height: 1.6;
+            margin-left: 17.5rem;
+        }
+
+        body.collapsed {
+            margin-left: 0;
         }
 
         .container {
