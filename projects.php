@@ -24,7 +24,7 @@ session_start();  // Toujours démarrer la session en début de script
             box-sizing: border-box;
         }
 
-        body {
+        .body_job {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
             color: #ffffff;
@@ -33,7 +33,7 @@ session_start();  // Toujours démarrer la session en début de script
             margin-left: 17.5rem;
         }
 
-        body.collapsed {
+        .body_job.collapsed {
             margin-left: 0;
         }
 
@@ -388,7 +388,7 @@ session_start();  // Toujours démarrer la session en début de script
         }
     </style>
 </head>
-<body>
+<body class="body_job">
 <?php require_once 'nav.php'; ?>
 
 <div class="particles" id="particles"></div>
