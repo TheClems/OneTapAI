@@ -2,41 +2,56 @@
 
 
 require_once 'config.php';
-require_once 'api_config.php';
-getDatabaseConnection();
-
+getDBConnection();
 $message = '';
 
 // Traitement du formulaire
 if ($_POST) {
-    $nom = trim($_POST['nom']);
-    $email = trim($_POST['email']);
-    $telephone = trim($_POST['telephone']);
-    $message_user = trim($_POST['message']);
+    $logo = trim($_POST['logo']);
+    $description = trim($_POST['description']);
+    $categorie = trim($_POST['categorie']);
+    $sous_categorie = trim($_POST['sous_categorie']);
+    $tags = trim($_POST['tags']);
+    $model = trim($_POST['model']);
+    $instructions = trim($_POST['instructions']);
     
     // Validation des données
     $erreurs = [];
     
-    if (empty($nom)) {
-        $erreurs[] = "Le nom est requis";
+    if (empty($logo)) {
+        $erreurs[] = "Le logo est requis";
     }
     
-    if (empty($email)) {
-        $erreurs[] = "L'email est requis";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $erreurs[] = "L'email n'est pas valide";
+    if (empty($description)) {
+        $erreurs[] = "La description est requise";
     }
     
-    if (empty($telephone)) {
-        $erreurs[] = "Le téléphone est requis";
+    if (empty($categorie)) {
+        $erreurs[] = "La catégorie est requise";
+    }
+    
+    if (empty($sous_categorie)) {
+        $erreurs[] = "La sous catégorie est requise";
+    }
+    
+    if (empty($tags)) {
+        $erreurs[] = "Les tags sont requis";
+    }
+    
+    if (empty($model)) {
+        $erreurs[] = "Le model est requis";
+    }
+    
+    if (empty($instructions)) {
+        $erreurs[] = "Les instructions sont requises";
     }
     
     // Si pas d'erreurs, insertion en base
     if (empty($erreurs)) {
         try {
-            $sql = "INSERT INTO personas (nom, email, telephone, message, date_creation) VALUES (?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO personas (logo, description, categorie, sous_categorie, tags, model, instructions) VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$nom, $email, $telephone, $message_user]);
+            $stmt->execute([$logo, $description, $categorie, $sous_categorie, $tags, $model, $instructions]);
             
             $message = "<div class='alert alert-success'>Données enregistrées avec succès !</div>";
             
@@ -162,23 +177,38 @@ if ($_POST) {
         
         <form method="POST" action="">
             <div class="form-group">
-                <label for="nom">Nom complet <span class="required">*</span></label>
-                <input type="text" id="nom" name="nom" value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>" required>
+                <label for="logo">Logo <span class="required">*</span></label>
+                <input type="text" id="logo" name="logo" value="<?php echo isset($_POST['logo']) ? htmlspecialchars($_POST['logo']) : ''; ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="email">Email <span class="required">*</span></label>
-                <input type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
+                <label for="description">Description <span class="required">*</span></label>
+                <input type="text" id="description" name="description" value="<?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="telephone">Téléphone <span class="required">*</span></label>
-                <input type="tel" id="telephone" name="telephone" value="<?php echo isset($_POST['telephone']) ? htmlspecialchars($_POST['telephone']) : ''; ?>" required>
+                <label for="categorie">Catégorie <span class="required">*</span></label>
+                <input type="text" id="categorie" name="categorie" value="<?php echo isset($_POST['categorie']) ? htmlspecialchars($_POST['categorie']) : ''; ?>" required>
             </div>
             
             <div class="form-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Votre message..."><?php echo isset($_POST['message']) ? htmlspecialchars($_POST['message']) : ''; ?></textarea>
+                <label for="sous_categorie">Sous Catégorie <span class="required">*</span></label>
+                <input type="text" id="sous_categorie" name="sous_categorie" value="<?php echo isset($_POST['sous_categorie']) ? htmlspecialchars($_POST['sous_categorie']) : ''; ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags">Tags <span class="required">*</span></label>
+                <input type="text" id="tags" name="tags" value="<?php echo isset($_POST['tags']) ? htmlspecialchars($_POST['tags']) : ''; ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="model">Model <span class="required">*</span></label>
+                <input type="text" id="model" name="model" value="<?php echo isset($_POST['model']) ? htmlspecialchars($_POST['model']) : ''; ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="instructions">Instructions</label>
+                <textarea id="instructions" name="instructions" placeholder="Votre instructions..."><?php echo isset($_POST['instructions']) ? htmlspecialchars($_POST['instructions']) : ''; ?></textarea>
             </div>
             
             <button type="submit" class="btn">Envoyer</button>
