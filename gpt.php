@@ -34,9 +34,26 @@ if (curl_errno($ch)) {
     echo 'Erreur cURL : ' . curl_error($ch);
 } else {
     $responseData = json_decode($response, true);
+
+    // Affichage complet de la réponse
+    echo "<h3>Réponse complète de l'API :</h3>";
     echo "<pre>";
-    echo $responseData['choices'][0]['message']['content'];
+    print_r($responseData);
     echo "</pre>";
+    
+    // Vérifie si 'choices' existe
+    if (isset($responseData['choices'][0]['message']['content'])) {
+        echo "<h3>Réponse de ChatGPT :</h3>";
+        echo "<pre>" . htmlspecialchars($responseData['choices'][0]['message']['content']) . "</pre>";
+    } else {
+        echo "<h3>Erreur : aucune réponse trouvée.</h3>";
+        echo "<pre>";
+        echo "HTTP Code : $httpcode\n";
+        echo "Clé API valide ? Modèle disponible ?\n";
+        echo "Réponse JSON brute :\n" . htmlspecialchars($response);
+        echo "</pre>";
+    }
+    
 }
 
 // Fermeture de cURL
