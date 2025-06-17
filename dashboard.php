@@ -18,7 +18,7 @@ $user = getCurrentUser();
 </head>
 
 <body>
-    <?php require_once 'nav.php'; ?>
+    <?php require_once 'bootstrap.php'; ?>
 
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
