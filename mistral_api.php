@@ -6,7 +6,7 @@ require_once 'api_config.php';
 // Configuration spécifique à Mistral
 const MISTRAL_API_KEY = 'OX4fzStQrzPd2PfyCAl7PR6ip3bcsvey';
 const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';
-const MISTRAL_MODEL = 'mistral-medium';
+const MISTRAL_MODEL = 'mistral-large';
 
 /**
  * Processeur spécifique pour l'API Mistral
