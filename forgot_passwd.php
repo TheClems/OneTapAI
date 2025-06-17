@@ -38,6 +38,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
         $error = "Aucun compte trouvé avec cette adresse ou ce nom d'utilisateur.";
     }
 }
+
+// Si l'utilisateur soumet le formulaire de réinitialisation
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['token']) && isset($_POST['password'], $_POST['confirm_password'])) {
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+
+    if ($password !== $confirmPassword) {
+        $error = "Les mots de passe ne correspondent pas.";
+    } elseif (strlen($password) < 8) {
+        $error = "Le mot de passe doit contenir au moins 8 caractères.";
+    } else {
+        // 🔐 Hasher le mot de passe
+
+        // 🔎 Retrouver l'utilisateur avec le token
+        $token = $_GET['token'];
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE forgot_password_id = ?");
+        $stmt->execute([$token]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            // ✅ Mettre à jour le mot de passe
+            $stmt = $pdo->prepare("UPDATE users SET password = ?, forgot_password_id = NULL WHERE id = ?");
+            $stmt->execute([$password, $user['id']]);
+
+            $success = "Mot de passe mis à jour avec succès.";
+        } else {
+            $error = "Lien invalide ou expiré.";
+        }
+    }
+}
+
 ?>
 
 <link rel="stylesheet" href="css/auth.css" />
@@ -105,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
                     <h1>Enter your new password</h1>
     
                     <input id="password" name="password" placeholder="Password" required="">
-                    <input id="password" name="password" placeholder="Confirm Password" required="">
+                    <input id="confirm_password" name="confirm_password" placeholder="Confirm Password" required="">
 
     
                     <button>Change password</button>
