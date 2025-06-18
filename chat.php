@@ -100,6 +100,7 @@ function getUserChannels($userId)
                 cc.id, 
                 cc.created_at,
                 cc.model,
+                cc.persona_name,
                 COALESCE(
                     (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
                     'Nouveau chat'
