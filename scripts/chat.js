@@ -8,9 +8,6 @@ const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
 
-const personaId = <?php echo json_encode($_SESSION['persona_id'] ?? null); ?>;
-const selectedModelPersona = <?php echo json_encode($_SESSION['selected_model'] ?? null); ?>;
-const personaInstructions = <?php echo json_encode($_SESSION['persona_instructions'] ?? null); ?>;
 
 // Fonction pour formater l'heure
 function formatTime(dateString) {
