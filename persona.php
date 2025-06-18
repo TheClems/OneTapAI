@@ -16,13 +16,8 @@ session_start();  // Toujours démarrer la session en début de script
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Métiers IA - Portfolio Professionnel</title>
 
+    <link rel="stylesheet" href="css/animations.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         .body_job {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #ffffff;
@@ -44,36 +39,6 @@ session_start();  // Toujours démarrer la session en début de script
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem 0;
-        }
-
-        .header h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #64ffda, #1de9b6);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradient 3s ease infinite;
-            margin-bottom: 1rem;
-        }
-
-        .header p {
-            font-size: 1.2rem;
-            color: #cccccc;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         .search-container {
@@ -398,7 +363,7 @@ session_start();  // Toujours démarrer la session en début de script
     <div class="container">
         <div class="header">
             <h1>Portfolio Métiers IA</h1>
-            <p>Découvrez une sélection d'experts IA spécialisés dans différents domaines du marketing digital et de l'entrepreneuriat</p>
+            <p class="subtitle">Découvrez une sélection d'experts IA spécialisés dans différents domaines du marketing digital et de l'entrepreneuriat</p>
         </div>
 
         <div class="search-container">
