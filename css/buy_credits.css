@@ -438,3 +438,8 @@
   justify-content: center;
   margin-top: 5vh;
 }
+
+.buttons-container{
+  display: flex;
+  justify-content: center;
+}
