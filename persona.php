@@ -563,7 +563,7 @@ session_start();  // Toujours démarrer la session en début de script
         function startConversation() {
             if (currentId) {
                 // Passer l'ID du persona en paramètre, chat.php générera son propre id_channel
-                window.location.href = `test.php?persona_id=${currentId}`;
+                window.location.href = `chat.php?persona_id=${currentId}`;
             } else {
                 alert('Erreur: ID du persona non trouvé');
             }
