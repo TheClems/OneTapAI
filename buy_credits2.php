@@ -97,7 +97,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
                         Buy
                     </button>
-                    <!-- <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div> -->
                 </div>
             <?php endforeach; ?>
         </div>
