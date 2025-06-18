@@ -1,9 +1,6 @@
 // Initialiser Lucide icons
 lucide.createIcons();
 
-// Variables PHP pour JS
-const userUsername = '<?php echo htmlspecialchars($user['username']); ?>';
-const userFullName = '<?php echo htmlspecialchars($user['full_name']); ?>';
 
 
 
