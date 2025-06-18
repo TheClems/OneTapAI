@@ -107,10 +107,9 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
     <div class="paypal-render-area" id="paypal-render-area"></div>
-    
+
     <script>
     const pseudoPHP = <?= json_encode($user['username']) ?>;
-
     document.querySelectorAll('.acheter-btn').forEach(function (button) {
         button.addEventListener('click', function () {
             const nom = this.getAttribute('data-nom');
