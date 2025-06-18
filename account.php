@@ -102,6 +102,6 @@ $user = getCurrentUser();
     </script>
     <script type="text/javascript" src="scripts/account.js"></script>
     <script type="text/javascript" src="scripts/nav.js"></script>
-    <script src="scripts/animated-bg.js"></script>
+    <script type="text/javascript" src="scripts/animated-bg.js"></script>
 </body>
 </html>
