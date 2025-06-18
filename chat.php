@@ -165,10 +165,17 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     if ($existingEmptyChannel) {
         // Utiliser le channel vide existant
-        $currentChannelId = $existingEmptyChannel;
-        $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
-        header("Location: ?id_channel=" . $existingEmptyChannel . $modelParam);
-        exit;
+        if(isset($_GET['persona_id'])) {
+            $currentChannelId = $existingEmptyChannel;
+            $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
+            header("Location: ?id_channel=" . $existingEmptyChannel . $modelParam . '&persona_id=' . $_GET['persona_id']);
+            exit;
+        } else {
+            $currentChannelId = $existingEmptyChannel;
+            $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
+            header("Location: ?id_channel=" . $existingEmptyChannel . $modelParam);
+            exit;
+        }
     } else {
         // Créer un nouveau channel seulement s'il n'y en a pas de vide
         $id = uniqid('chat_', true);
