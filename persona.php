@@ -359,7 +359,15 @@ session_start();  // Toujours démarrer la session en début de script
 <body class="body_job">
 <?php require_once 'nav.php'; ?>
 
-<div class="particles" id="particles"></div>
+    <!-- Animated background -->
+    <div class="animated-bg" id="animatedBg"></div>
+
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>Portfolio Métiers IA</h1>
