@@ -281,7 +281,7 @@ async function sendMessage() {
     if (!message) return;
 
     // Récupérer le modèle sélectionné
-    const selectedModel = getSelectedModel(); // Cette fonction doit être définie
+    let selectedModel = getSelectedModel(); // Cette fonction doit être définie
 
     // Si instructions personnalisées → forcer un modèle compatible
     if (typeof personaInstructions === 'string' && personaInstructions.trim() !== '') {
