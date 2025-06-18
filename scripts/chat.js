@@ -7,11 +7,21 @@ const chatHistoryPanel = document.getElementById('chatHistoryPanel');
 const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
-console.log(personaId);
-console.log(selectedModelPersona);
-console.log(personaInstructions);
-console.log(personaNom);
-console.log(personaTags);
+if (typeof personaId !== 'undefined') {
+    console.log('personaId:', personaId);
+}
+if (typeof selectedModelPersona !== 'undefined') {
+    console.log('selectedModelPersona:', selectedModelPersona);
+}
+if (typeof personaInstructions !== 'undefined') {
+    console.log('personaInstructions:', personaInstructions);
+}
+if (typeof personaNom !== 'undefined') {
+    console.log('personaNom:', personaNom);
+}
+if (typeof personaTags !== 'undefined') {
+    console.log('personaTags:', personaTags);
+}
 
 // Fonction pour formater l'heure
 function formatTime(dateString) {
@@ -270,8 +280,7 @@ function getSelectedModel() {
     return model || 'mistral-medium'; // Valeur par défaut
 }
 
-
-// Envoyer un message
+//Envoyer message
 async function sendMessage() {
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
@@ -279,29 +288,27 @@ async function sendMessage() {
     const loading = document.getElementById('loading');
 
     const message = messageInput.value.trim();
-
     if (!message) return;
 
-    // Récupérer le modèle sélectionné
-    let selectedModel = getSelectedModel(); // Cette fonction doit être définie
+    let selectedModel = getSelectedModel(); // Doit être définie ailleurs
 
-    // Si instructions personnalisées → forcer un modèle compatible
-    if (typeof personaInstructions === 'string' && personaInstructions.trim() !== '') {
-        // Par exemple, on force GPT pour les instructions personnalisées
+    // Si des instructions personnalisées existent, forcer un modèle spécifique
+    if (typeof personaInstructions !== 'undefined' &&
+        typeof personaInstructions === 'string' &&
+        personaInstructions.trim() !== '' &&
+        typeof selectedModelPersona !== 'undefined') {
         selectedModel = selectedModelPersona;
     }
-    // Déterminer quel script API utiliser
+
+    // Déterminer l'endpoint API à utiliser
     let apiEndpoint;
-    if (selectedModel === 'gemini') {
-        apiEndpoint = 'gemini_api.php';
-    } else if (selectedModel === 'openrouter') {
-        apiEndpoint = 'openrouter_api.php';
-    } else if (selectedModel === 'mistral-medium') {
-        apiEndpoint = 'mistral_api.php';
-    } else if (selectedModel === 'deepseek') {
-        apiEndpoint = 'deepseek_api.php';
-    } else if (selectedModel === 'gpt') {
-        apiEndpoint = 'gpt_api.php';
+    switch (selectedModel) {
+        case 'gemini': apiEndpoint = 'gemini_api.php'; break;
+        case 'openrouter': apiEndpoint = 'openrouter_api.php'; break;
+        case 'mistral-medium': apiEndpoint = 'mistral_api.php'; break;
+        case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
+        case 'gpt': apiEndpoint = 'gpt_api.php'; break;
+        default: apiEndpoint = 'default_api.php'; break;
     }
 
     // Désactiver l'interface pendant l'envoi
@@ -309,37 +316,36 @@ async function sendMessage() {
     sendButton.disabled = true;
     loading.style.display = 'block';
 
-    // Ajouter le message utilisateur à l'affichage
     displayMessage(message, true);
     messageInput.value = '';
 
-    // Ajouter le message à l'historique
     messageHistory.push({
         role: 'user',
         content: message
     });
 
     try {
-        // Récupérer l'ID du channel depuis l'URL
         const urlParams = new URLSearchParams(window.location.search);
         const chatChannelId = urlParams.get('id_channel');
 
-        // Créer la liste des messages à envoyer
         let messagesToSend = [...messageHistory];
 
-        // Ajouter les instructions si définies et non vides
-        if (typeof personaInstructions === 'string' && personaInstructions.trim() !== '') {
+        // Ajouter instructions si elles existent
+        if (typeof personaInstructions !== 'undefined' &&
+            typeof personaInstructions === 'string' &&
+            personaInstructions.trim() !== '' &&
+            typeof personaNom !== 'undefined' &&
+            typeof personaTags !== 'undefined') {
+
             messagesToSend = [{
                 role: 'system',
-                content: 'Tu es ' + personaNom + ', Utilise tes compétences en ' + personaTags + '. ' + personaInstructions.trim()
+                content: `Tu es ${personaNom}, Utilise tes compétences en ${personaTags}. ${personaInstructions.trim()}`
             }, ...messagesToSend];
         }
 
         const response = await fetch(apiEndpoint, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 messages: messagesToSend,
                 chat_channel_id: chatChannelId
@@ -349,13 +355,10 @@ async function sendMessage() {
         const data = await response.json();
 
         if (data.success) {
-            // Ajouter la réponse de l'IA
             displayMessage(data.content, false);
-
-            // Ajouter à l'historique
             messageHistory.push({
                 role: 'assistant',
-                content: data.content.replace(/<br\s*\/?>/gi, '\n') // Convertir les <br> en retours à la ligne
+                content: data.content.replace(/<br\s*\/?>/gi, '\n')
             });
         } else {
             throw new Error(data.error || 'Erreur inconnue');
@@ -365,13 +368,13 @@ async function sendMessage() {
         console.error('Erreur:', error);
         displayMessage(`Désolé, une erreur s'est produite : ${error.message}`, false);
     } finally {
-        // Réactiver l'interface
         messageInput.disabled = false;
         sendButton.disabled = false;
         loading.style.display = 'none';
         messageInput.focus();
     }
 }
+
 
 
 
