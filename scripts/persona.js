@@ -61,7 +61,7 @@ function openModal(card) {
     const title = card.querySelector('.career-title').textContent;
     const description = card.querySelector('.career-description').textContent;
     const model = card.dataset.model;
-    const specialites = card.dataset.specialites;
+    let specialites = card.dataset.specialites;
     const role = card.dataset.role;
     const id = card.dataset.id; // Récupérer l'ID
 
