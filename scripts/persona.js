@@ -25,9 +25,8 @@ function searchCareers() {
         const title = normalizeText(card.querySelector('.career-title').textContent);
         const description = normalizeText(card.querySelector('.career-description').textContent);
         const category = normalizeText(card.querySelector('.career-category').textContent);
-        const tags = Array.from(card.querySelectorAll('.tag'))
-        .map(tag => normalizeText(tag.textContent).replace(/;/g, ', '))
-        .join(' ');
+        const tags = Array.from(card.querySelectorAll('.tag')).map(tag => normalizeText(tag.textContent)).join(' ');
+
         const searchableText = `${title} ${description} ${category} ${tags}`;
 
         const matchesSearch = searchableText.includes(searchTerm) || searchTerm === '';
@@ -72,6 +71,7 @@ function openModal(card) {
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalDescription').textContent = description;
     document.getElementById('modalModel').textContent = model;
+    specialites = specialites.replace(/;/g, ', ');
     document.getElementById('modalSpecialites').textContent = specialites;
 
     currentRole = role;
