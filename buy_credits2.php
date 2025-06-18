@@ -107,28 +107,29 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script src="scripts/animated-bg.js"></script>
     <script>
-       document.querySelectorAll('.acheter-btn').forEach(function (button) {
+    <script>
+const pseudoPHP = <?= json_encode($user['username']) ?>;
+
+document.querySelectorAll('.acheter-btn').forEach(function (button) {
     button.addEventListener('click', function () {
-        const id = this.getAttribute('data-id');
         const nom = this.getAttribute('data-nom');
         const prix = this.getAttribute('data-prix');
         const credits = this.getAttribute('data-credits');
 
-        // Désactive tous les boutons
+        // Réactive tous les boutons et désactive celui cliqué
         document.querySelectorAll('.acheter-btn').forEach(btn => btn.disabled = false);
-        // Désactive uniquement celui cliqué
         this.disabled = true;
 
-        // Réinitialise le conteneur du bouton PayPal
-        const renderArea = document.getElementById('paypal-render-area');
-        renderArea.innerHTML = ''; // vide le conteneur
-        const paypalDiv = document.createElement('div');
-        paypalDiv.id = 'paypal-button-container';
-        renderArea.appendChild(paypalDiv);
-        paypalDiv.scrollIntoView({ behavior: 'smooth' });
+        // Trouver ou créer le conteneur pour PayPal
+        let renderArea = document.getElementById('paypal-render-area');
+        if (!renderArea) {
+            renderArea = document.createElement('div');
+            renderArea.id = 'paypal-render-area';
+            document.body.appendChild(renderArea);
+        }
 
+        renderArea.innerHTML = '<div id="paypal-button-container"></div>';
 
-        // Rendu du bouton PayPal
         paypal.Buttons({
             createOrder: function (data, actions) {
                 return actions.order.create({
@@ -151,12 +152,20 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
                     console.log("Détails : ", details);
                 });
+            },
+            onError: function(err) {
+                console.error("Erreur PayPal:", err);
+                alert("Une erreur est survenue avec PayPal.");
             }
         }).render('#paypal-button-container');
+
+        // Optionnel : scroll vers le bouton PayPal
+        renderArea.scrollIntoView({ behavior: 'smooth' });
     });
 });
+</script>
 
-<div id="paypal-render-area"></div>
-    </script>
-    <script type="text/javascript" src="scripts/nav.js"></script>
+<!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
+<script type="text/javascript" src="scripts/nav.js"></script>
+<div id="paypal-render-area" style="margin-top: 30px;"></div>
 </body>
