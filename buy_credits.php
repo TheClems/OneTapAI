@@ -63,12 +63,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
 
-    <div class="floating-elements">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
-
     <div class="container">
         <div class="header">
             <h1>Buy credits</h1>
@@ -112,7 +106,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
 
-    <script src="scripts/floating-element.js"></script>
+    <script src="scripts/animated-bg.js"></script>
     <script>
         // PayPal integration
 const pseudoPHP = <?= json_encode($user['username']) ?>;

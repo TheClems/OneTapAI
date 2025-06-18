@@ -22,11 +22,6 @@ $user = getCurrentUser();
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
 
-    <div class="floating-elements">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
     <div class="container">
         <div class="header">
             <div class="user-info">
@@ -45,7 +40,7 @@ $user = getCurrentUser();
         </div>
     </div>
     <script type="text/javascript" src="scripts/nav.js"></script>
-    <script type="text/javascript" src="scripts/floating-element.js"></script>
+    <script src="scripts/animated-bg.js"></script>
 </body>
 
 </html>
