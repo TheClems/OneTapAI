@@ -431,19 +431,18 @@ session_start();  // Toujours démarrer la session en début de script
                 $instructions = $row['instructions'];
                 $tagsArray = explode(';', $tags);
 
-                echo $tagsArray;
+
                 echo    "<div class='career-card' data-category='$categorie' data-role='$nom' data-model='$model' data-specialites='$tags'>
                 <div class='career-icon'>$logo</div>
                 <div class='career-category'>$categorie</div>
                 <h3 class='career-title'>$nom</h3>
                 <p class='career-description'>$description</p>
-                <div class='career-tags'>
-                    <?php foreach ($tagsArray as $tag) { ?>
-                        <span class='tag'><?php echo $tag; ?></span>
-                    <?php } ?>
-                </div>
-            </div>
-            ";
+                <div class='career-tags'>";
+                    foreach ($tagsArray as $tag) {
+                        echo "<span class='tag'>$tag</span>";
+                    }
+                echo "</div>
+            </div>";
             }
             ?>
             <div class="career-card" data-category="contenu" data-role="redacteur_editorial" data-model="Claude-3.5" data-specialites="Journalisme, Investigation, Ligne éditoriale">
