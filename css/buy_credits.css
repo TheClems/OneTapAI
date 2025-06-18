@@ -440,6 +440,6 @@
 }
 
 .buttons-container{
-  display: flex;
-  justify-content: center;
+  display: flex !important;
+  justify-content: center !important;
 }
