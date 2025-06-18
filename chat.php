@@ -19,6 +19,10 @@ if (isset($_SESSION['user_id'])) {
 $selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
 $_SESSION['selected_model'] = $selectedModel;
 
+// Variables pour les données du persona
+$instructions = '';
+$nom = '';
+$tags = '';
 
 if (isset($_GET['persona_id'])) {
     $personaId = $_GET['persona_id'];
@@ -32,13 +36,11 @@ if (isset($_GET['persona_id'])) {
             $instructions = $result['instructions'];
             $nom = $result['nom'];
             $tags = $result['tags'];
-
         }
     } catch (PDOException $e) {
         error_log("Erreur récupération modèle: " . $e->getMessage());
     }
 }
-
 
 // Liste des modèles disponibles
 $availableModels = [
@@ -166,6 +168,21 @@ function verifyChannelOwnership($channelId, $userId)
     }
 }
 
+// Fonction pour générer l'URL avec tous les paramètres
+function buildRedirectUrl($channelId, $model = null, $personaId = null) {
+    $params = ['id_channel' => $channelId];
+    
+    if ($model) {
+        $params['model'] = $model;
+    }
+    
+    if ($personaId) {
+        $params['persona_id'] = $personaId;
+    }
+    
+    return '?' . http_build_query($params);
+}
+
 $channelHistory = [];
 $currentChannelId = null;
 
@@ -185,18 +202,15 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     }
 
     if ($existingEmptyChannel) {
-        // Utiliser le channel vide existant
-        if(isset($_GET['persona_id'])) {
-            $currentChannelId = $existingEmptyChannel;
-            $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
-            header("Location: ?id_channel=" . $existingEmptyChannel . $modelParam . '&persona_id=' . $_GET['persona_id']);
-            exit;
-        } else {
-            $currentChannelId = $existingEmptyChannel;
-            $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
-            header("Location: ?id_channel=" . $existingEmptyChannel . $modelParam);
-            exit;
-        }
+        // Utiliser le channel vide existant et préserver TOUS les paramètres
+        $currentChannelId = $existingEmptyChannel;
+        $redirectUrl = buildRedirectUrl(
+            $existingEmptyChannel, 
+            $selectedModel, 
+            isset($_GET['persona_id']) ? $_GET['persona_id'] : null
+        );
+        header("Location: " . $redirectUrl);
+        exit;
     } else {
         // Créer un nouveau channel seulement s'il n'y en a pas de vide
         $id = uniqid('chat_', true);
@@ -213,8 +227,13 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             ]);
             $_SESSION['id_channel'] = $id;
 
-            $modelParam = $selectedModel ? '&model=' . urlencode($selectedModel) : '';
-            header("Location: ?id_channel=" . $id . $modelParam);
+            // Préserver TOUS les paramètres lors de la redirection
+            $redirectUrl = buildRedirectUrl(
+                $id, 
+                $selectedModel, 
+                isset($_GET['persona_id']) ? $_GET['persona_id'] : null
+            );
+            header("Location: " . $redirectUrl);
             exit;
         } catch (PDOException $e) {
             error_log("Erreur création channel: " . $e->getMessage());
@@ -458,6 +477,9 @@ if ($currentChannelId !== null) {
                             data-model="<?php echo htmlspecialchars($channel['model']); ?>">
                             <div class="chat-preview">
                                 <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
+                            </div>
+                            <div class="chat-model">
+                                <?php echo $channel['model']; ?>
                             </div>
                             <div class="chat-model">
                                 <?php echo $channel['model']; ?>
