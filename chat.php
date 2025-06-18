@@ -202,13 +202,20 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     }
 
     if ($existingEmptyChannel) {
-        // Utiliser le channel vide existant et préserver TOUS les paramètres
         $currentChannelId = $existingEmptyChannel;
-        $redirectUrl = buildRedirectUrl(
-            $existingEmptyChannel, 
-            $selectedModel, 
-            isset($_GET['persona_id']) ? $_GET['persona_id'] : null
-        );
+        
+        // Si un persona est sélectionné, mettre à jour le channel
+        if (!empty($nom)) {
+            $pdo = getDBConnection();
+            try {
+                $stmt = $pdo->prepare("UPDATE chat_channels SET persona_name = ?, model = ? WHERE id = ?");
+                $stmt->execute([$nom, $selectedModel ?: '', $existingEmptyChannel]);
+            } catch (PDOException $e) {
+                error_log("Erreur mise à jour persona: " . $e->getMessage());
+            }
+        }
+        
+        $redirectUrl = buildRedirectUrl($existingEmptyChannel, $selectedModel, $_GET['persona_id'] ?? null);
         header("Location: " . $redirectUrl);
         exit;
     } else {
