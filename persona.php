@@ -439,7 +439,7 @@ session_start();  // Toujours démarrer la session en début de script
                 <p class='career-description'>$description</p>
                 <div class='career-tags'>
                     <?php foreach ($tagsArray as $tag) { ?>
-                        <span class="tag"><?php echo $tag; ?></span>
+                        <span class='tag'><?php echo $tag; ?></span>
                     <?php } ?>
                 </div>
             </div>
