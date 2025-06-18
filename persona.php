@@ -589,7 +589,7 @@ session_start();  // Toujours démarrer la session en début de script
         // Fonction pour démarrer une conversation
         function startConversation() {
             if (currentId) {
-                // Redirection vers la page de chat avec l'ID en paramètre
+                // Redirection directe vers la page de chat avec l'ID
                 window.location.href = `chat.php?id=${currentId}`;
             } else {
                 alert('Erreur: ID du persona non trouvé');
