@@ -10,6 +10,8 @@ const mainContainer = document.getElementById('mainContainer');
 console.log(personaId);
 console.log(selectedModelPersona);
 console.log(personaInstructions);
+console.log(personaNom);
+console.log(personaTags);
 
 // Fonction pour formater l'heure
 function formatTime(dateString) {
@@ -329,7 +331,7 @@ async function sendMessage() {
         if (typeof personaInstructions === 'string' && personaInstructions.trim() !== '') {
             messagesToSend = [{
                 role: 'system',
-                content: personaInstructions.trim()
+                content: 'Tu es ' + personaNom + ', Utilise tes compétences en ' + personaTags + '. ' + personaInstructions.trim()
             }, ...messagesToSend];
         }
 
