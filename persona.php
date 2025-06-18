@@ -357,7 +357,7 @@ session_start();  // Toujours démarrer la session en début de script
     </style>
 </head>
 <body class="body_job">
-<?php require_once 'nav.php'; ?>
+    <?php require_once 'nav.php'; ?>
 
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
@@ -384,8 +384,7 @@ session_start();  // Toujours démarrer la session en début de script
         </div>
 
         <div class="careers-grid">
-
-        <div class="career-card" data-category="contenu" data-role="redacteur_editorial" data-model="Claude-3.5" data-specialites="Journalisme, Investigation, Ligne éditoriale">
+            <div class="career-card" data-category="contenu" data-role="redacteur_editorial" data-model="Claude-3.5" data-specialites="Journalisme, Investigation, Ligne éditoriale">
                 <div class="career-icon">📰</div>
                 <div class="career-category">Média & Presse</div>
                 <h3 class="career-title">Rédacteur Éditorial</h3>
@@ -397,6 +396,7 @@ session_start();  // Toujours démarrer la session en début de script
                     <span class="tag">Investigation</span>
                 </div>
             </div>
+
             <?php
             $pdo = getDBConnection();
             $stmt = $pdo->query("SELECT * FROM personas");
@@ -426,7 +426,6 @@ session_start();  // Toujours démarrer la session en début de script
             </div>";
             }
             ?>
-            
         </div>
     </div>
 
@@ -671,3 +670,6 @@ session_start();  // Toujours démarrer la session en début de script
     </script>
 
     <script src="scripts/nav.js"></script>
+    <script src="scripts/animated-bg.js"></script>
+</body>
+</html>
