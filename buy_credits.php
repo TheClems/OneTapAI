@@ -63,12 +63,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
 
-    <div class="floating-elements">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
-
     <div class="container">
         <div class="header">
             <h1>Buy credits</h1>

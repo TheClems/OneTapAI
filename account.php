@@ -19,12 +19,6 @@ $user = getCurrentUser();
 
     <div class="animated-bg" id="animatedBg"></div>
 
-    <div class="floating-elements">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
-
     <div class="main-content">
         
         <h1>Account</h1>

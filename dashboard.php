@@ -21,12 +21,7 @@ $user = getCurrentUser();
     <?php require_once 'nav.php'; ?>
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
-
-    <div class="floating-elements">
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-        <div class="floating-element"></div>
-    </div>
+    
     <div class="container">
         <div class="header">
             <div class="user-info">
