@@ -109,8 +109,8 @@ function uniqid(prefix = '', more_entropy = false) {
 function startConversation() {
     if (currentId) {
         // Passer l'ID du persona en paramètre, chat.php générera son propre id_channel
-        const id = uniqid('chat_', true);
-        window.location.href = `chat.php?id_channel=${id}&persona_id=${currentId}`;
+        
+        window.location.href = `chat.php?persona_id=${currentId}`;
     } else {
         alert('Erreur: ID du persona non trouvé');
     }
