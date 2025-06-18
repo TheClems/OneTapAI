@@ -433,7 +433,7 @@ session_start();  // Toujours démarrer la session en début de script
 
 
                 echo    "<div class='career-card' data-category='$categorie' data-role='$nom' data-model='$model' data-specialites='$tags'>
-                <div class='career-icon'>📝</div>
+                <div class='career-icon'>$logo</div>
                 <div class='career-category'>$categorie</div>
                 <h3 class='career-title'>$nom</h3>
                 <p class='career-description'>$description</p>
