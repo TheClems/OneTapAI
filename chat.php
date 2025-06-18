@@ -19,6 +19,27 @@ if (isset($_SESSION['user_id'])) {
 $selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
 $_SESSION['selected_model'] = $selectedModel;
 
+
+if (isset($_GET['persona_id'])) {
+    $personaId = $_GET['persona_id'];
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("SELECT model, instructions FROM personas WHERE id = ?");
+        $stmt->execute([$personaId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $selectedModel = $result['model'];
+            $instructions = $result['instructions'];
+            $_SESSION['selected_model'] = $selectedModel;
+            $_SESSION['persona_id'] = $personaId;
+            $_SESSION['persona_instructions'] = $instructions;
+        }
+    } catch (PDOException $e) {
+        error_log("Erreur récupération modèle: " . $e->getMessage());
+    }
+}
+
+
 // Liste des modèles disponibles
 $availableModels = [
     'mistral-medium' => [
@@ -507,6 +528,10 @@ if ($currentChannelId !== null) {
 
 </html>
 <script>
+
+const personaId = <?php echo json_encode($_SESSION['persona_id'] ?? null); ?>;
+const selectedModelPersona = <?php echo json_encode($_SESSION['selected_model'] ?? null); ?>;
+const personaInstructions = <?php echo json_encode($_SESSION['persona_instructions'] ?? null); ?>;
     // Historique des messages depuis PHP
     let messageHistory = <?php echo json_encode(array_map(function ($msg) {
                                 return [
