@@ -218,12 +218,13 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
         $pdo = getDBConnection();
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at, model) VALUES (:id, :id_user, :created_at, :model)");
+            $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at, model, persona_name) VALUES (:id, :id_user, :created_at, :model, :persona_name)");
             $stmt->execute([
                 ':id' => $id,
                 ':id_user' => $userId,
                 ':created_at' => $createdAt,
-                ':model' => $selectedModel ?: ''
+                ':model' => $selectedModel ?: '',
+                ':persona_name' => $nom ?: ''
             ]);
             $_SESSION['id_channel'] = $id;
 
