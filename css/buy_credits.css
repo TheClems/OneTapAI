@@ -437,14 +437,5 @@
 .paypal-render-area {
   justify-content: center;
   margin-top: 5vh;
-}
-
-.paypal-render-area {
-  display: flex !important;
-  justify-content: center !important;
-}
-
-#paypal-button-container {
-  display: flex !important;
-  justify-content: center !important;
+  display: flex;
 }
