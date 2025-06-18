@@ -431,8 +431,8 @@ session_start();  // Toujours démarrer la session en début de script
                 $instructions = $row['instructions'];
                 $tagsArray = explode(';', $tags);
                 $categorie_min = strtolower($categorie);
-
-                echo    "<div class='career-card' data-category='$categorie_min' data-role='$nom' data-model='$model' data-specialites='$tags'>
+                $nom_min = strtolower($nom);
+                echo    "<div class='career-card' data-category='$categorie_min' data-role='$nom_min' data-model='$model' data-specialites='$tags'>
                 <div class='career-icon'>$logo</div>
                 <div class='career-category'>$categorie</div>
                 <h3 class='career-title'>$nom</h3>
