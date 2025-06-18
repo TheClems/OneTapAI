@@ -32,11 +32,7 @@ if (isset($_GET['persona_id'])) {
             $instructions = $result['instructions'];
             $nom = $result['nom'];
             $tags = $result['tags'];
-            $_SESSION['selected_model'] = $selectedModel;
-            $_SESSION['persona_id'] = $personaId;
-            $_SESSION['persona_instructions'] = $instructions;
-            $_SESSION['persona_nom'] = $nom;
-            $_SESSION['persona_tags'] = $tags;
+
         }
     } catch (PDOException $e) {
         error_log("Erreur récupération modèle: " . $e->getMessage());
@@ -533,11 +529,11 @@ if ($currentChannelId !== null) {
 </html>
 <script>
 
-const personaId = <?php echo json_encode($_SESSION['persona_id'] ?? null); ?>;
-const selectedModelPersona = <?php echo json_encode($_SESSION['selected_model'] ?? null); ?>;
-const personaInstructions = <?php echo json_encode($_SESSION['persona_instructions'] ?? null); ?>;
-const personaNom = <?php echo json_encode($_SESSION['persona_nom'] ?? null); ?>;
-const personaTags = <?php echo json_encode($_SESSION['persona_tags'] ?? null); ?>;
+const personaId = <?php echo $personaId ?? null; ?>;
+const selectedModelPersona = <?php echo $selectedModel ?? null; ?>;
+const personaInstructions = <?php echo $instructions ?? null; ?>;
+const personaNom = <?php echo $nom ?? null; ?>;
+const personaTags = <?php echo $tags ?? null; ?>;
     // Historique des messages depuis PHP
     let messageHistory = <?php echo json_encode(array_map(function ($msg) {
                                 return [
