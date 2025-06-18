@@ -7,7 +7,9 @@ const chatHistoryPanel = document.getElementById('chatHistoryPanel');
 const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
-
+console.log(personaId);
+console.log(selectedModelPersona);
+console.log(personaInstructions);
 
 // Fonction pour formater l'heure
 function formatTime(dateString) {
