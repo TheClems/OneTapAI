@@ -107,7 +107,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script src="scripts/animated-bg.js"></script>
     <script>
-    <script>
 const pseudoPHP = <?= json_encode($user['username']) ?>;
 
 document.querySelectorAll('.acheter-btn').forEach(function (button) {
