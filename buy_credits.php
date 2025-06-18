@@ -58,69 +58,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 
-<style>
-/* Styles pour les conteneurs PayPal */
-.paypal-boutons {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin-top: 15px;
-    padding: 10px;
-    min-height: 50px;
-}
-
-/* Style pour chaque bouton PayPal individuellement */
-[id^="paypal-boutons-"] {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin-top: 15px;
-    padding: 10px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-}
-
-/* Effet hover sur le conteneur */
-[id^="paypal-boutons-"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-}
-
-/* Style pour les iframes PayPal */
-[id^="paypal-boutons-"] iframe {
-    border-radius: 8px !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
-    transition: all 0.3s ease !important;
-}
-
-/* Effet hover sur les iframes */
-[id^="paypal-boutons-"] iframe:hover {
-    transform: scale(1.02) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-}
-
-/* Style alternatif avec bordure */
-.paypal-boutons-wrapper {
-    border: 2px solid #0070ba;
-    border-radius: 12px;
-    padding: 8px;
-    background: white;
-    margin-top: 15px;
-}
-
-/* Animation de chargement */
-.paypal-boutons:empty::before {
-    content: "Chargement PayPal...";
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-    color: #666;
-    font-style: italic;
-}
-</style>
 <body class="body_buy_credits">
 <?php require_once 'nav.php'; ?>
 
@@ -172,7 +109,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script src="scripts/animated-bg.js"></script>
     <script>
-// PayPal integration améliorée
+        // PayPal integration
 const pseudoPHP = <?= json_encode($user['username']) ?>;
 
 document.querySelectorAll('.acheter-btn').forEach(function (button) {
@@ -182,20 +119,9 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
         const prix = this.getAttribute('data-prix');
         const credits = this.getAttribute('data-credits');
 
-        // Désactiver le bouton
         this.disabled = true;
-        this.textContent = 'Chargement...';
 
-        // Créer le bouton PayPal avec styles personnalisés
         paypal.Buttons({
-            style: {
-                layout: 'horizontal',
-                color: 'blue',
-                shape: 'pill',
-                label: 'pay',
-                height: 45,
-                tagline: false
-            },
             createOrder: function (data, actions) {
                 return actions.order.create({
                     purchase_units: [{
@@ -214,60 +140,13 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
             },
             onApprove: function (data, actions) {
                 return actions.order.capture().then(function (details) {
-                    // Afficher une notification de succès stylée
-                    showSuccessNotification("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                    alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
                     console.log("Détails : ", details);
-                    
-                    // Recharger la page après 2 secondes
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
                 });
-            },
-            onError: function (err) {
-                console.error('Erreur PayPal:', err);
-                button.disabled = false;
-                button.textContent = 'Buy';
-                alert('Erreur lors du paiement. Veuillez réessayer.');
-            },
-            onCancel: function (data) {
-                console.log('Paiement annulé');
-                button.disabled = false;
-                button.textContent = 'Buy';
             }
         }).render("#paypal-boutons-" + id);
-
-        // Cacher le bouton d'achat une fois PayPal chargé
-        setTimeout(() => {
-            this.style.display = 'none';
-        }, 1000);
     });
 });
-
-// Fonction pour afficher une notification de succès
-function showSuccessNotification(message) {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 9999;
-        font-weight: 500;
-        animation: slideIn 0.3s ease;
-    `;
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    // Supprimer la notification après 4 secondes
-    setTimeout(() => {
-        notification.remove();
-    }, 4000);
-}
     </script>
     <script type="text/javascript" src="scripts/nav.js"></script>
 </body>
