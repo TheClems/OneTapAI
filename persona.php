@@ -399,6 +399,7 @@ session_start();  // Toujours démarrer la session en début de script
             $pdo = getDBConnection();
             $stmt = $pdo->query("SELECT * FROM personas");
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $id = $row['id'];
                 $logo = $row['logo'];
                 $nom = $row['nom'];
                 $description = $row['description'];
@@ -410,7 +411,7 @@ session_start();  // Toujours démarrer la session en début de script
                 $tagsArray = explode(';', $tags);
                 $categorie_min = strtolower($categorie);
                 $nom_min = strtolower($nom);
-                echo    "<div class='career-card' data-category='$categorie_min' data-role='$nom_min' data-model='$model' data-specialites='$tags'>
+                echo    "<div class='career-card' data-category='$categorie_min' data-role='$nom_min' data-model='$model' data-specialites='$tags' data-id='$id'>
                 <div class='career-icon'>$logo</div>
                 <div class='career-category'>$categorie</div>
                 <h3 class='career-title'>$nom</h3>
@@ -470,6 +471,7 @@ session_start();  // Toujours démarrer la session en début de script
         const startChatBtn = document.getElementById('startChatBtn');
         
         let currentRole = '';
+        let currentId = ''; // Nouvelle variable pour stocker l'ID
         let activeCategory = 'tous';
 
         // Fonction de recherche améliorée
@@ -518,6 +520,7 @@ session_start();  // Toujours démarrer la session en début de script
             const model = card.dataset.model;
             const specialites = card.dataset.specialites;
             const role = card.dataset.role;
+            const id = card.dataset.id; // Récupérer l'ID
             
             // Mise à jour du contenu du modal
             document.getElementById('modalIcon').textContent = icon;
@@ -528,6 +531,7 @@ session_start();  // Toujours démarrer la session en début de script
             document.getElementById('modalSpecialites').textContent = specialites;
             
             currentRole = role;
+            currentId = id; // Stocker l'ID globalement
             modal.style.display = 'block';
             
             // Animation d'ouverture
@@ -549,33 +553,14 @@ session_start();  // Toujours démarrer la session en début de script
 
         // Fonction pour démarrer une conversation
         function startConversation() {
-            // Ici vous pouvez ajouter la logique pour démarrer une conversation
-            // Par exemple, rediriger vers une page de chat ou ouvrir une interface de chat
-            
-            const roleNames = {
-                'redacteur_discours': 'Rédacteur Discours Politique',
-                'redacteur_editorial': 'Rédacteur Éditorial',
-                'prompt_engineer': 'Prompt Engineer',
-                'broadcaster': 'Broadcaster/Journalist',
-                'chef_produit': 'Chef de Produit',
-                'growth_hacker': 'Growth Hacker',
-                'social_media_manager': 'Social Media Manager',
-                'etude_marche': 'Chargé d\'Étude de Marché',
-                'influence_marketing': 'Influence Marketing',
-                'marketing_automation': 'Expert Marketing Automation',
-                'email_marketing': 'Expert E-mail Marketing',
-                'ui_ux_designer': 'UI/UX Designer',
-                'ecommerce_marketing': 'Marketing E-commerce',
-                'expert_seo': 'Expert SEO',
-                'entrepreneur': 'Serial Entrepreneur',
-                'directeur_marketing': 'Directeur Marketing & Commercial',
-                'ecrivain': 'Écrivain'
-            };
-
-            alert(`Conversation démarrée avec ${roleNames[currentRole]}!\n\nCette fonctionnalité peut être connectée à votre système de chat préféré.`);
-            closeModalFunction();
+            if (currentId) {
+                // Redirection vers la page de chat avec l'ID en paramètre
+                window.location.href = `chat.php?id=${currentId}`;
+            } else {
+                alert('Erreur: ID du persona non trouvé');
+            }
         }
-
+        
         // Event Listeners
 
         // Recherche en temps réel
