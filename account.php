@@ -13,7 +13,7 @@ $user = getCurrentUser();
     <title>Account - OneTapAI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <link rel="stylesheet" href="css/account.css">
-    <link rel="stylesheet" href="css/animated-bg.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body class="body_account">
     <?php require_once 'nav.php'; ?>
