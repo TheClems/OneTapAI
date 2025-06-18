@@ -58,7 +58,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body class="body_buy_credits">
-<?php require_once 'nav.php'; ?>
+    <?php require_once 'nav.php'; ?>
 
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
@@ -100,71 +100,71 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             <?php endforeach; ?>
         </div>
-
     </div>
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
 
-    <script src="scripts/animated-bg.js"></script>
+
+    <!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
+    <div class="paypal-render-area" id="paypal-render-area"></div>
+    
     <script>
-const pseudoPHP = <?= json_encode($user['username']) ?>;
+    const pseudoPHP = <?= json_encode($user['username']) ?>;
 
-document.querySelectorAll('.acheter-btn').forEach(function (button) {
-    button.addEventListener('click', function () {
-        const nom = this.getAttribute('data-nom');
-        const prix = this.getAttribute('data-prix');
-        const credits = this.getAttribute('data-credits');
+    document.querySelectorAll('.acheter-btn').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const nom = this.getAttribute('data-nom');
+            const prix = this.getAttribute('data-prix');
+            const credits = this.getAttribute('data-credits');
 
-        // Réactive tous les boutons et désactive celui cliqué
-        document.querySelectorAll('.acheter-btn').forEach(btn => btn.disabled = false);
-        this.disabled = true;
+            // Réactive tous les boutons et désactive celui cliqué
+            document.querySelectorAll('.acheter-btn').forEach(btn => btn.disabled = false);
+            this.disabled = true;
 
-        // Trouver ou créer le conteneur pour PayPal
-        let renderArea = document.getElementById('paypal-render-area');
-        if (!renderArea) {
-            renderArea = document.createElement('div');
-            renderArea.id = 'paypal-render-area';
-            document.body.appendChild(renderArea);
-        }
-
-        renderArea.innerHTML = '<div id="paypal-button-container"></div>';
-
-        paypal.Buttons({
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        description: nom + " - " + credits + " crédits",
-                        custom_id: pseudoPHP + "-" + nom,
-                        invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
-                        amount: {
-                            value: prix,
-                            currency_code: 'EUR'
-                        }
-                    }],
-                    application_context: {
-                        shipping_preference: "NO_SHIPPING"
-                    }
-                });
-            },
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
-                    console.log("Détails : ", details);
-                });
-            },
-            onError: function(err) {
-                console.error("Erreur PayPal:", err);
-                alert("Une erreur est survenue avec PayPal.");
+            // Trouver ou créer le conteneur pour PayPal
+            let renderArea = document.getElementById('paypal-render-area');
+            if (!renderArea) {
+                renderArea = document.createElement('div');
+                renderArea.id = 'paypal-render-area';
+                document.body.appendChild(renderArea);
             }
-        }).render('#paypal-button-container');
 
-        // Optionnel : scroll vers le bouton PayPal
-        renderArea.scrollIntoView({ behavior: 'smooth' });
+            renderArea.innerHTML = '<div id="paypal-button-container"></div>';
+
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            description: nom + " - " + credits + " crédits",
+                            custom_id: pseudoPHP + "-" + nom,
+                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                            amount: {
+                                value: prix,
+                                currency_code: 'EUR'
+                            }
+                        }],
+                        application_context: {
+                            shipping_preference: "NO_SHIPPING"
+                        }
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                        console.log("Détails : ", details);
+                    });
+                },
+                onError: function(err) {
+                    console.error("Erreur PayPal:", err);
+                    alert("Une erreur est survenue avec PayPal.");
+                }
+            }).render('#paypal-button-container');
+
+            // Optionnel : scroll vers le bouton PayPal
+            renderArea.scrollIntoView({ behavior: 'smooth' });
+        });
     });
-});
-</script>
-
-<!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
-<script type="text/javascript" src="scripts/nav.js"></script>
-<div id="paypal-render-area" style="margin-top: 30px;"></div>
+    </script>
+    <script type="text/javascript" src="scripts/nav.js"></script>
+    <script src="scripts/animated-bg.js"></script>
 </body>
