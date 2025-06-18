@@ -8,7 +8,9 @@ const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
 
-
+const personaId = <?php echo json_encode($_SESSION['persona_id'] ?? null); ?>;
+const selectedModelPersona = <?php echo json_encode($_SESSION['selected_model'] ?? null); ?>;
+const personaInstructions = <?php echo json_encode($_SESSION['persona_instructions'] ?? null); ?>;
 
 // Fonction pour formater l'heure
 function formatTime(dateString) {
@@ -276,11 +278,17 @@ async function sendMessage() {
     const loading = document.getElementById('loading');
 
     const message = messageInput.value.trim();
+
     if (!message) return;
 
     // Récupérer le modèle sélectionné
     const selectedModel = getSelectedModel(); // Cette fonction doit être définie
 
+    // Si instructions personnalisées → forcer un modèle compatible
+    if (typeof personaInstructions === 'string' && personaInstructions.trim() !== '') {
+        // Par exemple, on force GPT pour les instructions personnalisées
+        selectedModel = selectedModelPersona;
+    }
     // Déterminer quel script API utiliser
     let apiEndpoint;
     if (selectedModel === 'gemini') {
@@ -315,13 +323,24 @@ async function sendMessage() {
         const urlParams = new URLSearchParams(window.location.search);
         const chatChannelId = urlParams.get('id_channel');
 
+        // Créer la liste des messages à envoyer
+        let messagesToSend = [...messageHistory];
+
+        // Ajouter les instructions si définies et non vides
+        if (typeof personaInstructions === 'string' && personaInstructions.trim() !== '') {
+            messagesToSend = [{
+                role: 'system',
+                content: personaInstructions.trim()
+            }, ...messagesToSend];
+        }
+
         const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                messages: messageHistory,
+                messages: messagesToSend,
                 chat_channel_id: chatChannelId
             })
         });
@@ -331,7 +350,7 @@ async function sendMessage() {
         if (data.success) {
             // Ajouter la réponse de l'IA
             displayMessage(data.content, false);
-            
+
             // Ajouter à l'historique
             messageHistory.push({
                 role: 'assistant',
@@ -352,6 +371,7 @@ async function sendMessage() {
         messageInput.focus();
     }
 }
+
 
 
 // Gestionnaires d'événements
