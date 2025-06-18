@@ -529,11 +529,25 @@ if ($currentChannelId !== null) {
 </html>
 <script>
 
-const personaId = <?php echo $personaId ?? null; ?>;
-const selectedModelPersona = <?php echo $selectedModel ?? null; ?>;
-const personaInstructions = <?php echo $instructions ?? null; ?>;
-const personaNom = <?php echo $nom ?? null; ?>;
-const personaTags = <?php echo $tags ?? null; ?>;
+<?php if (isset($personaId)) : ?>
+const personaId = <?= json_encode($personaId) ?>;
+<?php endif; ?>
+
+<?php if (isset($selectedModel)) : ?>
+const selectedModelPersona = <?= json_encode($selectedModel) ?>;
+<?php endif; ?>
+
+<?php if (isset($instructions)) : ?>
+const personaInstructions = <?= json_encode($instructions) ?>;
+<?php endif; ?>
+
+<?php if (isset($nom)) : ?>
+const personaNom = <?= json_encode($nom) ?>;
+<?php endif; ?>
+
+<?php if (isset($tags)) : ?>
+const personaTags = <?= json_encode($tags) ?>;
+<?php endif; ?>
     // Historique des messages depuis PHP
     let messageHistory = <?php echo json_encode(array_map(function ($msg) {
                                 return [
