@@ -172,7 +172,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="paypal-render-area" id="paypal-render-area"></div>
 
     <script>
-// PayPal integration améliorée
+// PayPal integration corrigée
 const pseudoPHP = <?= json_encode($user['username']) ?>;
 
 document.querySelectorAll('.acheter-btn').forEach(function (button) {
@@ -181,66 +181,105 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
         const nom = this.getAttribute('data-nom');
         const prix = this.getAttribute('data-prix');
         const credits = this.getAttribute('data-credits');
+        
+        const containerId = "#paypal-boutons-" + id;
+        
+        // Vérifier que l'élément existe avant de continuer
+        const container = document.querySelector(containerId);
+        if (!container) {
+            console.error('Conteneur PayPal introuvable:', containerId);
+            alert('Erreur: conteneur PayPal introuvable');
+            return;
+        }
+        
+        // Vérifier si PayPal n'est pas déjà rendu dans ce conteneur
+        if (container.innerHTML.trim() !== '') {
+            console.log('PayPal déjà rendu pour ce conteneur');
+            return;
+        }
 
         // Désactiver le bouton
         this.disabled = true;
-        this.textContent = 'Chargement...';
-
-        // Créer le bouton PayPal avec styles personnalisés
-        paypal.Buttons({
-            style: {
-                layout: 'horizontal',
-                color: 'blue',
-                shape: 'pill',
-                label: 'pay',
-                height: 45,
-                tagline: false
-            },
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        description: nom + " - " + credits + " crédits",
-                        custom_id: pseudoPHP + "-" + nom,
-                        invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
-                        amount: {
-                            value: prix,
-                            currency_code: 'EUR'
-                        }
-                    }],
-                    application_context: {
-                        shipping_preference: "NO_SHIPPING"
-                    }
-                });
-            },
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    // Afficher une notification de succès stylée
-                    showSuccessNotification("✅ Paiement réussi par " + details.payer.name.given_name + " !");
-                    console.log("Détails : ", details);
-                    
-                    // Recharger la page après 2 secondes
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                });
-            },
-            onError: function (err) {
-                console.error('Erreur PayPal:', err);
-                button.disabled = false;
-                button.textContent = 'Buy';
-                alert('Erreur lors du paiement. Veuillez réessayer.');
-            },
-            onCancel: function (data) {
-                console.log('Paiement annulé');
-                button.disabled = false;
-                button.textContent = 'Buy';
-            }
-        }).render("#paypal-boutons-" + id);
-
-        // Cacher le bouton d'achat une fois PayPal chargé
+        this.textContent = 'Chargement PayPal...';
+        
+        // Ajouter un délai pour s'assurer que l'élément est bien présent
         setTimeout(() => {
-            this.style.display = 'none';
-        }, 1000);
+            // Vérifier à nouveau que l'élément existe
+            const finalContainer = document.querySelector(containerId);
+            if (!finalContainer) {
+                console.error('Conteneur toujours introuvable après délai');
+                this.disabled = false;
+                this.textContent = 'Buy';
+                return;
+            }
+
+            try {
+                paypal.Buttons({
+                    style: {
+                        layout: 'horizontal',
+                        color: 'blue',
+                        shape: 'pill',
+                        label: 'pay',
+                        height: 45,
+                        tagline: false
+                    },
+                    createOrder: function (data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                description: nom + " - " + credits + " crédits",
+                                custom_id: pseudoPHP + "-" + nom,
+                                invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                                amount: {
+                                    value: prix,
+                                    currency_code: 'EUR'
+                                }
+                            }],
+                            application_context: {
+                                shipping_preference: "NO_SHIPPING"
+                            }
+                        });
+                    },
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            showSuccessNotification("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                            console.log("Détails : ", details);
+                            
+                            // Recharger la page après 2 secondes
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        });
+                    },
+                    onError: function (err) {
+                        console.error('Erreur PayPal:', err);
+                        button.disabled = false;
+                        button.textContent = 'Buy';
+                        alert('Erreur lors du paiement. Veuillez réessayer.');
+                    },
+                    onCancel: function (data) {
+                        console.log('Paiement annulé');
+                        button.disabled = false;
+                        button.textContent = 'Buy';
+                    }
+                }).render(containerId).then(() => {
+                    // PayPal rendu avec succès
+                    console.log('PayPal rendu avec succès dans', containerId);
+                    // Cacher le bouton d'achat
+                    button.style.display = 'none';
+                }).catch((err) => {
+                    console.error('Erreur lors du rendu PayPal:', err);
+                    button.disabled = false;
+                    button.textContent = 'Buy';
+                    alert('Impossible de charger PayPal. Veuillez réessayer.');
+                });
+                
+            } catch (error) {
+                console.error('Erreur PayPal:', error);
+                button.disabled = false;
+                button.textContent = 'Buy';
+                alert('Erreur lors de l\'initialisation PayPal.');
+            }
+        }, 100); // Délai de 100ms pour s'assurer que l'élément est bien présent
     });
 });
 
@@ -268,6 +307,12 @@ function showSuccessNotification(message) {
         notification.remove();
     }, 4000);
 }
+
+// Debug: Afficher tous les conteneurs PayPal disponibles
+console.log('Conteneurs PayPal disponibles:');
+document.querySelectorAll('[id^="paypal-boutons-"]').forEach(el => {
+    console.log('- ' + el.id);
+});
     </script>
     <script type="text/javascript" src="scripts/nav.js"></script>
     <script src="scripts/animated-bg.js"></script>
