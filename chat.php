@@ -100,6 +100,7 @@ function getUserChannels($userId)
                 cc.id, 
                 cc.created_at,
                 cc.model,
+                cc.persona_name,
                 COALESCE(
                     (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
                     'Nouveau chat'
@@ -202,13 +203,20 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     }
 
     if ($existingEmptyChannel) {
-        // Utiliser le channel vide existant et préserver TOUS les paramètres
         $currentChannelId = $existingEmptyChannel;
-        $redirectUrl = buildRedirectUrl(
-            $existingEmptyChannel, 
-            $selectedModel, 
-            isset($_GET['persona_id']) ? $_GET['persona_id'] : null
-        );
+        
+        // Si un persona est sélectionné, mettre à jour le channel
+        if (!empty($nom)) {
+            $pdo = getDBConnection();
+            try {
+                $stmt = $pdo->prepare("UPDATE chat_channels SET persona_name = ?, model = ? WHERE id = ?");
+                $stmt->execute([$nom, $selectedModel ?: '', $existingEmptyChannel]);
+            } catch (PDOException $e) {
+                error_log("Erreur mise à jour persona: " . $e->getMessage());
+            }
+        }
+        
+        $redirectUrl = buildRedirectUrl($existingEmptyChannel, $selectedModel, $_GET['persona_id'] ?? null);
         header("Location: " . $redirectUrl);
         exit;
     } else {
@@ -482,9 +490,12 @@ if ($currentChannelId !== null) {
                             <div class="chat-model">
                                 <?php echo $channel['model']; ?>
                             </div>
-                            <div class="chat-model">
-                                <?php echo $channel['model']; ?>
-                            </div>
+                            <?php if ($channel['persona_name']): ?>
+                                <div class="chat-persona">
+                                    <?php echo $channel['persona_name']; ?>
+                                </div>
+                            <?php endif; ?>
+
                             <div class="chat-time">
                                 🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
                             </div>
