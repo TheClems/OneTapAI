@@ -97,7 +97,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
                         Buy
                     </button>
-                    <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
+                    <!-- <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div> -->
                 </div>
             <?php endforeach; ?>
         </div>
@@ -108,18 +108,28 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script src="scripts/animated-bg.js"></script>
     <script>
-        // PayPal integration
-const pseudoPHP = <?= json_encode($user['username']) ?>;
-
-document.querySelectorAll('.acheter-btn').forEach(function (button) {
+       document.querySelectorAll('.acheter-btn').forEach(function (button) {
     button.addEventListener('click', function () {
         const id = this.getAttribute('data-id');
         const nom = this.getAttribute('data-nom');
         const prix = this.getAttribute('data-prix');
         const credits = this.getAttribute('data-credits');
 
+        // Désactive tous les boutons
+        document.querySelectorAll('.acheter-btn').forEach(btn => btn.disabled = false);
+        // Désactive uniquement celui cliqué
         this.disabled = true;
 
+        // Réinitialise le conteneur du bouton PayPal
+        const renderArea = document.getElementById('paypal-render-area');
+        renderArea.innerHTML = ''; // vide le conteneur
+        const paypalDiv = document.createElement('div');
+        paypalDiv.id = 'paypal-button-container';
+        renderArea.appendChild(paypalDiv);
+        paypalDiv.scrollIntoView({ behavior: 'smooth' });
+
+
+        // Rendu du bouton PayPal
         paypal.Buttons({
             createOrder: function (data, actions) {
                 return actions.order.create({
@@ -143,9 +153,11 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
                     console.log("Détails : ", details);
                 });
             }
-        }).render("#paypal-boutons-" + id);
+        }).render('#paypal-button-container');
     });
 });
+
+<div id="paypal-render-area"></div>
     </script>
     <script type="text/javascript" src="scripts/nav.js"></script>
 </body>
