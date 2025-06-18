@@ -489,9 +489,12 @@ if ($currentChannelId !== null) {
                             <div class="chat-model">
                                 <?php echo $channel['model']; ?>
                             </div>
-                            <div class="chat-model">
-                                <?php echo $channel['model']; ?>
-                            </div>
+                            <?php if ($channel['persona_name']): ?>
+                                <div class="chat-persona">
+                                    <?php echo $channel['persona_name']; ?>
+                                </div>
+                            <?php endif; ?>
+
                             <div class="chat-time">
                                 🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
                             </div>
