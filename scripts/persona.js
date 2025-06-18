@@ -93,12 +93,24 @@ function closeModalFunction() {
         modal.style.display = 'none';
     }, 300);
 }
+function uniqid(prefix = '', more_entropy = false) {
+    const now = Date.now(); // timestamp en ms
+    const random = Math.floor(Math.random() * 1000000000).toString(16); // valeur pseudo-aléatoire
+    let unique = prefix + now.toString(16) + random;
+
+    if (more_entropy) {
+        unique += (Math.random() * 10).toFixed(8).toString(); // ajoute un peu plus d'entropie
+    }
+
+    return unique;
+}
 
 // Fonction pour démarrer une conversation
 function startConversation() {
     if (currentId) {
         // Passer l'ID du persona en paramètre, chat.php générera son propre id_channel
-        window.location.href = `chat.php?persona_id=${currentId}`;
+        const id = uniqid('chat_', true);
+        window.location.href = `chat.php?id_channel=${id}&persona_id=${currentId}`;
     } else {
         alert('Erreur: ID du persona non trouvé');
     }
