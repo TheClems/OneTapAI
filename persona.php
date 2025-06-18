@@ -554,8 +554,8 @@ session_start();  // Toujours démarrer la session en début de script
         // Fonction pour démarrer une conversation
         function startConversation() {
             if (currentId) {
-                // Redirection directe vers la page de chat avec l'ID
-                window.location.href = `chat.php?id=${currentId}`;
+                // Passer l'ID du persona en paramètre, chat.php générera son propre id_channel
+                window.location.href = `chat.php?persona_id=${currentId}`;
             } else {
                 alert('Erreur: ID du persona non trouvé');
             }
@@ -593,7 +593,6 @@ session_start();  // Toujours démarrer la session en début de script
 
         // Démarrage de conversation
         startChatBtn.addEventListener('click', startConversation);
-
         // Gestion du clavier
         document.addEventListener('keydown', (event) => {
             // Fermer le modal avec Escape
