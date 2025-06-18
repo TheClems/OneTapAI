@@ -417,19 +417,35 @@ session_start();  // Toujours démarrer la session en début de script
         </div>
 
         <div class="careers-grid">
-            <div class="career-card" data-category="contenu" data-role="redacteur_discours" data-model="GPT-4" data-specialites="Rhétorique politique, Art oratoire, Persuasion">
-                <div class="career-icon">📝</div>
-                <div class="career-category">Contenu & Communication</div>
-                <h3 class="career-title">Rédacteur Discours Politique</h3>
-                <p class="career-description">Expert en rédaction de discours politiques percutants et persuasifs. Maîtrise de la rhétorique et de l'art oratoire pour créer des messages impactants.</p>
-                <div class="career-tags">
-                    <span class="tag">Rhétorique</span>
-                    <span class="tag">Persuasion</span>
-                    <span class="tag">Communication</span>
-                    <span class="tag highlighted">Politique</span>
+            <?php
+            $pdo = getDBConnection();
+            $stmt = $pdo->query("SELECT * FROM personas");
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $logo = $row['logo'];
+                $nom = $row['nom'];
+                $description = $row['description'];
+                $categorie = $row['categorie'];
+                $sous_categorie = $row['sous_categorie'];
+                $tags = $row['tags'];
+                $model = $row['model'];
+                $instructions = $row['instructions'];
+                $tagsArray = explode(';', $tags);
+
+
+                echo    "<div class='career-card' data-category='$categorie' data-role='$nom' data-model='$model' data-specialites='$tags'>
+                <div class='career-icon'>📝</div>
+                <div class='career-category'>$categorie</div>
+                <h3 class='career-title'>$nom</h3>
+                <p class='career-description'>$description</p>
+                <div class='career-tags'>
+                    <?php foreach ($tagsArray as $tag) { ?>
+                        <span class="tag"><?php echo $tag; ?></span>
+                    <?php } ?>
                 </div>
             </div>
-
+            ";
+            }
+            ?>
             <div class="career-card" data-category="contenu" data-role="redacteur_editorial" data-model="Claude-3.5" data-specialites="Journalisme, Investigation, Ligne éditoriale">
                 <div class="career-icon">📰</div>
                 <div class="career-category">Média & Presse</div>
