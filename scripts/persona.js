@@ -25,8 +25,9 @@ function searchCareers() {
         const title = normalizeText(card.querySelector('.career-title').textContent);
         const description = normalizeText(card.querySelector('.career-description').textContent);
         const category = normalizeText(card.querySelector('.career-category').textContent);
-        const tags = Array.from(card.querySelectorAll('.tag')).map(tag => normalizeText(tag.textContent)).join(' ');
-
+        const tags = Array.from(card.querySelectorAll('.tag'))
+        .map(tag => normalizeText(tag.textContent).replace(/;/g, ', '))
+        .join(' ');
         const searchableText = `${title} ${description} ${category} ${tags}`;
 
         const matchesSearch = searchableText.includes(searchTerm) || searchTerm === '';
