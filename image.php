@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 $apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // Remplace par ta vraie clé API
 
-$endpoint = 'https://api-flux.aiturboapi.com/v1/text-to-image';
+$endpoint = 'https://api.fluxaiimagegenerator.com/v1/images/generate';
 
 $data = [
     "prompt" => "un dragon mécanique en plein vol",
