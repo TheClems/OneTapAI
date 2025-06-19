@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+error_reporting(E_ALL);
 $apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // remplace par ta clé API
 $endpoint = 'https://api-flux.aiturboapi.com/v1/image-to-prompt'; // ou /v1/text-to-prompt selon ton besoin
 
