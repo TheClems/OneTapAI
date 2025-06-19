@@ -136,7 +136,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         purchase_units: [{
                             description: nom + " - " + credits + " crédits",
                             custom_id: pseudoPHP + "-" + nom,
-                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom + "-" + Date.now(),
                             amount: {
                                 value: prix,
                                 currency_code: 'EUR'
