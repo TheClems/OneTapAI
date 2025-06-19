@@ -5,36 +5,70 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // Remplace par ta vraie clé API
-$endpoint = 'https://api-flux.aiturboapi.com/v1/text-to-prompt';
+$apiUrl = 'https://api.bfl.ml/v1/flux-pro-1.1'; // Flux API endpoint
+$outputFolder = __DIR__ . '/images_fluc'; // Folder to save the generated images
 
-$data = [
-    "prompt" => "chat astronaute dans l'espace",
-    "width" => 512,
-    "height" => 512,
-    "num_images" => 1,
-    "steps" => 30
-];
-
-$headers = [
-    "x-api-key: $apiKey",
-    "Content-Type: application/json"
-];
-$ch = curl_init($endpoint);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true); // Vérifie le certificat SSL
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-
-$response = curl_exec($ch);
-
-if (curl_errno($ch)) {
-    echo "<p style='color:red'>❌ Erreur cURL : " . curl_error($ch) . "</p>";
-} else {
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    echo "<h3>Code HTTP : $httpCode</h3>";
-    echo "<pre>Réponse : " . htmlspecialchars($response) . "</pre>";
+// Ensure the output folder exists
+if (!is_dir($outputFolder)) {
+    mkdir($outputFolder, 0777, true);
 }
 
-curl_close($ch);
+// Function to generate and save the image
+function generateAndSaveImage($prompt, $width, $height, $apiKey, $apiUrl, $outputFolder) {
+    // Create the payload for the API request
+    $payload = [
+        'prompt' => $prompt,
+        'width' => $width,
+        'height' => $height,
+        'prompt_upsampling' => false,
+        'seed' => rand(0, 999999), // Optional seed for reproducibility
+        'safety_tolerance' => 3
+    ];
+
+    // Initialize cURL
+    $ch = curl_init($apiUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'X-Key: ' . $apiKey
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute the API request
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    if (!$response) {
+        die('Error: Unable to connect to the API.');
+    }
+
+    // Decode the API response
+    $data = json_decode($response, true);
+    if (!isset($data['image_url'])) {
+        die('Error: Invalid API response - ' . $response);
+    }
+
+    // Download the image
+    $imageContent = file_get_contents($data['image_url']);
+    if (!$imageContent) {
+        die('Error: Unable to download the image.');
+    }
+
+    // Save the image to the output folder
+    $outputFile = $outputFolder . '/generated_image_' . time() . '.png';
+    if (!file_put_contents($outputFile, $imageContent)) {
+        die('Error: Unable to save the image.');
+    }
+
+    echo "Image successfully saved to: $outputFile\n";
+}
+
+// Example Usage
+// Get values from the query string, with defaults
+$prompt = isset($_GET['prompt']) ? $_GET['prompt'] : 'a serene lake at sunset, beautiful reflections, mountains in the background';
+$width = isset($_GET['width']) ? (int)$_GET['width'] : 1024;
+$height = isset($_GET['height']) ? (int)$_GET['height'] : 768;
+
+// Generate the image
+generateAndSaveImage($prompt, $width, $height, $apiKey, $apiUrl, $outputFolder);
