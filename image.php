@@ -1,74 +1,45 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 
-error_reporting(E_ALL);
+$apiKey = 'a9c25d736c28420cb74a3d087ac84ce6'; // Ta clé API ici
+$endpoint = 'https://api.aimlapi.com/v1/chat/completions';
 
-$apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // Remplace par ta vraie clé API
-$apiUrl = 'https://api.bfl.ml/v1/flux-pro-1.1'; // Flux API endpoint
-$outputFolder = __DIR__ . '/images_fluc'; // Folder to save the generated images
+$data = [
+    "model" => "gpt-4o",
+    "messages" => [
+        [
+            "role" => "user",
+            "content" => "Read this article and generate a short prompt for illustration generation (no need to output the words like Prompt): Futuristic Cities. Cities of the future promise to radically transform how people live, work, and move. Instead of sprawling layouts, we’ll see vertical structures that integrate residential, work, and public spaces into single, self-sustaining ecosystems. Architecture will adapt to climate conditions, and buildings will be energy-efficient—generating power through solar panels, wind turbines, and even foot traffic. Transportation will be fully autonomous and silent. Streets will be freed from traffic and pollution, with ground-level space given back to pedestrians and greenery. Drones, magnetic levitation pods, and underground tunnels will handle most transit. Artificial intelligence will manage traffic flow and energy distribution in real time, ensuring maximum efficiency and comfort. Digital technology will be woven into every part of urban life. Smart homes will adapt to residents’ habits, while city services will respond instantly to citizen needs. Virtual and augmented reality will blur the line between physical and digital spaces. These cities won’t just be places to live—they’ll be flexible, sustainable environments where technology truly serves people."
+        ],
+    ],
+];
 
-// Ensure the output folder exists
-if (!is_dir($outputFolder)) {
-    mkdir($outputFolder, 0777, true);
+$headers = [
+    "Content-Type: application/json",
+    "Authorization: Bearer $apiKey",
+];
+
+$ch = curl_init($endpoint);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+if (curl_errno($ch)) {
+    echo 'Erreur cURL : ' . curl_error($ch);
+} else {
+    if ($httpCode == 200) {
+        $result = json_decode($response, true);
+        if (isset($result['choices'][0]['message']['content'])) {
+            echo "Réponse du modèle :\n" . $result['choices'][0]['message']['content'] . "\n";
+        } else {
+            echo "Réponse inattendue :\n$response\n";
+        }
+    } else {
+        echo "Erreur HTTP $httpCode :\n$response\n";
+    }
 }
 
-// Function to generate and save the image
-function generateAndSaveImage($prompt, $width, $height, $apiKey, $apiUrl, $outputFolder) {
-    // Create the payload for the API request
-    $payload = [
-        'prompt' => $prompt,
-        'width' => $width,
-        'height' => $height,
-        'prompt_upsampling' => false,
-        'seed' => rand(0, 999999), // Optional seed for reproducibility
-        'safety_tolerance' => 3
-    ];
-
-    // Initialize cURL
-    $ch = curl_init($apiUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'X-Key: ' . $apiKey
-    ]);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    // Execute the API request
-    $response = curl_exec($ch);
-    curl_close($ch);
-
-    if (!$response) {
-        die('Error: Unable to connect to the API.');
-    }
-
-    // Decode the API response
-    $data = json_decode($response, true);
-    if (!isset($data['image_url'])) {
-        die('Error: Invalid API response - ' . $response);
-    }
-
-    // Download the image
-    $imageContent = file_get_contents($data['image_url']);
-    if (!$imageContent) {
-        die('Error: Unable to download the image.');
-    }
-
-    // Save the image to the output folder
-    $outputFile = $outputFolder . '/generated_image_' . time() . '.png';
-    if (!file_put_contents($outputFile, $imageContent)) {
-        die('Error: Unable to save the image.');
-    }
-
-    echo "Image successfully saved to: $outputFile\n";
-}
-
-// Example Usage
-// Get values from the query string, with defaults
-$prompt = isset($_GET['prompt']) ? $_GET['prompt'] : 'a serene lake at sunset, beautiful reflections, mountains in the background';
-$width = isset($_GET['width']) ? (int)$_GET['width'] : 1024;
-$height = isset($_GET['height']) ? (int)$_GET['height'] : 768;
-
-// Generate the image
-generateAndSaveImage($prompt, $width, $height, $apiKey, $apiUrl, $outputFolder);
+curl_close($ch);
