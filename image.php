@@ -10,7 +10,7 @@ $prompt = "cat on a table";
 $outputFormat = "jpeg";
 
 // Fichier de sortie
-$outputFile = __DIR__ . '/napoleon.jpeg';
+$outputFile = __DIR__ . '/cat.jpeg';
 
 // Initialisation de cURL
 $ch = curl_init($url);
