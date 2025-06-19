@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // Remplace par ta vraie clé API
-$endpoint = 'https://api.fluxaiimagegenerator.com/v1/images/generate';
+$endpoint = 'https://api-flux.aiturboapi.com/v1/images/generate';
 
 $data = [
     "prompt" => "chat astronaute dans l'espace",
