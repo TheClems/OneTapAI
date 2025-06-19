@@ -16,10 +16,9 @@ $data = [
 ];
 
 $headers = [
-    "Authorization: Bearer $apiKey",
+    "x-api-key: $apiKey",
     "Content-Type: application/json"
 ];
-
 $ch = curl_init($endpoint);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
