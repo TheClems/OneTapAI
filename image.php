@@ -6,7 +6,7 @@ $apiKey = 'sk-sTX9dwsqDfL8F9k0dpvpTzPQjJ5rFkW1tOPEPwcsGvVv4wHj';  // Remplace pa
 $url = 'https://api.stability.ai/v2beta/stable-image/generate/sd3';
 
 // Prompt et format de sortie
-$prompt = "Napoleon";
+$prompt = "cat on a table";
 $outputFormat = "jpeg";
 
 // Fichier de sortie
