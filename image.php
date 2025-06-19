@@ -3,13 +3,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
 error_reporting(E_ALL);
-$apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // remplace par ta clé API
-$endpoint = 'https://api-flux.aiturboapi.com/v1/image-to-prompt'; // ou /v1/text-to-prompt selon ton besoin
 
-// Adaptation de payload pour génération d'images
+$apiKey = '84b3c98803124c7cae41a7bd8b06ad1d'; // Remplace par ta vraie clé API
+$endpoint = 'https://api-flux.aiturboapi.com/v1/text-to-image';
+
 $data = [
     "prompt" => "un chat robotique dans un paysage futuriste",
-    "width"  => 512,
+    "width" => 512,
     "height" => 512,
     "num_images" => 1
 ];
@@ -30,18 +30,17 @@ if (curl_errno($ch)) {
     echo 'Erreur cURL : ' . curl_error($ch);
 } else {
     $res = json_decode($response, true);
+
+    // Affiche l’image générée
     if (isset($res['data']['images'][0])) {
-        $img = $res['data']['images'][0];
-        // si c’est un encodage base64
-        if (strpos($img, 'data:image') === 0) {
-            echo '<img src="' . $img . '" />';
-        } else {
-            // sinon on suppose que c’est une URL
-            echo '<img src="' . htmlspecialchars($img) . '" />';
-        }
+        $imageUrl = $res['data']['images'][0]; // Peut être une URL ou base64
+        echo '<h2>Image générée :</h2>';
+        echo '<img src="' . htmlspecialchars($imageUrl) . '" alt="Image générée" />';
     } else {
-        echo 'Réponse API : ' . htmlspecialchars($response);
+        echo 'Réponse inattendue :<br>';
+        echo '<pre>' . htmlspecialchars(json_encode($res, JSON_PRETTY_PRINT)) . '</pre>';
     }
 }
 
 curl_close($ch);
+
