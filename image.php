@@ -81,28 +81,22 @@ function generateImageWithStabilityAI($prompt)
     }
     
     // Configuration des options cURL
-    // Préparer le JSON du corps
-    $data = json_encode([
-        'prompt' => $prompt,
-        'output_format' => $outputFormat
-    ]);
-
-    // Configuration des options cURL
     $success = curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_POSTFIELDS => [
+            'prompt' => $prompt,
+            'output_format' => $outputFormat,
+        ],
         CURLOPT_HTTPHEADER => [
             "authorization: Bearer $apiKey",
             "accept: image/*",
-            "Content-Type: application/json" // IMPORTANT
         ],
-        CURLOPT_TIMEOUT => 60,
+        CURLOPT_TIMEOUT => 60, // Plus de temps pour la génération d'image
         CURLOPT_CONNECTTIMEOUT => 15,
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_USERAGENT => 'AI-Chat-App/1.0',
     ]);
-
     
     if (!$success) {
         curl_close($ch);
