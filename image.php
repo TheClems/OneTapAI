@@ -1,7 +1,6 @@
 <?php
-// gemini_image_api.php - API spécifique pour la génération d'images avec Gemini
 
-require_once 'common_functions.php';
+require_once 'api_config.php';
 
 // Configuration spécifique à Gemini Image Generation
 const GEMINI_API_KEY = 'AIzaSyBs7CiasxHyT2IrrZiiBPsUMeKaBcFCA7A';
