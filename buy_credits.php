@@ -142,32 +142,8 @@ document.querySelectorAll('.acheter-btn').forEach(function (button) {
                 return actions.order.capture().then(function (details) {
                     alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
                     console.log("Détails : ", details);
-
-                    // Ajouter les crédits après confirmation serveur
-                    fetch('payment_verified.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            credits: parseInt(credits)
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            location.reload(); // recharge la page pour afficher les crédits mis à jour
-                        } else {
-                            alert("Erreur lors de l'ajout des crédits : " + data.message);
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Erreur réseau : ", err);
-                        alert("Erreur de communication avec le serveur.");
-                    });
                 });
             }
-
         }).render("#paypal-boutons-" + id);
     });
 });
