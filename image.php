@@ -59,7 +59,7 @@ function extractImagePrompt($messages)
 }
 
 /**
- * Générer l'image avec l'API Stability AI (comme dans votre exemple)
+ * Générer l'image avec l'API Stability AI
  */
 function generateImageWithStabilityAI($prompt)
 {
@@ -92,7 +92,7 @@ function generateImageWithStabilityAI($prompt)
             "authorization: Bearer $apiKey",
             "accept: image/*",
         ],
-        CURLOPT_TIMEOUT => 60, // Plus de temps pour la génération d'image
+        CURLOPT_TIMEOUT => 60,
         CURLOPT_CONNECTTIMEOUT => 15,
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_USERAGENT => 'AI-Chat-App/1.0',
@@ -190,20 +190,34 @@ function processImageGenerationApi($cleanMessages, $chatChannelId)
  */
 function readAndValidateImageInput()
 {
+    // DEBUG: Log de la méthode de requête
+    logError("DEBUG: Request method: " . $_SERVER['REQUEST_METHOD']);
+    
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         sendJsonResponse(['success' => false, 'error' => 'Méthode non autorisée'], 405);
     }
 
     // Lire et décoder les données d'entrée
     $rawInput = file_get_contents('php://input');
+    
+    // DEBUG: Log des données brutes reçues
+    logError("DEBUG: Raw input received: " . substr($rawInput, 0, 500));
+    
     if ($rawInput === false) {
         sendJsonResponse(['success' => false, 'error' => 'Impossible de lire les données']);
     }
 
     $input = json_decode($rawInput, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        sendJsonResponse(['success' => false, 'error' => 'Données JSON invalides']);
+    $jsonError = json_last_error();
+    
+    // DEBUG: Log de l'erreur JSON si présente
+    if ($jsonError !== JSON_ERROR_NONE) {
+        logError("DEBUG: JSON decode error: " . json_last_error_msg());
+        sendJsonResponse(['success' => false, 'error' => 'Données JSON invalides: ' . json_last_error_msg()]);
     }
+    
+    // DEBUG: Log de l'input décodé
+    logError("DEBUG: Decoded input: " . json_encode($input));
 
     // Pour la génération d'images, on peut accepter soit un prompt direct, soit des messages
     if (isset($input['prompt']) && !empty($input['prompt'])) {
@@ -211,11 +225,16 @@ function readAndValidateImageInput()
         $input['messages'] = [
             ['role' => 'user', 'content' => $input['prompt']]
         ];
+        logError("DEBUG: Converted prompt to messages format");
     }
 
     if (!$input || !isset($input['messages']) || !is_array($input['messages'])) {
+        logError("DEBUG: Messages validation failed - input: " . json_encode($input));
         sendJsonResponse(['success' => false, 'error' => 'Messages ou prompt manquants']);
     }
+    
+    // DEBUG: Log du nombre de messages
+    logError("DEBUG: Number of messages: " . count($input['messages']));
 
     return $input;
 }
@@ -225,61 +244,92 @@ function readAndValidateImageInput()
  */
 function processImageApiRequest()
 {
-    // Configuration des headers
-    setupApiHeaders();
-    handleOptionsRequest();
+    try {
+        // DEBUG: Log du début du processus
+        logError("DEBUG: Starting image API request processing");
+        
+        // Configuration des headers
+        setupApiHeaders();
+        handleOptionsRequest();
 
-    // Extraction du chat_channel_id
-    $chatChannelId = extractChatChannelId();
-    if (!$chatChannelId) {
-        sendJsonResponse(['success' => false, 'error' => 'ID de canal de chat manquant'], 400);
-    }
+        // Lecture et validation des données d'entrée
+        $input = readAndValidateImageInput();
+        $messages = $input['messages'];
+        
+        // DEBUG: Log des messages
+        logError("DEBUG: Messages to process: " . json_encode($messages));
 
-    // Lecture et validation des données d'entrée
-    $input = readAndValidateImageInput();
-    $messages = $input['messages'];
-
-    // Connexion à la base de données
-    $pdo = getDatabaseConnection();
-    if (!$pdo) {
-        sendJsonResponse(['success' => false, 'error' => 'Erreur de connexion à la base de données']);
-    }
-
-    // Validation et nettoyage des messages
-    $cleanMessages = validateAndCleanMessages($messages);
-    if (empty($cleanMessages)) {
-        sendJsonResponse(['success' => false, 'error' => 'Aucun message valide trouvé']);
-    }
-
-    // Sauvegarder le message utilisateur en base
-    $lastMessage = end($cleanMessages);
-    if ($lastMessage['role'] === 'user') {
-        $saveResult = saveMessageToDatabase($pdo, $chatChannelId, $lastMessage['role'], $lastMessage['content']);
-        if (!$saveResult) {
-            logError("Failed to save user message to database");
+        // Extraction du chat_channel_id
+        $chatChannelId = extractChatChannelId();
+        
+        // DEBUG: Log du chat channel ID
+        logError("DEBUG: Chat channel ID: " . ($chatChannelId ? $chatChannelId : 'NULL'));
+        
+        if (!$chatChannelId) {
+            sendJsonResponse(['success' => false, 'error' => 'ID de canal de chat manquant'], 400);
         }
+
+        // Connexion à la base de données
+        $pdo = getDatabaseConnection();
+        if (!$pdo) {
+            logError("DEBUG: Database connection failed");
+            sendJsonResponse(['success' => false, 'error' => 'Erreur de connexion à la base de données']);
+        }
+        
+        logError("DEBUG: Database connection successful");
+
+        // Validation et nettoyage des messages
+        $cleanMessages = validateAndCleanMessages($messages);
+        
+        // DEBUG: Log des messages nettoyés
+        logError("DEBUG: Clean messages count: " . count($cleanMessages));
+        
+        if (empty($cleanMessages)) {
+            sendJsonResponse(['success' => false, 'error' => 'Aucun message valide trouvé']);
+        }
+
+        // Sauvegarder le message utilisateur en base
+        $lastMessage = end($cleanMessages);
+        if ($lastMessage['role'] === 'user') {
+            $saveResult = saveMessageToDatabase($pdo, $chatChannelId, $lastMessage['role'], $lastMessage['content']);
+            if (!$saveResult) {
+                logError("Failed to save user message to database");
+            } else {
+                logError("DEBUG: User message saved to database");
+            }
+        }
+
+        // Générer l'image
+        logError("DEBUG: Starting image generation");
+        $result = processImageGenerationApi($cleanMessages, $chatChannelId);
+        logError("DEBUG: Image generation completed");
+
+        // Sauvegarder le chemin de l'image comme réponse de l'assistant
+        $saveAssistantResult = saveMessageToDatabase($pdo, $chatChannelId, 'assistant', $result['content']);
+        if (!$saveAssistantResult) {
+            logError("Failed to save assistant message (image path) to database");
+        } else {
+            logError("DEBUG: Assistant message saved to database");
+        }
+
+        // Envoyer la réponse finale
+        logError("DEBUG: Sending final response");
+        sendJsonResponse([
+            'success' => true,
+            'content' => $result['content'],
+            'model' => $result['model'],
+            'usage' => $result['usage'],
+            'image_info' => $result['image_info'],
+            'timestamp' => date('c'),
+            'chat_channel_id' => $chatChannelId,
+            'type' => 'image'
+        ]);
+        
+    } catch (Exception $e) {
+        logError("DEBUG: Exception caught: " . $e->getMessage());
+        logError("DEBUG: Exception trace: " . $e->getTraceAsString());
+        sendJsonResponse(['success' => false, 'error' => 'Erreur interne: ' . $e->getMessage()], 500);
     }
-
-    // Générer l'image
-    $result = processImageGenerationApi($cleanMessages, $chatChannelId);
-
-    // Sauvegarder le chemin de l'image comme réponse de l'assistant
-    $saveAssistantResult = saveMessageToDatabase($pdo, $chatChannelId, 'assistant', $result['content']);
-    if (!$saveAssistantResult) {
-        logError("Failed to save assistant message (image path) to database");
-    }
-
-    // Envoyer la réponse finale
-    sendJsonResponse([
-        'success' => true,
-        'content' => $result['content'], // Chemin relatif de l'image
-        'model' => $result['model'],
-        'usage' => $result['usage'],
-        'image_info' => $result['image_info'],
-        'timestamp' => date('c'),
-        'chat_channel_id' => $chatChannelId,
-        'type' => 'image' // Indiquer que c'est une réponse image
-    ]);
 }
 
 // Point d'entrée principal
