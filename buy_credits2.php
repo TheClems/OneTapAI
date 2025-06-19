@@ -7,7 +7,7 @@ $user = getCurrentUser();
 $success = '';
 $error = '';
 
-// Traiter l'achat fictif
+// Traiter l'achat fictif (mode démo)
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['package'])) {
     $package = $_POST['package'];
     $credits_to_add = 0;
@@ -32,6 +32,51 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['package'])) {
         } else {
             $error = "Erreur lors de l'achat des crédits.";
         }
+    }
+}
+
+// Traiter le paiement PayPal réussi
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['paypal_success'])) {
+    $credits_to_add = intval($_POST['credits'] ?? 0);
+    
+    if ($credits_to_add > 0) {
+        $pdo = getDBConnection();
+        
+        try {
+            // Ajouter les crédits à l'utilisateur
+            $stmt = $pdo->prepare("UPDATE users SET credits = credits + ? WHERE id = ?");
+            if ($stmt->execute([$credits_to_add, $_SESSION['user_id']])) {
+                // Réponse JSON pour le JavaScript
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => "Paiement réussi ! " . number_format($credits_to_add) . " crédits ajoutés à votre compte.",
+                    'new_credits' => getCurrentUser()['credits']
+                ]);
+                exit;
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'message' => "Erreur lors de l'ajout des crédits."
+                ]);
+                exit;
+            }
+        } catch (Exception $e) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'message' => "Erreur lors de l'ajout des crédits : " . $e->getMessage()
+            ]);
+            exit;
+        }
+    } else {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => "Données de transaction invalides."
+        ]);
+        exit;
     }
 }
 
@@ -76,7 +121,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="current-credits">
             <div class="current-credits-content">
                 <p>Your current credits</p>
-                <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
+                <div class="credits-number" id="current-credits-display"><?php echo number_format($user['credits']); ?></div>
             </div>
         </div>
 
@@ -104,21 +149,38 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
 
-
     <!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
     <div class="paypal-render-area" id="paypal-render-area"></div>
 
     <script>
     const pseudoPHP = <?= json_encode($user['username']) ?>;
+    
+    // Fonction pour envoyer les données de paiement au serveur
+    function addCreditsToDatabase(credits) {
+        const formData = new FormData();
+        formData.append('paypal_success', '1');
+        formData.append('credits', credits);
+        
+        return fetch(window.location.href, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json());
+    }
+    
     document.querySelectorAll('.acheter-btn').forEach(function (button) {
         button.addEventListener('click', function () {
             const nom = this.getAttribute('data-nom');
-            const prix = this.getAttribute('data-prix');
-            const credits = this.getAttribute('data-credits');
+            const prix = parseFloat(this.getAttribute('data-prix'));
+            const credits = parseInt(this.getAttribute('data-credits'));
 
             // Réactive tous les boutons et désactive celui cliqué
-            document.querySelectorAll('.acheter-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('.acheter-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.textContent = 'Buy';
+            });
             this.disabled = true;
+            this.textContent = 'Processing...';
 
             // Trouver ou créer le conteneur pour PayPal
             let renderArea = document.getElementById('paypal-render-area');
@@ -138,7 +200,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             custom_id: pseudoPHP + "-" + nom,
                             invoice_id: "FACTURE-" + pseudoPHP + "-" + nom + "-" + Date.now(),
                             amount: {
-                                value: prix,
+                                value: prix.toFixed(2),
                                 currency_code: 'EUR'
                             }
                         }],
@@ -149,13 +211,60 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 },
                 onApprove: function (data, actions) {
                     return actions.order.capture().then(function (details) {
-                        alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
-                        console.log("Détails : ", details);
+                        console.log("Paiement capturé:", details);
+                        
+                        // Envoyer les données au serveur pour ajouter les crédits
+                        addCreditsToDatabase(credits)
+                            .then(response => {
+                                if (response.success) {
+                                    // Afficher le message de succès
+                                    alert("✅ " + response.message);
+                                    
+                                    // Mettre à jour l'affichage des crédits
+                                    document.getElementById('current-credits-display').textContent = 
+                                        new Intl.NumberFormat().format(response.new_credits);
+                                    
+                                    // Réactiver tous les boutons
+                                    document.querySelectorAll('.acheter-btn').forEach(btn => {
+                                        btn.disabled = false;
+                                        btn.textContent = 'Buy';
+                                    });
+                                    
+                                    // Masquer la zone PayPal
+                                    renderArea.innerHTML = '';
+                                    
+                                } else {
+                                    alert("❌ " + response.message);
+                                    console.error("Erreur serveur:", response);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Erreur lors de l'ajout des crédits:", error);
+                                alert("❌ Erreur lors de l'ajout des crédits. Veuillez contacter le support.");
+                            });
                     });
                 },
                 onError: function(err) {
                     console.error("Erreur PayPal:", err);
-                    alert("Une erreur est survenue avec PayPal.");
+                    alert("❌ Une erreur est survenue avec PayPal.");
+                    
+                    // Réactiver le bouton en cas d'erreur
+                    document.querySelectorAll('.acheter-btn').forEach(btn => {
+                        btn.disabled = false;
+                        btn.textContent = 'Buy';
+                    });
+                },
+                onCancel: function(data) {
+                    console.log("Paiement annulé:", data);
+                    
+                    // Réactiver le bouton si l'utilisateur annule
+                    document.querySelectorAll('.acheter-btn').forEach(btn => {
+                        btn.disabled = false;
+                        btn.textContent = 'Buy';
+                    });
+                    
+                    // Masquer la zone PayPal
+                    renderArea.innerHTML = '';
                 }
             }).render('#paypal-button-container');
 
@@ -167,3 +276,5 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script type="text/javascript" src="scripts/nav.js"></script>
     <script src="scripts/animated-bg.js"></script>
 </body>
+
+</html>
