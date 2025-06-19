@@ -308,6 +308,7 @@ async function sendMessage() {
         case 'mistral-medium': apiEndpoint = 'mistral_api.php'; break;
         case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
         case 'gpt': apiEndpoint = 'gpt_api.php'; break;
+        case 'image': apiEndpoint = 'image.php'; break;
         default: apiEndpoint = 'default_api.php'; break;
     }
 
