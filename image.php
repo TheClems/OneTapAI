@@ -6,11 +6,11 @@ $apiKey = 'sk-sTX9dwsqDfL8F9k0dpvpTzPQjJ5rFkW1tOPEPwcsGvVv4wHj';  // Remplace pa
 $url = 'https://api.stability.ai/v2beta/stable-image/generate/sd3';
 
 // Prompt et format de sortie
-$prompt = "Lighthouse on a cliff overlooking the ocean";
+$prompt = "Napoleon";
 $outputFormat = "jpeg";
 
 // Fichier de sortie
-$outputFile = __DIR__ . '/lighthouse.jpeg';
+$outputFile = __DIR__ . '/napoleon.jpeg';
 
 // Initialisation de cURL
 $ch = curl_init($url);
