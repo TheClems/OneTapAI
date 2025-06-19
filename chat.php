@@ -68,6 +68,11 @@ $availableModels = [
         'name' => 'GPT',
         'icon' => '',
         'description' => 'Intelligence de OpenAI'
+    ],
+    'image' => [
+        'name' => 'Image',
+        'icon' => '',
+        'description' => 'Intelligence de OpenAI'
     ]
 ];
 
