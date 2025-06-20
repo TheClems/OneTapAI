@@ -641,12 +641,14 @@ h3.light-mode {
         position: absolute;
         z-index: 1;
         transform: translateY(-100%);
+        margin-left: 0;
     }
 
     .chat-history-panel.mobile.collapsed {
         height: 0;
         border-bottom: none;
-        transform: translateY(100%);
+        transform: translateY(0%);
+        height: 100vh;
 
     }
     .header{
