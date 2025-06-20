@@ -642,10 +642,15 @@ h3.light-mode {
     .chat-history-panel.collapsed {
         height: 0;
         border-bottom: none;
+        width: 0vw;
+    }
+
+    .chat-container{
+        width: 0vw;
     }
 
     .chat-container.collapsed{
-        width: 0vw;
+        width: 100vw;
     }
 
     .toggle-history-btn {
