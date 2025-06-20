@@ -44,7 +44,7 @@ function updateLayoutForNavbar() {
 }
 
 // Gérer le responsive mobile
-function handleMobileLayout() {
+/*function handleMobileLayout() {
     const isMobile = window.innerWidth <= 768;
     mainContainer.classList.toggle('mobile', isMobile);
     
@@ -54,18 +54,8 @@ function handleMobileLayout() {
         toggleHistoryBtn.textContent = chatHistoryPanel.classList.contains('collapsed') ? '📊' : '📈';
     }
 }
+*/
 
-// Basculer l'affichage de l'historique
-toggleHistoryBtn.addEventListener('click', () => {
-    chatHistoryPanel.classList.toggle('collapsed');
-    const isCollapsed = chatHistoryPanel.classList.contains('collapsed');
-    
-    if (window.innerWidth <= 768) {
-        toggleHistoryBtn.textContent = isCollapsed ? '📊' : '✖️';
-    } else {
-        toggleHistoryBtn.textContent = isCollapsed ? '📊' : '📈';
-    }
-});
 
 // Créer un nouveau chat
 newChatBtn.addEventListener('click', () => {
