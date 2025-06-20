@@ -633,7 +633,7 @@ h3.light-mode {
     .history-header{
         width: 100vw;
     }
-    .chat-history-panel {
+    .chat-history-panel.mobile {
         width: 100vw;
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -643,7 +643,7 @@ h3.light-mode {
         transform: translateY(-100%);
     }
 
-    .chat-history-panel.collapsed {
+    .chat-history-panel.mobile.collapsed {
         height: 0;
         border-bottom: none;
         transform: translateY(100%);
