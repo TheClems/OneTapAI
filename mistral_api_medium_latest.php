@@ -7,12 +7,14 @@ require_once 'api_config.php';
 const MISTRAL_API_KEY = 'URJIXdnJ1d8qvXgwntjZ6KCRDVv4qRqp';
 const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';
 const MISTRAL_MODEL = 'mistral-medium-2505';
+$userId = $_SESSION['user_id'];
 
 /**
  * Processeur spécifique pour l'API Mistral
  */
 function processMistralApi($cleanMessages, $chatChannelId)
 {
+    global $userId;
     // Préparer les données pour l'API Mistral
     $data = [
         "model" => MISTRAL_MODEL,
@@ -71,7 +73,38 @@ function processMistralApi($cleanMessages, $chatChannelId)
     if (empty($content)) {
         sendJsonResponse(['success' => false, 'error' => 'Réponse vide de l\'API']);
     }
+    $usage = $result['usage'] ?? null;
+    if ($usage && isset($usage['prompt_tokens'], $usage['completion_tokens'])) {
+        $promptTokens = $usage['prompt_tokens'];
+        $completionTokens = $usage['completion_tokens'];
+        $totalTokens = $promptTokens + $completionTokens;   
 
+        $pdo = getDBConnection();
+        try {
+            // Récupérer le coût des tokens d'entrée
+            $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'mistral-medium-latest' AND io_type = 'input'");
+            $stmt->execute();
+            $inputResult = $stmt->fetch(PDO::FETCH_ASSOC);
+            $tokenParCreditsInput = $inputResult['tokens_par_credit'];
+            $creditsUsedInput = (1 / $tokenParCreditsInput) * $promptTokens;
+
+            // Récupérer le coût des tokens de sortie
+            $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'mistral-medium-latest' AND io_type = 'output'");
+            $stmt->execute();
+            $outputResult = $stmt->fetch(PDO::FETCH_ASSOC);
+            $tokenParCreditsOutput = $outputResult['tokens_par_credit'];
+            $creditsUsedOutput = (1 / $tokenParCreditsOutput) * $completionTokens;
+
+            $creditsUsed = $creditsUsedInput + $creditsUsedOutput;
+
+            // Déduire les crédits de l'utilisateur
+            $stmt = $pdo->prepare("UPDATE users SET credits = credits - ? WHERE id = ?");
+            $stmt->execute([$creditsUsed, $userId]);
+
+        } catch (PDOException $e) {
+            error_log("Erreur récupération modèle: " . $e->getMessage());
+        }
+    }
     return [
         'content' => $content,
         'model' => $result['model'] ?? MISTRAL_MODEL,
