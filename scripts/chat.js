@@ -29,6 +29,7 @@ if (typeof personaTags !== 'undefined') {
 if (toggleHistoryBtn) {
     toggleHistoryBtn.addEventListener('click', () => {
         if (window.innerWidth < 1024) {
+            console.log('Clic sur toggleHistoryBtn');
             if (chatContainer2) chatContainer2.classList.add('collapsed');
             if (chatHistoryPanel) chatHistoryPanel.classList.add('collapsed');
         }
