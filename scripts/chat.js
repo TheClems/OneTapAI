@@ -7,8 +7,8 @@ const chatHistoryPanel = document.getElementById('chatHistoryPanel');
 const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
-const chatHistoryPanel2 = document.getElementById('chatHistoryPanel2');
-const chatContainer = document.getElementById('chatContainer');
+const chatHistoryPanel3 = document.getElementById('chatHistoryPanel2');
+const chatContainer2 = document.getElementById('chatContainer');
 
 if (typeof personaId !== 'undefined') {
     console.log('personaId:', personaId);
@@ -30,8 +30,8 @@ if (typeof personaTags !== 'undefined') {
 if (toggleHistoryBtn) {
     toggleHistoryBtn.addEventListener('click', () => {
         if (window.innerWidth < 1024) {
-            if (chatContainer) chatContainer.classList.add('collapsed');
-            if (chatHistoryPanel2) chatHistoryPanel2.classList.add('collapsed');
+            if (chatContainer2) chatContainer2.classList.add('collapsed');
+            if (chatHistoryPanel3) chatHistoryPanel3.classList.add('collapsed');
         }
     });
 }
