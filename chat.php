@@ -492,7 +492,7 @@ if ($currentChannelId !== null) {
 
 
         <div class="history-header">
-            <button class="close-chat-history" id="toggleHistoryBtn" title="Fermer le panneau">
+            <button class="close-chat-history" id="toggleHistoryBtnClose" title="Fermer le panneau">
                 &times;
             </button>
             <h3>💬 Historique</h3>

@@ -8,7 +8,7 @@ const toggleHistoryBtnOpen = document.getElementById('toggleHistoryBtnOpen');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
 const chatContainer2 = document.getElementById('chat-container');
-
+toggleHistoryBtnClose = document.getElementById('toggleHistoryBtnClose');
 if (typeof personaId !== 'undefined') {
     console.log('personaId:', personaId);
 }
@@ -32,6 +32,16 @@ if (toggleHistoryBtnOpen) {
             console.log('Clic sur toggleHistoryBtnOpen');
             if (chatContainer2) chatContainer2.classList.add('collapsed');
             if (chatHistoryPanel) chatHistoryPanel.classList.add('collapsed');
+        }
+    });
+}
+
+if (toggleHistoryBtnClose) {
+    toggleHistoryBtnClose.addEventListener('click', () => {
+        if (window.innerWidth < 1024) {
+            console.log('Clic sur toggleHistoryBtnClose');
+            if (chatContainer2) chatContainer2.classList.remove('collapsed');
+            if (chatHistoryPanel) chatHistoryPanel.classList.remove('collapsed');
         }
     });
 }
