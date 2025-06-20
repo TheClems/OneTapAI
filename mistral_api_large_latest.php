@@ -77,6 +77,36 @@ function processMistralApi($cleanMessages, $chatChannelId)
         'model' => $result['model'] ?? MISTRAL_MODEL,
         'usage' => $result['usage'] ?? null
     ];
+
+    if ($usage && isset($usage['prompt_tokens'], $usage['completion_tokens'])) {
+        $promptTokens = $usage['prompt_tokens'];
+        $completionTokens = $usage['completion_tokens'];
+        $totalTokens = $promptTokens + $completionTokens;   
+
+        $pdo = getDBConnection();
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM ia_models WHERE modele_ia = 'mistral-large-latest' AND io_type = 'input'");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $Token_par_credits_input = $result['tokens_par_credit'];
+            $credits_used_input =  (1 / $Token_par_credits_input) * $promptTokens;
+
+            $stmt = $pdo->prepare("SELECT * FROM ia_models WHERE modele_ia = 'mistral-large-latest' AND io_type = 'output'");
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $Token_par_credits_output = $result['tokens_par_credit'];
+            $credits_used_output =  (1 / $Token_par_credits_output) * $completionTokens;
+
+            $credits_used = $credits_used_input + $credits_used_output;
+
+            $stmt = $pdo->prepare("UPDATE users SET credits = credits - ? WHERE id = ?");
+            $stmt->execute([$credits_used, $userId]);
+
+        } catch (PDOException $e) {
+            error_log("Erreur récupération modèle: " . $e->getMessage());
+        }
+    }
+
 }
 
 /**
