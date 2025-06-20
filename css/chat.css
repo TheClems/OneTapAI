@@ -640,7 +640,7 @@ h3.light-mode {
         overflow: visible;
         position: absolute;
         z-index: 1;
-        transform: translateX(-100%);
+        transform: translateY(-100%);
     }
 
     .chat-history-panel.collapsed {
@@ -658,7 +658,13 @@ h3.light-mode {
     .chat-messages{
         width: 100vw;
     }
-
+    .open-chat-history{
+        color : white;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 2rem;
+    }
     .close-chat-history{
         color : white;
         background: none;

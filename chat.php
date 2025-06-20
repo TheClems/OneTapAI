@@ -533,6 +533,9 @@ if ($currentChannelId !== null) {
         <!-- Zone de chat principale -->
         <div class="chat-container">
             <div class="header">
+                <button class="open-chat-history" id="toggleHistoryBtn" title="Ouvrir le panneau">
+                ▼
+                </button>
                 <div class="header-content">
                     <h1>🤖 <?php echo $selectedModel ? $availableModels[$selectedModel]['name'] : 'IA'; ?> Chat</h1>
                 </div>
