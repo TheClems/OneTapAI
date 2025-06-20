@@ -6,7 +6,7 @@ require_once 'api_config.php';
 // Configuration spécifique à Claude
 const CLAUDE_API_KEY = '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';
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const CLAUDE_MODEL = 'claude-3-5-haiku-latest';
+const CLAUDE_MODEL = 'claude-3-5-haiku-20241022';
 const ANTHROPIC_VERSION = '2023-06-01';
 $userId = $_SESSION['user_id'];
 
