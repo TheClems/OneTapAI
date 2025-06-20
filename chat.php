@@ -489,13 +489,11 @@ if ($currentChannelId !== null) {
     <div class="main-container" id="mainContainer">
         <!-- Panneau historique des chats -->
         <div class="chat-history-panel" id="chatHistoryPanel">
-            <button class="toggle-history-btn" id="toggleHistoryBtn" title="Basculer l'historique">
-                📊
-            </button>
+
 
             <div class="history-header">
                 <button class="toggle-history-btn" id="toggleHistoryBtn" title="Basculer l'historique">
-                    📊
+                    ✕ 
                 </button>
                 <h3>
                     💬 Historique
