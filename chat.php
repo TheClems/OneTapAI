@@ -494,6 +494,9 @@ if ($currentChannelId !== null) {
             </button>
 
             <div class="history-header">
+                <button class="toggle-history-btn" id="toggleHistoryBtn" title="Basculer l'historique">
+                    📊
+                </button>
                 <h3>
                     💬 Historique
                 </h3>
