@@ -266,6 +266,7 @@ function handleResize() {
         if (chatContainer) chatContainer.classList.add('mobile');
         if (body_account) body_account.classList.add('mobile');
         if (body_job) body_job.classList.add('mobile');
+        if (chatHistoryPanel2) chatHistoryPanel2.classList.add('mobile');
 
     } else if (sidebar) {
         if (body_buy_credits) body_buy_credits.classList.remove('mobile');
@@ -273,7 +274,8 @@ function handleResize() {
         if (chatContainer) chatContainer.classList.remove('mobile');
         if (body_account) body_account.classList.remove('mobile');
         if (body_job) body_job.classList.remove('mobile');
-    }
+        if (chatHistoryPanel2) chatHistoryPanel2.classList.remove('mobile');
+            }
 }
 
 window.addEventListener('resize', handleResize);
