@@ -4,7 +4,7 @@ const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const loading = document.getElementById('loading');
 const chatHistoryPanel = document.getElementById('chatHistoryPanel');
-const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
+const toggleHistoryBtnOpen = document.getElementById('toggleHistoryBtnOpen');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
 const chatContainer2 = document.getElementById('chatContainer');
@@ -26,10 +26,10 @@ if (typeof personaTags !== 'undefined') {
 }
 
 
-if (toggleHistoryBtn) {
-    toggleHistoryBtn.addEventListener('click', () => {
+if (toggleHistoryBtnOpen) {
+    toggleHistoryBtnOpen.addEventListener('click', () => {
         if (window.innerWidth < 1024) {
-            console.log('Clic sur toggleHistoryBtn');
+            console.log('Clic sur toggleHistoryBtnOpen');
             if (chatContainer2) chatContainer2.classList.add('collapsed');
             if (chatHistoryPanel) chatHistoryPanel.classList.add('collapsed');
         }
