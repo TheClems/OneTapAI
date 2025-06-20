@@ -332,7 +332,8 @@ async function sendMessage() {
     switch (selectedModel) {
         case 'gemini': apiEndpoint = 'gemini_api.php'; break;
         case 'openrouter': apiEndpoint = 'openrouter_api.php'; break;
-        case 'mistral-medium': apiEndpoint = 'mistral_api.php'; break;
+        case 'mistral-medium-latest': apiEndpoint = 'mistral_api_medium_latest.php'; break;
+        case 'mistral-large-latest': apiEndpoint = 'mistral_api_large_latest.php'; break;
         case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
         case 'gpt': apiEndpoint = 'gpt_api.php'; break;
         case 'image': apiEndpoint = 'image.php'; break; // Utiliser votre nouveau fichier

@@ -44,8 +44,13 @@ if (isset($_GET['persona_id'])) {
 
 // Liste des modèles disponibles
 $availableModels = [
-    'mistral-medium' => [
+    'mistral-medium-latest' => [
         'name' => 'Mistral Medium',
+        'icon' => '',
+        'description' => 'Équilibré'
+    ],
+    'mistral-large-latest' => [
+        'name' => 'Mistral Large',
         'icon' => '',
         'description' => 'Équilibré'
     ],
