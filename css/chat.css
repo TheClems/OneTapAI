@@ -535,6 +535,13 @@ h3.light-mode {
     animation-delay: -0.16s;
 }
 
+.open-chat-history{
+ display: none;   
+}
+.close-chat-history{
+ display: none;   
+}
+
 @keyframes bounce {
 
     0%,
