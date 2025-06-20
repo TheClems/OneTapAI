@@ -7,12 +7,13 @@ require_once 'api_config.php';
 const MISTRAL_API_KEY = 'URJIXdnJ1d8qvXgwntjZ6KCRDVv4qRqp';
 const MISTRAL_API_URL = 'https://api.mistral.ai/v1/chat/completions';
 const MISTRAL_MODEL = 'mistral-large-2411';
-
+$userId = $_SESSION['user_id'];
 /**
  * Processeur spécifique pour l'API Mistral
  */
 function processMistralApi($cleanMessages, $chatChannelId)
 {
+    global $userId;
     // Préparer les données pour l'API Mistral
     $data = [
         "model" => MISTRAL_MODEL,
@@ -71,13 +72,7 @@ function processMistralApi($cleanMessages, $chatChannelId)
     if (empty($content)) {
         sendJsonResponse(['success' => false, 'error' => 'Réponse vide de l\'API']);
     }
-
-    return [
-        'content' => $content,
-        'model' => $result['model'] ?? MISTRAL_MODEL,
-        'usage' => $result['usage'] ?? null
-    ];
-
+    $usage = $result['usage'] ?? null;
     if ($usage && isset($usage['prompt_tokens'], $usage['completion_tokens'])) {
         $promptTokens = $usage['prompt_tokens'];
         $completionTokens = $usage['completion_tokens'];
@@ -85,27 +80,35 @@ function processMistralApi($cleanMessages, $chatChannelId)
 
         $pdo = getDBConnection();
         try {
-            $stmt = $pdo->prepare("SELECT * FROM ia_models WHERE modele_ia = 'mistral-large-latest' AND io_type = 'input'");
+            // Récupérer le coût des tokens d'entrée
+            $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'mistral-large-latest' AND io_type = 'input'");
             $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $Token_par_credits_input = $result['tokens_par_credit'];
-            $credits_used_input =  (1 / $Token_par_credits_input) * $promptTokens;
+            $inputResult = $stmt->fetch(PDO::FETCH_ASSOC);
+            $tokenParCreditsInput = $inputResult['tokens_par_credit'];
+            $creditsUsedInput = (1 / $tokenParCreditsInput) * $promptTokens;
 
-            $stmt = $pdo->prepare("SELECT * FROM ia_models WHERE modele_ia = 'mistral-large-latest' AND io_type = 'output'");
+            // Récupérer le coût des tokens de sortie
+            $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'mistral-large-latest' AND io_type = 'output'");
             $stmt->execute();
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $Token_par_credits_output = $result['tokens_par_credit'];
-            $credits_used_output =  (1 / $Token_par_credits_output) * $completionTokens;
+            $outputResult = $stmt->fetch(PDO::FETCH_ASSOC);
+            $tokenParCreditsOutput = $outputResult['tokens_par_credit'];
+            $creditsUsedOutput = (1 / $tokenParCreditsOutput) * $completionTokens;
 
-            $credits_used = $credits_used_input + $credits_used_output;
+            $creditsUsed = $creditsUsedInput + $creditsUsedOutput;
 
+            // Déduire les crédits de l'utilisateur
             $stmt = $pdo->prepare("UPDATE users SET credits = credits - ? WHERE id = ?");
-            $stmt->execute([$credits_used, $userId]);
+            $stmt->execute([$creditsUsed, $userId]);
 
         } catch (PDOException $e) {
             error_log("Erreur récupération modèle: " . $e->getMessage());
         }
     }
+    return [
+        'content' => $content,
+        'model' => $result['model'] ?? MISTRAL_MODEL,
+        'usage' => $result['usage'] ?? null
+    ];
 
 }
 
