@@ -659,7 +659,7 @@ h3.light-mode {
 
     .close-chat-history{
         color : white;
-        background-color: none;
+        background: none;
         border: none;
         cursor: pointer;
         font-size: 2rem;
