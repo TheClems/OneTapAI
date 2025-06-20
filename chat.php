@@ -531,7 +531,7 @@ if ($currentChannelId !== null) {
         </div>
 
         <!-- Zone de chat principale -->
-        <div class="chat-container">
+        <div class="chat-container" id="chat-container">
             <div class="header">
                 <button class="open-chat-history" id="toggleHistoryBtn" title="Ouvrir le panneau">
                 ▼
