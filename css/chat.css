@@ -628,6 +628,7 @@ h3.light-mode {
 @media (max-width: 768px) {
     .main-container {
         margin-left: 0;
+        overflow: hidden;
     }
     .history-header{
         width: 100vw;
@@ -637,20 +638,20 @@ h3.light-mode {
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         overflow: visible;
+        position: absolute;
+        z-index: 1;
     }
 
     .chat-history-panel.collapsed {
         height: 0;
         border-bottom: none;
-        display: none;
+
     }
 
     .chat-container{
-        display: none;
     }
 
     .chat-container.collapsed{
-        display: block;
     }
 
     .chat-messages{
