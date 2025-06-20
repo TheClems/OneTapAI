@@ -334,6 +334,7 @@ async function sendMessage() {
         case 'openrouter': apiEndpoint = 'openrouter_api.php'; break;
         case 'mistral-medium-latest': apiEndpoint = 'mistral_api_medium_latest.php'; break;
         case 'mistral-large-latest': apiEndpoint = 'mistral_api_large_latest.php'; break;
+        case 'claude-3.5-haiku-latest': apiEndpoint = 'claude_api_haiku_latest.php'; break;
         case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
         case 'gpt': apiEndpoint = 'gpt_api.php'; break;
         case 'image': apiEndpoint = 'image.php'; break; // Utiliser votre nouveau fichier

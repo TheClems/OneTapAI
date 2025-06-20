@@ -54,6 +54,11 @@ $availableModels = [
         'icon' => '',
         'description' => 'Équilibré'
     ],
+    'claude-3.5-haiku-latest' => [
+        'name' => 'Claude 3.5 Haiku',
+        'icon' => '',
+        'description' => 'Intelligence de Anthropic'
+    ],
     'gemini' => [
         'name' => 'Gemini',
         'icon' => '',
