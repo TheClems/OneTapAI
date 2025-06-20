@@ -82,7 +82,7 @@ function processGrokApi($cleanMessages, $chatChannelId)
         $pdo = getDBConnection();
         try {
             // Récupérer le coût des tokens d'entrée pour Grok
-            $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'grok-3-latest' AND io_type = 'input'");
+            $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'grok-3-mini' AND io_type = 'input'");
             $stmt->execute();
             $inputResult = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -91,7 +91,7 @@ function processGrokApi($cleanMessages, $chatChannelId)
                 $creditsUsedInput = (1 / $tokenParCreditsInput) * $promptTokens;
 
                 // Récupérer le coût des tokens de sortie pour Grok
-                $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'grok-3-latest' AND io_type = 'output'");
+                $stmt = $pdo->prepare("SELECT tokens_par_credit FROM ia_models WHERE modele_ia = 'grok-3-mini' AND io_type = 'output'");
                 $stmt->execute();
                 $outputResult = $stmt->fetch(PDO::FETCH_ASSOC);
                 
