@@ -640,6 +640,7 @@ h3.light-mode {
         overflow: visible;
         position: absolute;
         z-index: 1;
+        transform: translateX(-100%);
     }
 
     .chat-history-panel.collapsed {
