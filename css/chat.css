@@ -628,14 +628,15 @@ h3.light-mode {
 @media (max-width: 768px) {
     .main-container {
         margin-left: 0;
-        flex-direction: column;
     }
-
+    .history-header{
+        width: 100vw;
+    }
     .chat-history-panel {
-        width: 100%;
-        height: 40vh;
+        width: 100vw;
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: visible;
     }
 
     .chat-history-panel.collapsed {
