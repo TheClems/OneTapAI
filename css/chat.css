@@ -678,6 +678,7 @@ h3.light-mode {
         border: none;
         cursor: pointer;
         font-size: 2rem;
+        display: block;
     }
     .close-chat-history{
         color : white;
@@ -685,6 +686,7 @@ h3.light-mode {
         border: none;
         cursor: pointer;
         font-size: 2rem;
+        display: block;
     }
 
 
