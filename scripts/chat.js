@@ -7,7 +7,7 @@ const chatHistoryPanel = document.getElementById('chatHistoryPanel');
 const toggleHistoryBtnOpen = document.getElementById('toggleHistoryBtnOpen');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
-const chatContainer2 = document.getElementById('chatContainer');
+const chatContainer2 = document.getElementById('chat-container');
 
 if (typeof personaId !== 'undefined') {
     console.log('personaId:', personaId);

@@ -646,6 +646,7 @@ h3.light-mode {
     .chat-history-panel.collapsed {
         height: 0;
         border-bottom: none;
+        transform: translateY(100%);
 
     }
     .header{
