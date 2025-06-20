@@ -648,7 +648,11 @@ h3.light-mode {
         border-bottom: none;
 
     }
-
+    .header{
+        display: flex;
+        justify-content: space-between;
+        padding: 2rem;
+    }
     .chat-container{
     }
 
