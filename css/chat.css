@@ -657,6 +657,14 @@ h3.light-mode {
         width: 100vw;
     }
 
+    .close-chat-history{
+        color : white;
+        background-color: none;
+        border: none;
+        cursor: pointer;
+        font-size: 2rem;
+    }
+
 
     .toggle-history-btn {
         top: auto;
