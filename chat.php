@@ -59,6 +59,11 @@ $availableModels = [
         'icon' => '',
         'description' => 'Intelligence de Anthropic'
     ],
+    'claude-sonnet-4' => [
+        'name' => 'Claude Sonnet 4',
+        'icon' => '',
+        'description' => 'Intelligence de Anthropic'
+    ],
     'grok-3-mini' => [
         'name' => 'Grok 3 Mini',
         'icon' => '',

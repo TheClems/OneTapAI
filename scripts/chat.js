@@ -335,6 +335,7 @@ async function sendMessage() {
         case 'mistral-medium-latest': apiEndpoint = 'mistral_api_medium_latest.php'; break;
         case 'mistral-large-latest': apiEndpoint = 'mistral_api_large_latest.php'; break;
         case 'claude-3.5-haiku-latest': apiEndpoint = 'claude_api_haiku_latest.php'; break;
+        case 'claude-sonnet-4': apiEndpoint = 'claude_api_sonnet_4.php'; break;
         case 'grok-3-mini': apiEndpoint = 'grok_api_3_mini.php'; break;
         case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
         case 'gpt': apiEndpoint = 'gpt_api.php'; break;
