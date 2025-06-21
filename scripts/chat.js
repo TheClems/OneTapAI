@@ -4,9 +4,11 @@ const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const loading = document.getElementById('loading');
 const chatHistoryPanel = document.getElementById('chatHistoryPanel');
-const toggleHistoryBtn = document.getElementById('toggleHistoryBtn');
+const toggleHistoryBtnOpen = document.getElementById('toggleHistoryBtnOpen');
 const newChatBtn = document.getElementById('newChatBtn');
 const mainContainer = document.getElementById('mainContainer');
+const chatContainer2 = document.getElementById('chat-container');
+toggleHistoryBtnClose = document.getElementById('toggleHistoryBtnClose');
 if (typeof personaId !== 'undefined') {
     console.log('personaId:', personaId);
 }
@@ -21,6 +23,27 @@ if (typeof personaNom !== 'undefined') {
 }
 if (typeof personaTags !== 'undefined') {
     console.log('personaTags:', personaTags);
+}
+
+
+if (toggleHistoryBtnOpen) {
+    toggleHistoryBtnOpen.addEventListener('click', () => {
+        if (window.innerWidth < 1024) {
+            console.log('Clic sur toggleHistoryBtnOpen');
+            if (chatContainer2) chatContainer2.classList.add('collapsed');
+            if (chatHistoryPanel) chatHistoryPanel.classList.add('collapsed');
+        }
+    });
+}
+
+if (toggleHistoryBtnClose) {
+    toggleHistoryBtnClose.addEventListener('click', () => {
+        if (window.innerWidth < 1024) {
+            console.log('Clic sur toggleHistoryBtnClose');
+            if (chatContainer2) chatContainer2.classList.remove('collapsed');
+            if (chatHistoryPanel) chatHistoryPanel.classList.remove('collapsed');
+        }
+    });
 }
 
 // Fonction pour formater l'heure
@@ -44,7 +67,7 @@ function updateLayoutForNavbar() {
 }
 
 // Gérer le responsive mobile
-function handleMobileLayout() {
+/*function handleMobileLayout() {
     const isMobile = window.innerWidth <= 768;
     mainContainer.classList.toggle('mobile', isMobile);
     
@@ -54,18 +77,8 @@ function handleMobileLayout() {
         toggleHistoryBtn.textContent = chatHistoryPanel.classList.contains('collapsed') ? '📊' : '📈';
     }
 }
+*/
 
-// Basculer l'affichage de l'historique
-toggleHistoryBtn.addEventListener('click', () => {
-    chatHistoryPanel.classList.toggle('collapsed');
-    const isCollapsed = chatHistoryPanel.classList.contains('collapsed');
-    
-    if (window.innerWidth <= 768) {
-        toggleHistoryBtn.textContent = isCollapsed ? '📊' : '✖️';
-    } else {
-        toggleHistoryBtn.textContent = isCollapsed ? '📊' : '📈';
-    }
-});
 
 // Créer un nouveau chat
 newChatBtn.addEventListener('click', () => {
@@ -73,7 +86,7 @@ newChatBtn.addEventListener('click', () => {
 });
 
 // Gérer les clics sur les éléments de chat
-document.addEventListener('click', (e) => {
+/*document.addEventListener('click', (e) => {
     const chatItem = e.target.closest('.chat-item');
     if (chatItem) {
         const channelId = chatItem.dataset.channelId;
@@ -114,7 +127,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
-
+*/
 // Charger l'historique existant
 function loadHistoryMessages() {
     if (channelHistoryFromDB && channelHistoryFromDB.length > 0) {
@@ -172,57 +185,39 @@ function createParticles() {
 
 // Fonction pour formater le contenu d'un message
 function formatMessageContent(content) {
-    // Convertir les **texte** en <strong>
+    // Vérifier si c'est un chemin d'image
+    if (isImageResponse(content)) {
+        return `<img src="${content}" alt="Image générée" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" onclick="window.open('${content}', '_blank')">`;
+    }
+    
+    // Vérifier si c'est un marqueur d'image dans l'historique
+    if (content.startsWith('[IMAGE:') && content.endsWith(']')) {
+        const imagePath = content.slice(8, -1); // Extraire le chemin entre [IMAGE: et ]
+        return `<img src="${imagePath}" alt="Image générée" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" onclick="window.open('${imagePath}', '_blank')">`;
+    }
+    
+    // Formatage normal pour le texte
     content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // Convertir les *texte* en <em>
     content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-    // Convertir les ##### Titre en <h6>
     content = content.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
-
-
-    // Convertir les ##### Titre en <h5>
     content = content.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
-    // Convertir les #### Titre en <h4>
     content = content.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-
-    // Convertir les ### Titre en <h3>
     content = content.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-    
-    // Convertir les ## Titre en <h2>
     content = content.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-    
-    // Convertir les # Titre en <h1>
     content = content.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    
-    // Convertir les blocs de code ```code```
     content = content.replace(/```(\w+)?\n?([\s\S]*?)```/g, function(match, lang, code) {
         return `<pre><code>${code.trim()}</code></pre>`;
     });
-    
-    // Convertir le code inline `code`
     content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
-    
-    // Convertir les liens [texte](url)
     content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-    
-    // Convertir les listes - item
     content = content.replace(/^- (.*$)/gm, '<li>$1</li>');
     content = content.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-    
-    // Convertir les listes numérotées 1. item
     content = content.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
-    
-    // Convertir les citations > texte
     content = content.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
-    
-    // Convertir les retours à la ligne
     content = content.replace(/\n/g, '<br>');
     
     return content;
 }
-
 // Afficher un message dans le chat (sans affecter l'historique)
 function displayMessage(content, isUser = false) {
     const messageDiv = document.createElement('div');
@@ -277,8 +272,53 @@ function getSelectedModel() {
         }
     }
     
-    return model || 'mistral-medium'; // Valeur par défaut
+    return model || 'mistral-medium-latest'; // Valeur par défaut
 }
+
+// Fonction pour afficher une image dans le chat
+function displayImageMessage(imagePath, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    // Créer l'élément image avec gestion d'erreur
+    const imageHtml = `
+        <div class="message-content">
+            <img src="${imagePath}" 
+                 alt="Image générée" 
+                 style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;"
+                 onclick="window.open('${imagePath}', '_blank')"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none; padding: 10px; background: #f0f0f0; border-radius: 8px; color: #666;">
+                ❌ Erreur de chargement de l'image<br>
+                <small>Chemin: ${imagePath}</small>
+            </div>
+        </div>
+        <div class="message-time">${timeString}</div>
+    `;
+
+    messageDiv.innerHTML = imageHtml;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Fonction pour déterminer si c'est une réponse d'image
+function isImageResponse(content) {
+    return content && (
+        content.startsWith('image_api/') ||
+        content.includes('.jpg') ||
+        content.includes('.jpeg') ||
+        content.includes('.png') ||
+        content.includes('.gif') ||
+        content.includes('.webp')
+    );
+}
+
 
 //Envoyer message
 async function sendMessage() {
@@ -290,7 +330,7 @@ async function sendMessage() {
     const message = messageInput.value.trim();
     if (!message) return;
 
-    let selectedModel = getSelectedModel(); // Doit être définie ailleurs
+    let selectedModel = getSelectedModel();
 
     // Si des instructions personnalisées existent, forcer un modèle spécifique
     if (typeof personaInstructions !== 'undefined' &&
@@ -305,9 +345,14 @@ async function sendMessage() {
     switch (selectedModel) {
         case 'gemini': apiEndpoint = 'gemini_api.php'; break;
         case 'openrouter': apiEndpoint = 'openrouter_api.php'; break;
-        case 'mistral-medium': apiEndpoint = 'mistral_api.php'; break;
+        case 'mistral-medium-latest': apiEndpoint = 'mistral_api_medium_latest.php'; break;
+        case 'mistral-large-latest': apiEndpoint = 'mistral_api_large_latest.php'; break;
+        case 'claude-3.5-haiku-latest': apiEndpoint = 'claude_api_haiku_latest.php'; break;
+        case 'claude-sonnet-4': apiEndpoint = 'claude_api_sonnet_4.php'; break;
+        case 'grok-3-mini': apiEndpoint = 'grok_api_3_mini.php'; break;
         case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
         case 'gpt': apiEndpoint = 'gpt_api.php'; break;
+        case 'image': apiEndpoint = 'image.php'; break; // Utiliser votre nouveau fichier
         default: apiEndpoint = 'default_api.php'; break;
     }
 
@@ -352,21 +397,65 @@ async function sendMessage() {
             })
         });
 
-        const data = await response.json();
+        // Vérifier si la réponse est OK
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status} - ${response.statusText}`);
+        }
+
+        // Lire le contenu de la réponse
+        const responseText = await response.text();
+        
+        // Vérifier si le contenu est vide
+        if (!responseText || responseText.trim() === '') {
+            throw new Error('Réponse vide du serveur');
+        }
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (jsonError) {
+            console.error('Erreur JSON:', jsonError);
+            console.error('Contenu de la réponse:', responseText);
+            throw new Error('Réponse invalide du serveur (JSON malformé)');
+        }
 
         if (data.success) {
-            displayMessage(data.content, false);
-            messageHistory.push({
-                role: 'assistant',
-                content: data.content.replace(/<br\s*\/?>/gi, '\n')
-            });
+            // Vérifier si c'est une réponse d'image
+            if (data.type === 'image' || isImageResponse(data.content)) {
+                displayImageMessage(data.content, false);
+                messageHistory.push({
+                    role: 'assistant',
+                    content: `[IMAGE: ${data.content}]`
+                });
+            } else {
+                // Réponse texte normale
+                displayMessage(data.content, false);
+                messageHistory.push({
+                    role: 'assistant',
+                    content: data.content.replace(/<br\s*\/?>/gi, '\n')
+                });
+            }
         } else {
             throw new Error(data.error || 'Erreur inconnue');
         }
 
     } catch (error) {
-        console.error('Erreur:', error);
-        displayMessage(`Désolé, une erreur s'est produite : ${error.message}`, false);
+        console.error('Erreur complète:', error);
+        
+        // Afficher un message d'erreur plus détaillé
+        let errorMessage = 'Désolé, une erreur s\'est produite';
+        
+        if (error.message.includes('JSON')) {
+            errorMessage += ' (erreur de format de réponse)';
+        } else if (error.message.includes('HTTP')) {
+            errorMessage += ' (erreur de connexion)';
+        } else if (error.message.includes('vide')) {
+            errorMessage += ' (réponse vide du serveur)';
+        }
+        
+        errorMessage += ` : ${error.message}`;
+        
+        displayMessage(errorMessage, false);
     } finally {
         messageInput.disabled = false;
         sendButton.disabled = false;

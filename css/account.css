@@ -21,6 +21,11 @@ body {
     margin-left: 2rem;
 }
 
+.body_account.mobile {
+    margin-left: 0rem;
+    overflow: visible;
+}
+
 .main-content {
     padding: 2rem;
     max-width: 1200px;

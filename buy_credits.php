@@ -48,7 +48,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=&currency=EUR"></script>
     <link rel="stylesheet" href="css/buy_credits.css" />
     <link rel="stylesheet" href="css/animations.css">
 

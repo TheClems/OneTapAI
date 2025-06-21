@@ -136,7 +136,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         purchase_units: [{
                             description: nom + " - " + credits + " crédits",
                             custom_id: pseudoPHP + "-" + nom,
-                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom,
+                            invoice_id: "FACTURE-" + pseudoPHP + "-" + nom + "-" + Date.now(),
                             amount: {
                                 value: prix,
                                 currency_code: 'EUR'
@@ -151,6 +151,31 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     return actions.order.capture().then(function (details) {
                         alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
                         console.log("Détails : ", details);
+
+                        // Appel à la page PHP pour ajouter les crédits
+                        fetch('payment_verified.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                credits: credits
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.status === 'success') {
+                                alert("🎉 Vos crédits ont été ajoutés avec succès !");
+                                // Recharger la page pour mettre à jour le solde
+                                window.location.reload();
+                            } else {
+                                alert("❌ Une erreur est survenue : " + result.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Erreur lors de l'ajout des crédits :", error);
+                            alert("❌ Erreur lors de l'envoi des crédits.");
+                        });
                     });
                 },
                 onError: function(err) {

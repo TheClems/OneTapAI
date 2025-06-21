@@ -535,6 +535,13 @@ h3.light-mode {
     animation-delay: -0.16s;
 }
 
+.open-chat-history{
+ display: none;   
+}
+.close-chat-history{
+ display: none;   
+}
+
 @keyframes bounce {
 
     0%,
@@ -628,20 +635,60 @@ h3.light-mode {
 @media (max-width: 768px) {
     .main-container {
         margin-left: 0;
-        flex-direction: column;
+        overflow: hidden;
     }
-
-    .chat-history-panel {
-        width: 100%;
-        height: 40vh;
+    .history-header{
+        width: 100vw;
+    }
+    .chat-history-panel.mobile {
+        width: 100vw;
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: visible;
+        position: absolute;
+        z-index: 1;
+        transform: translateY(-100%);
+        margin-left: 0;
     }
 
-    .chat-history-panel.collapsed {
+    .chat-history-panel.mobile.collapsed {
         height: 0;
         border-bottom: none;
+        transform: translateY(0%);
+        height: 100vh;
+
     }
+    .header{
+        display: flex;
+        justify-content: space-between;
+        padding: 2rem;
+    }
+    .chat-container{
+    }
+
+    .chat-container.collapsed{
+    }
+
+    .chat-messages{
+        width: 100vw;
+    }
+    .open-chat-history{
+        color : white;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 2rem;
+        display: block;
+    }
+    .close-chat-history{
+        color : white;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 2rem;
+        display: block;
+    }
+
 
     .toggle-history-btn {
         top: auto;

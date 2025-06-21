@@ -161,13 +161,18 @@ if (themeToggle) {
 // Toggle de la sidebar
 if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
+
+        if (window.innerWidth > 1024) {
+            if (chatContainer) chatContainer.classList.toggle('collapsed');
+            if (chatHistoryPanel2) chatHistoryPanel2.classList.toggle('collapsed');
+
+
+        }
         if (sidebar) sidebar.classList.toggle('collapsed');
-        if (chatContainer) chatContainer.classList.toggle('collapsed');
         if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
         if (body_account) body_account.classList.toggle('collapsed');
         if (toggleBtn2) toggleBtn2.classList.toggle('collapsed');
 
-        if (chatHistoryPanel2) chatHistoryPanel2.classList.toggle('collapsed');
         if (body_job) body_job.classList.toggle('collapsed');
     });
 }
@@ -261,6 +266,7 @@ function handleResize() {
         if (chatContainer) chatContainer.classList.add('mobile');
         if (body_account) body_account.classList.add('mobile');
         if (body_job) body_job.classList.add('mobile');
+        if (chatHistoryPanel2) chatHistoryPanel2.classList.add('mobile');
 
     } else if (sidebar) {
         if (body_buy_credits) body_buy_credits.classList.remove('mobile');
@@ -268,7 +274,8 @@ function handleResize() {
         if (chatContainer) chatContainer.classList.remove('mobile');
         if (body_account) body_account.classList.remove('mobile');
         if (body_job) body_job.classList.remove('mobile');
-    }
+        if (chatHistoryPanel2) chatHistoryPanel2.classList.remove('mobile');
+            }
 }
 
 window.addEventListener('resize', handleResize);

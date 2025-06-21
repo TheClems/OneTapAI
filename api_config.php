@@ -74,12 +74,15 @@ function getDatabaseConnection()
 function saveMessageToDatabase($pdo, $chatChannelId, $role, $content)
 {
     try {
+        $createdAt = date('Y-m-d H:i:s', strtotime('+2 hours'));
+
         $stmt = $pdo->prepare("
             INSERT INTO chat_messages (chat_channel_id, role, content, created_at) 
-            VALUES (?, ?, ?, NOW())
+            VALUES (?, ?, ?, ?)
         ");
+
         
-        return $stmt->execute([$chatChannelId, $role, $content]);
+        return $stmt->execute([$chatChannelId, $role, $content, $createdAt]);
     } catch (PDOException $e) {
         logError("Database insert error: " . $e->getMessage());
         return false;
