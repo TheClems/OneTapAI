@@ -674,11 +674,13 @@ if ($currentChannelId !== null) {
 
             const channelId = this.dataset.channelId;
             const channelModel = this.dataset.model;
+            const personaId = this.dataset.persona;
 
             console.log('Clic sur chat item:', {
                 channelId: channelId,
                 channelModel: channelModel,
-                selectedModel: selectedModel
+                personaId: personaId,
+                selectedModel: selectedModel,
             });
 
             const currentUrl = new URL(window.location);
@@ -692,11 +694,11 @@ if ($currentChannelId !== null) {
 
             if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
                 modelToUse = channelModel;
-                personaIdToUse = this.dataset.persona_id;
+                personaIdToUse = personaId;
                 console.log('Utilisation du modèle du channel:', modelToUse);
             } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
                 modelToUse = selectedModel;
-                personaIdToUse = this.dataset.persona_id;
+                personaIdToUse = personaId;
                 console.log('Utilisation du modèle sélectionné:', modelToUse);
             } else {
                 modelToUse = 'mistral-large';
