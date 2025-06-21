@@ -665,57 +665,60 @@ if ($currentChannelId !== null) {
         window.location.href = currentUrl.pathname + '?model=' + encodeURIComponent(modelToUse);
     });
 
-    // Gestion des clics sur l'historique avec préservation du modèle
-    document.querySelectorAll('.chat-item').forEach(item => {
-        item.addEventListener('click', function() {
-            // Empêcher les clics multiples
-            if (this.classList.contains('loading')) return;
-            this.classList.add('loading');
+// Gestion des clics sur l'historique avec préservation du modèle
+document.querySelectorAll('.chat-item').forEach(item => {
+    item.addEventListener('click', function() {
+        // Empêcher les clics multiples
+        if (this.classList.contains('loading')) return;
+        this.classList.add('loading');
 
-            const channelId = this.dataset.channelId;
-            const channelModel = this.dataset.model;
-            const personaId = this.dataset.persona;
+        const channelId = this.dataset.channelId;
+        const channelModel = this.dataset.model;
+        const personaId = this.dataset.persona; // Cette valeur vient du data-persona="5"
 
-            console.log('Clic sur chat item:', {
-                channelId: channelId,
-                channelModel: channelModel,
-                personaId: personaId,
-                selectedModel: selectedModel,
-            });
-
-            const currentUrl = new URL(window.location);
-            currentUrl.searchParams.set('id_channel', channelId);
-
-            // Priorité 1: Modèle du channel s'il existe et est valide
-            // Priorité 2: Modèle sélectionné actuellement
-            // Priorité 3: Modèle par défaut
-            let modelToUse;
-            let personaIdToUse;
-
-            if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
-                modelToUse = channelModel;
-                personaIdToUse = personaId;
-                console.log('Utilisation du modèle du channel:', modelToUse);
-            } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
-                modelToUse = selectedModel;
-                personaIdToUse = personaId;
-                console.log('Utilisation du modèle sélectionné:', modelToUse);
-            } else {
-                modelToUse = 'mistral-large';
-                personaIdToUse = null;
-                console.log('Utilisation du modèle par défaut:', modelToUse);
-            }
-
-            currentUrl.searchParams.set('model', modelToUse);
-            currentUrl.searchParams.set('persona_id', personaIdToUse);
-            console.log("→ Final personaIdToUse:", personaIdToUse);
-
-            const finalUrl = currentUrl.toString();
-            console.log('URL finale:', finalUrl);
-
-            window.location.href = finalUrl;
+        console.log('Clic sur chat item:', {
+            channelId: channelId,
+            channelModel: channelModel,
+            personaId: personaId,
+            selectedModel: selectedModel,
         });
+
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('id_channel', channelId);
+
+        // Déterminer le modèle à utiliser
+        let modelToUse;
+        
+        if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
+            modelToUse = channelModel;
+            console.log('Utilisation du modèle du channel:', modelToUse);
+        } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
+            modelToUse = selectedModel;
+            console.log('Utilisation du modèle sélectionné:', modelToUse);
+        } else {
+            modelToUse = 'mistral-large';
+            console.log('Utilisation du modèle par défaut:', modelToUse);
+        }
+
+        // Toujours définir le modèle
+        currentUrl.searchParams.set('model', modelToUse);
+
+        // Ajouter le persona_id SEULEMENT s'il existe et n'est pas vide
+        if (personaId && personaId !== '' && personaId !== 'null' && personaId !== 'undefined') {
+            currentUrl.searchParams.set('persona_id', personaId);
+            console.log('→ Persona ID ajouté:', personaId);
+        } else {
+            // Supprimer le paramètre persona_id s'il n'y en a pas
+            currentUrl.searchParams.delete('persona_id');
+            console.log('→ Pas de persona ID');
+        }
+
+        const finalUrl = currentUrl.toString();
+        console.log('URL finale:', finalUrl);
+
+        window.location.href = finalUrl;
     });
+});
 </script>
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
