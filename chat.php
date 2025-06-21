@@ -194,7 +194,6 @@ function verifyChannelOwnership($channelId, $userId)
     }
 }
 
-// Fonction pour générer l'URL avec tous les paramètres
 function buildRedirectUrl($channelId, $model = null, $personaId = null)
 {
     $params = ['id_channel' => $channelId];
@@ -209,6 +208,37 @@ function buildRedirectUrl($channelId, $model = null, $personaId = null)
 
     return '?' . http_build_query($params);
 }
+
+// Variables pour les données du persona - DÉPLACÉES EN HAUT
+$instructions = '';
+$nom = '';
+$tags = '';
+$personaId = null;
+
+// Traitement du persona AVANT tout le reste
+if (isset($_GET['persona_id'])) {
+    $personaId = $_GET['persona_id'];
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("SELECT model, instructions, nom, tags FROM personas WHERE id = ?");
+        $stmt->execute([$personaId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result) {
+            $selectedModel = $result['model'];
+            $instructions = $result['instructions'];
+            $nom = $result['nom'];
+            $tags = $result['tags'];
+        }
+    } catch (PDOException $e) {
+        error_log("Erreur récupération persona: " . $e->getMessage());
+    }
+}
+
+// Gestion du modèle sélectionné - APRÈS le persona
+if (!$selectedModel && isset($_GET['model'])) {
+    $selectedModel = $_GET['model'];
+}
+$_SESSION['selected_model'] = $selectedModel;
 
 $channelHistory = [];
 $currentChannelId = null;
@@ -242,7 +272,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             }
         }
 
-        $redirectUrl = buildRedirectUrl($existingEmptyChannel, $selectedModel, $_GET['persona_id'] ?? null);
+        // CORRECTION : Préserver le persona_id dans la redirection
+        $redirectUrl = buildRedirectUrl($existingEmptyChannel, $selectedModel, $personaId);
         header("Location: " . $redirectUrl);
         exit;
     } else {
@@ -262,12 +293,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
             ]);
             $_SESSION['id_channel'] = $id;
 
-            // Préserver TOUS les paramètres lors de la redirection
-            $redirectUrl = buildRedirectUrl(
-                $id,
-                $selectedModel,
-                isset($_GET['persona_id']) ? $_GET['persona_id'] : null
-            );
+            // CORRECTION : Préserver le persona_id dans la redirection
+            $redirectUrl = buildRedirectUrl($id, $selectedModel, $personaId);
             header("Location: " . $redirectUrl);
             exit;
         } catch (PDOException $e) {
@@ -281,9 +308,21 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     // Vérifier si ce channel appartient à l'utilisateur
     if (!verifyChannelOwnership($currentChannelId, $userId)) {
-        // Channel n'existe pas ou n'appartient pas à cet utilisateur
-        // Rediriger vers la page sans paramètres (éviter la boucle)
-        header("Location: " . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        // CORRECTION : Rediriger en préservant les paramètres importants
+        $redirectParams = [];
+        if (isset($_GET['model']) && !empty($_GET['model'])) {
+            $redirectParams['model'] = $_GET['model'];
+        }
+        if (isset($_GET['persona_id']) && !empty($_GET['persona_id'])) {
+            $redirectParams['persona_id'] = $_GET['persona_id'];
+        }
+        
+        $redirectUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        if (!empty($redirectParams)) {
+            $redirectUrl .= '?' . http_build_query($redirectParams);
+        }
+        
+        header("Location: " . $redirectUrl);
         exit;
     }
 
@@ -293,7 +332,6 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     // Nettoyer les autres channels vides (pas celui-ci)
     cleanupEmptyChannels($userId, $currentChannelId);
 }
-
 // Récupérer la liste des channels APRÈS le traitement
 $userChannels = getUserChannels($userId);
 
