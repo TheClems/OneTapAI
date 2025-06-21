@@ -515,7 +515,7 @@ if ($currentChannelId !== null) {
                                             
                                                     $pdo = getDBConnection();
                                                     try {
-                                                        $stmt = $pdo->prepare("SELECT id FROM personas WHERE persona_name = ?");
+                                                        $stmt = $pdo->prepare("SELECT id FROM personas WHERE nom = ?");
                                                         $stmt->execute([$channel['persona_name']]);
                                                         $result = $stmt->fetch(PDO::FETCH_ASSOC);
                                                         if ($result) {
