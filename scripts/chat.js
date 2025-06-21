@@ -272,7 +272,7 @@ function getSelectedModel() {
         }
     }
     
-    return model || 'mistral-medium'; // Valeur par défaut
+    return model || 'mistral-medium-latest'; // Valeur par défaut
 }
 
 // Fonction pour afficher une image dans le chat
