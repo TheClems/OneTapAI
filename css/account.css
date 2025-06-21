@@ -23,6 +23,7 @@ body {
 
 .body_account.mobile {
     margin-left: 0rem;
+    overflow: visible;
 }
 
 .main-content {
