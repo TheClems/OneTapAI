@@ -195,17 +195,18 @@ function verifyChannelOwnership($channelId, $userId)
 }
 
 // Fonction pour générer l'URL avec tous les paramètres
-function buildRedirectUrl($channelId, $model = null, $personaId = null) {
+function buildRedirectUrl($channelId, $model = null, $personaId = null)
+{
     $params = ['id_channel' => $channelId];
-    
+
     if ($model) {
         $params['model'] = $model;
     }
-    
+
     if ($personaId) {
         $params['persona_id'] = $personaId;
     }
-    
+
     return '?' . http_build_query($params);
 }
 
@@ -229,7 +230,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
     if ($existingEmptyChannel) {
         $currentChannelId = $existingEmptyChannel;
-        
+
         // Si un persona est sélectionné, mettre à jour le channel
         if (!empty($nom)) {
             $pdo = getDBConnection();
@@ -240,7 +241,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
                 error_log("Erreur mise à jour persona: " . $e->getMessage());
             }
         }
-        
+
         $redirectUrl = buildRedirectUrl($existingEmptyChannel, $selectedModel, $_GET['persona_id'] ?? null);
         header("Location: " . $redirectUrl);
         exit;
@@ -263,8 +264,8 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
 
             // Préserver TOUS les paramètres lors de la redirection
             $redirectUrl = buildRedirectUrl(
-                $id, 
-                $selectedModel, 
+                $id,
+                $selectedModel,
                 isset($_GET['persona_id']) ? $_GET['persona_id'] : null
             );
             header("Location: " . $redirectUrl);
@@ -491,24 +492,41 @@ if ($currentChannelId !== null) {
         <div class="chat-history-panel" id="chatHistoryPanel">
 
 
-        <div class="history-header">
-            <button class="close-chat-history" id="toggleHistoryBtnClose" title="Fermer le panneau">
-                &times;
-            </button>
-            <h3>💬 Historique</h3>
-            <button class="new-chat-btn" id="newChatBtn">
-                ✚
-            </button>
-        </div>
+            <div class="history-header">
+                <button class="close-chat-history" id="toggleHistoryBtnClose" title="Fermer le panneau">
+                    &times;
+                </button>
+                <h3>💬 Historique</h3>
+                <button class="new-chat-btn" id="newChatBtn">
+                    ✚
+                </button>
+            </div>
 
 
             <div class="chat-list" id="chatList">
                 <?php foreach ($userChannels as $channel): ?>
+
                     <?php if ($channel['message_count'] > 0): // Afficher seulement les channels avec des messages 
                     ?>
                         <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
                             data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
-                            data-model="<?php echo htmlspecialchars($channel['model']); ?>">
+                            data-model="<?php echo htmlspecialchars($channel['model']); ?>"
+                            data-persona="<?php if ($channel['persona_name']) {
+                                            
+                                                    $pdo = getDBConnection();
+                                                    try {
+                                                        $stmt = $pdo->prepare("SELECT id FROM personas WHERE persona_name = ?");
+                                                        $stmt->execute([$channel['persona_name']]);
+                                                        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                        if ($result) {
+                                                            $personaId = $result['id'];
+                                                            echo $personaId;
+                                                        }
+                                                    } catch (PDOException $e) {
+                                                        error_log("Erreur récupération modèle: " . $e->getMessage());
+                                                    }
+                                                
+                                            }?>">
                             <div class="chat-preview">
                                 <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                             </div>
@@ -534,7 +552,7 @@ if ($currentChannelId !== null) {
         <div class="chat-container" id="chat-container">
             <div class="header">
                 <button class="open-chat-history" id="toggleHistoryBtnOpen" title="Ouvrir le panneau">
-                ▼
+                    ▼
                 </button>
                 <div class="header-content">
                     <h1>🤖 <?php echo $selectedModel ? $availableModels[$selectedModel]['name'] : 'IA'; ?> Chat</h1>
@@ -590,26 +608,25 @@ if ($currentChannelId !== null) {
 
 </html>
 <script>
+    <?php if (isset($personaId)) : ?>
+        const personaId = <?= json_encode($personaId) ?>;
+    <?php endif; ?>
 
-<?php if (isset($personaId)) : ?>
-const personaId = <?= json_encode($personaId) ?>;
-<?php endif; ?>
+    <?php if (isset($selectedModel)) : ?>
+        const selectedModelPersona = <?= json_encode($selectedModel) ?>;
+    <?php endif; ?>
 
-<?php if (isset($selectedModel)) : ?>
-const selectedModelPersona = <?= json_encode($selectedModel) ?>;
-<?php endif; ?>
+    <?php if (isset($instructions)) : ?>
+        const personaInstructions = <?= json_encode($instructions) ?>;
+    <?php endif; ?>
 
-<?php if (isset($instructions)) : ?>
-const personaInstructions = <?= json_encode($instructions) ?>;
-<?php endif; ?>
+    <?php if (isset($nom)) : ?>
+        const personaNom = <?= json_encode($nom) ?>;
+    <?php endif; ?>
 
-<?php if (isset($nom)) : ?>
-const personaNom = <?= json_encode($nom) ?>;
-<?php endif; ?>
-
-<?php if (isset($tags)) : ?>
-const personaTags = <?= json_encode($tags) ?>;
-<?php endif; ?>
+    <?php if (isset($tags)) : ?>
+        const personaTags = <?= json_encode($tags) ?>;
+    <?php endif; ?>
     // Historique des messages depuis PHP
     let messageHistory = <?php echo json_encode(array_map(function ($msg) {
                                 return [
@@ -671,19 +688,24 @@ const personaTags = <?= json_encode($tags) ?>;
             // Priorité 2: Modèle sélectionné actuellement
             // Priorité 3: Modèle par défaut
             let modelToUse;
+            let personaIdToUse;
 
             if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
                 modelToUse = channelModel;
+                personaIdToUse = this.dataset.persona_id;
                 console.log('Utilisation du modèle du channel:', modelToUse);
             } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
                 modelToUse = selectedModel;
+                personaIdToUse = this.dataset.persona_id;
                 console.log('Utilisation du modèle sélectionné:', modelToUse);
             } else {
                 modelToUse = 'mistral-large';
+                personaIdToUse = null;
                 console.log('Utilisation du modèle par défaut:', modelToUse);
             }
 
             currentUrl.searchParams.set('model', modelToUse);
+            currentUrl.searchParams.set('persona_id', personaIdToUse);
 
             const finalUrl = currentUrl.toString();
             console.log('URL finale:', finalUrl);
@@ -695,4 +717,3 @@ const personaTags = <?= json_encode($tags) ?>;
 <script type="text/javascript" src="scripts/chat.js"></script>
 <script type="text/javascript" src="scripts/nav.js"></script>
 <script type="text/javascript" src="scripts/account.js"></script>
-
