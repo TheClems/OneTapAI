@@ -248,7 +248,7 @@ if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
     } else {
         // Créer un nouveau channel seulement s'il n'y en a pas de vide
         $id = uniqid('chat_', true);
-        $createdAt = date('Y-m-d H:i:s');
+        $createdAt = date('Y-m-d H:i:s', strtotime('+2 hours'));
         $pdo = getDBConnection();
 
         try {
