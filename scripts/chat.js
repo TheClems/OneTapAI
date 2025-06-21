@@ -86,7 +86,7 @@ newChatBtn.addEventListener('click', () => {
 });
 
 // Gérer les clics sur les éléments de chat
-document.addEventListener('click', (e) => {
+/*document.addEventListener('click', (e) => {
     const chatItem = e.target.closest('.chat-item');
     if (chatItem) {
         const channelId = chatItem.dataset.channelId;
@@ -127,7 +127,7 @@ document.addEventListener('click', (e) => {
         }
     }
 });
-
+*/
 // Charger l'historique existant
 function loadHistoryMessages() {
     if (channelHistoryFromDB && channelHistoryFromDB.length > 0) {
