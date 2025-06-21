@@ -505,28 +505,30 @@ if ($currentChannelId !== null) {
 
             <div class="chat-list" id="chatList">
                 <?php foreach ($userChannels as $channel): ?>
-
-                    <?php if ($channel['message_count'] > 0): // Afficher seulement les channels avec des messages 
-                    ?>
+                    <?php if ($channel['message_count'] > 0): ?>
+                        <?php
+                        // Récupérer l'ID du persona si il existe
+                        $channelPersonaId = null;
+                        if ($channel['persona_name']) {
+                            $pdo = getDBConnection();
+                            try {
+                                $stmt = $pdo->prepare("SELECT id FROM personas WHERE nom = ?");
+                                $stmt->execute([$channel['persona_name']]);
+                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                                if ($result) {
+                                    $channelPersonaId = $result['id'];
+                                }
+                            } catch (PDOException $e) {
+                                error_log("Erreur récupération persona: " . $e->getMessage());
+                            }
+                        }
+                        ?>
                         <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
                             data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
                             data-model="<?php echo htmlspecialchars($channel['model']); ?>"
-                            data-persona="<?php if ($channel['persona_name']) {
-                                            
-                                                    $pdo = getDBConnection();
-                                                    try {
-                                                        $stmt = $pdo->prepare("SELECT id FROM personas WHERE nom = ?");
-                                                        $stmt->execute([$channel['persona_name']]);
-                                                        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                                        if ($result) {
-                                                            $personaId = $result['id'];
-                                                            echo $personaId;
-                                                        }
-                                                    } catch (PDOException $e) {
-                                                        error_log("Erreur récupération modèle: " . $e->getMessage());
-                                                    }
-                                                
-                                            }?>">
+                            <?php if ($channelPersonaId): ?>
+                                data-persona="<?php echo htmlspecialchars($channelPersonaId); ?>"
+                            <?php endif; ?>>
                             <div class="chat-preview">
                                 <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                             </div>
@@ -538,7 +540,6 @@ if ($currentChannelId !== null) {
                                     <?php echo $channel['persona_name']; ?>
                                 </div>
                             <?php endif; ?>
-
                             <div class="chat-time">
                                 🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
                             </div>
