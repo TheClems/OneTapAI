@@ -708,6 +708,7 @@ if ($currentChannelId !== null) {
 
             currentUrl.searchParams.set('model', modelToUse);
             currentUrl.searchParams.set('persona_id', personaIdToUse);
+            console.log("→ Final personaIdToUse:", personaIdToUse);
 
             const finalUrl = currentUrl.toString();
             console.log('URL finale:', finalUrl);
