@@ -18,7 +18,6 @@ if (isset($_SESSION['user_id'])) {
 // Gestion du modèle sélectionné
 $selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
 $_SESSION['selected_model'] = $selectedModel;
-echo $selectedModel;
 
 // Variables pour les données du persona
 $instructions = '';
@@ -616,6 +615,7 @@ if ($currentChannelId !== null) {
 
     <?php if (isset($selectedModel)) : ?>
         const selectedModelPersona = <?= json_encode($selectedModel) ?>;
+        console.log(selectedModelPersona);
     <?php endif; ?>
 
     <?php if (isset($instructions)) : ?>
