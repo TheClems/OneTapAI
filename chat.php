@@ -5,423 +5,368 @@
 //error_reporting(E_ALL);
 require_once 'config.php';
 
-session_start();  // Toujours démarrer la session en début de script
-error_log("=== DEBUG PARAMETRES ===");
-error_log("GET params: " . print_r($_GET, true));
-error_log("persona_id reçu: " . (isset($_GET['persona_id']) ? $_GET['persona_id'] : 'NON DÉFINI'));
-error_log("model reçu: " . (isset($_GET['model']) ? $_GET['model'] : 'NON DÉFINI'));
-error_log("id_channel reçu: " . (isset($_GET['id_channel']) ? $_GET['id_channel'] : 'NON DÉFINI'));
+session_start();
 
-// Variables pour les données du persona
-$instructions = '';
-$nom = '';
-$tags = '';
-$personaId = null;
+// Gestion de l'utilisateur connecté
+$userId = $_SESSION['user_id'] ?? null;
+if (!$userId) {
+    // Rediriger vers la page de connexion si pas d'utilisateur
+    header("Location: login.php");
+    exit;
+}
 
-// Gestion du modèle sélectionné
-$selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
-$_SESSION['selected_model'] = $selectedModel;
-
-// Traitement du persona - AVANT tout le reste
-if (isset($_GET['persona_id']) && !empty($_GET['persona_id'])) {
-    $personaId = $_GET['persona_id'];
-    error_log("Traitement du persona ID: " . $personaId);
+// Classe pour gérer la logique de chat
+class ChatManager {
+    private $pdo;
+    private $userId;
     
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("SELECT model, instructions, nom, tags FROM personas WHERE id = ?");
-        $stmt->execute([$personaId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        error_log("Résultat requête persona: " . print_r($result, true));
-        
-        if ($result) {
-            // Ne pas écraser le modèle sélectionné si il existe déjà
-            if (!$selectedModel) {
-                $selectedModel = $result['model'];
+    public function __construct($userId) {
+        $this->pdo = getDBConnection();
+        $this->userId = $userId;
+    }
+    
+    /**
+     * Récupère les données d'un persona
+     */
+    public function getPersonaData($personaId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT model, instructions, nom, tags FROM personas WHERE id = ?");
+            $stmt->execute([$personaId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur récupération persona: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Récupère l'historique d'un channel
+     */
+    public function getChannelHistory($channelId) {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT role, content, created_at 
+                FROM chat_messages 
+                WHERE chat_channel_id = ? 
+                ORDER BY created_at ASC
+            ");
+            $stmt->execute([$channelId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur récupération historique: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Récupère les channels d'un utilisateur
+     */
+    public function getUserChannels() {
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    cc.id, 
+                    cc.created_at,
+                    cc.model,
+                    cc.persona_name,
+                    cc.persona_id,
+                    COALESCE(
+                        (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
+                        'Nouveau chat'
+                    ) as first_message,
+                    (SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = cc.id) as message_count
+                FROM chat_channels cc 
+                WHERE cc.id_user = ? 
+                ORDER BY cc.created_at DESC
+            ");
+            $stmt->execute([$this->userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur récupération channels: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Vérifie si un channel appartient à l'utilisateur
+     */
+    public function verifyChannelOwnership($channelId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT id_user FROM chat_channels WHERE id = ?");
+            $stmt->execute([$channelId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result && $result['id_user'] === $this->userId;
+        } catch (PDOException $e) {
+            error_log("Erreur vérification propriété channel: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Trouve un channel vide existant
+     */
+    public function findEmptyChannel() {
+        $channels = $this->getUserChannels();
+        foreach ($channels as $channel) {
+            if ($channel['message_count'] == 0 && (empty($channel['model']) || $channel['model'] === 'null')) {
+                return $channel['id'];
             }
-            $instructions = $result['instructions'];
-            $nom = $result['nom'];
-            $tags = $result['tags'];
+        }
+        return null;
+    }
+    
+    /**
+     * Crée un nouveau channel
+     */
+    public function createChannel($model = '', $personaName = '', $personaId = null) {
+        $id = uniqid('chat_', true);
+        $createdAt = date('Y-m-d H:i:s');
+        
+        try {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO chat_channels (id, id_user, created_at, model, persona_name, persona_id) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            $stmt->execute([$id, $this->userId, $createdAt, $model, $personaName, $personaId]);
+            $_SESSION['id_channel'] = $id;
+            return $id;
+        } catch (PDOException $e) {
+            error_log("Erreur création channel: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Met à jour un channel
+     */
+    public function updateChannel($channelId, $model = null, $personaName = null, $personaId = null) {
+        try {
+            $updates = [];
+            $params = [];
             
-            error_log("Persona chargé - Nom: $nom, Instructions: " . substr($instructions, 0, 50) . "...");
-        } else {
-            error_log("ERREUR: Aucun persona trouvé avec l'ID: " . $personaId);
+            if ($model !== null) {
+                $updates[] = "model = ?";
+                $params[] = $model;
+            }
+            if ($personaName !== null) {
+                $updates[] = "persona_name = ?";
+                $params[] = $personaName;
+            }
+            if ($personaId !== null) {
+                $updates[] = "persona_id = ?";
+                $params[] = $personaId;
+            }
+            
+            if (!empty($updates)) {
+                $sql = "UPDATE chat_channels SET " . implode(', ', $updates) . " WHERE id = ? AND id_user = ?";
+                $params[] = $channelId;
+                $params[] = $this->userId;
+                
+                $stmt = $this->pdo->prepare($sql);
+                return $stmt->execute($params);
+            }
+            return true;
+        } catch (PDOException $e) {
+            error_log("Erreur mise à jour channel: " . $e->getMessage());
+            return false;
         }
-    } catch (PDOException $e) {
-        error_log("Erreur récupération persona: " . $e->getMessage());
     }
-} else {
-    error_log("Pas de persona_id dans les paramètres");
-}
-
-error_log("Variables finales - selectedModel: $selectedModel, nom: $nom, instructions: " . substr($instructions, 0, 30));
-error_log("=== FIN DEBUG ===");
-if (isset($_SESSION['user_id'])) {
-    $userId = $_SESSION['user_id'];
-    // Tu peux maintenant utiliser $userId
-} else {
-    // Pas d'utilisateur connecté ou ID non stocké en session
-    $userId = null;
-}
-
-// Gestion du modèle sélectionné
-$selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
-$_SESSION['selected_model'] = $selectedModel;
-
-// Variables pour les données du persona
-$instructions = '';
-$nom = '';
-$tags = '';
-
-if (isset($_GET['persona_id'])) {
-    $personaId = $_GET['persona_id'];
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("SELECT model, instructions, nom, tags FROM personas WHERE id = ?");
-        $stmt->execute([$personaId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $selectedModel = $result['model'];
-            $instructions = $result['instructions'];
-            $nom = $result['nom'];
-            $tags = $result['tags'];
+    
+    /**
+     * Nettoie les channels vides
+     */
+    public function cleanupEmptyChannels($excludeChannelId = null) {
+        try {
+            $sql = "
+                DELETE cc FROM chat_channels cc 
+                LEFT JOIN chat_messages cm ON cc.id = cm.chat_channel_id 
+                WHERE cc.id_user = ? 
+                AND (cc.model IS NULL OR cc.model = '' OR cc.model = 'null')
+                AND cm.id IS NULL
+            ";
+            $params = [$this->userId];
+            
+            if ($excludeChannelId) {
+                $sql .= " AND cc.id != ?";
+                $params[] = $excludeChannelId;
+            }
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            
+            $deletedCount = $stmt->rowCount();
+            if ($deletedCount > 0) {
+                error_log("Supprimé $deletedCount channels vides pour l'utilisateur {$this->userId}");
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur nettoyage channels: " . $e->getMessage());
         }
-    } catch (PDOException $e) {
-        error_log("Erreur récupération modèle: " . $e->getMessage());
+    }
+    
+    /**
+     * Compte les messages dans un channel
+     */
+    public function countMessagesInChannel($channelId) {
+        try {
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = ?");
+            $stmt->execute([$channelId]);
+            return (int) $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            error_log("Erreur comptage messages: " . $e->getMessage());
+            return 0;
+        }
     }
 }
+
+// Classe pour gérer les redirections
+class RedirectManager {
+    
+    /**
+     * Construit une URL de redirection propre
+     */
+    public static function buildUrl($channelId, $model = null, $personaId = null) {
+        $params = ['id_channel' => $channelId];
+        
+        if ($model && $model !== 'null' && $model !== '') {
+            $params['model'] = $model;
+        }
+        
+        if ($personaId && $personaId !== 'null' && $personaId !== '') {
+            $params['persona_id'] = $personaId;
+        }
+        
+        return '?' . http_build_query($params);
+    }
+    
+    /**
+     * Effectue une redirection sécurisée
+     */
+    public static function redirect($url) {
+        // Nettoyer l'URL pour éviter les injections
+        $url = filter_var($url, FILTER_SANITIZE_URL);
+        header("Location: " . $url);
+        exit;
+    }
+    
+    /**
+     * Redirection vers la page principale
+     */
+    public static function redirectToMain() {
+        $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        self::redirect($currentPath);
+    }
+}
+
+// Initialisation
+$chatManager = new ChatManager($userId);
 
 // Liste des modèles disponibles
 $availableModels = [
-    'mistral-medium-latest' => [
-        'name' => 'Mistral Medium',
-        'icon' => '',
-        'description' => 'Équilibré'
-    ],
-    'mistral-large-latest' => [
-        'name' => 'Mistral Large',
-        'icon' => '',
-        'description' => 'Équilibré'
-    ],
-    'claude-3.5-haiku-latest' => [
-        'name' => 'Claude 3.5 Haiku',
-        'icon' => '',
-        'description' => 'Intelligence de Anthropic'
-    ],
-    'claude-sonnet-4' => [
-        'name' => 'Claude Sonnet 4',
-        'icon' => '',
-        'description' => 'Intelligence de Anthropic'
-    ],
-    'grok-3-mini' => [
-        'name' => 'Grok 3 Mini',
-        'icon' => '',
-        'description' => 'Intelligence de Grok'
-    ],
-    'gemini' => [
-        'name' => 'Gemini',
-        'icon' => '',
-        'description' => 'Intelligence de Google'
-    ],
-    'openrouter' => [
-        'name' => 'OpenRouter',
-        'icon' => '',
-        'description' => 'Intelligence de Google'
-    ],
-    'deepseek' => [
-        'name' => 'DeepSeek',
-        'icon' => '',
-        'description' => 'Intelligence de Chine'
-    ],
-    'gpt' => [
-        'name' => 'GPT',
-        'icon' => '',
-        'description' => 'Intelligence de OpenAI'
-    ],
-    'image' => [
-        'name' => 'Image',
-        'icon' => '',
-        'description' => 'Intelligence de OpenAI'
-    ]
+    'mistral-medium-latest' => ['name' => 'Mistral Medium', 'icon' => '', 'description' => 'Équilibré'],
+    'mistral-large-latest' => ['name' => 'Mistral Large', 'icon' => '', 'description' => 'Équilibré'],
+    'claude-3.5-haiku-latest' => ['name' => 'Claude 3.5 Haiku', 'icon' => '', 'description' => 'Intelligence de Anthropic'],
+    'claude-sonnet-4' => ['name' => 'Claude Sonnet 4', 'icon' => '', 'description' => 'Intelligence de Anthropic'],
+    'grok-3-mini' => ['name' => 'Grok 3 Mini', 'icon' => '', 'description' => 'Intelligence de Grok'],
+    'gemini' => ['name' => 'Gemini', 'icon' => '', 'description' => 'Intelligence de Google'],
+    'openrouter' => ['name' => 'OpenRouter', 'icon' => '', 'description' => 'Intelligence de Google'],
+    'deepseek' => ['name' => 'DeepSeek', 'icon' => '', 'description' => 'Intelligence de Chine'],
+    'gpt' => ['name' => 'GPT', 'icon' => '', 'description' => 'Intelligence de OpenAI'],
+    'image' => ['name' => 'Image', 'icon' => '', 'description' => 'Intelligence de OpenAI']
 ];
 
-// Fonction pour récupérer l'historique des messages d'un channel
-function getChannelHistory($channelId)
-{
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("
-            SELECT role, content, created_at 
-            FROM chat_messages 
-            WHERE chat_channel_id = ? 
-            ORDER BY created_at ASC
-        ");
-        $stmt->execute([$channelId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Erreur récupération historique: " . $e->getMessage());
-        return [];
+// Variables initiales
+$selectedModel = $_GET['model'] ?? null;
+$personaId = $_GET['persona_id'] ?? null;
+$channelId = $_GET['id_channel'] ?? null;
+
+// Données du persona
+$personaData = null;
+if ($personaId) {
+    $personaData = $chatManager->getPersonaData($personaId);
+    if ($personaData) {
+        $selectedModel = $personaData['model'] ?: $selectedModel;
+        $_SESSION['selected_model'] = $selectedModel;
     }
 }
 
-// Fonction pour récupérer la liste des channels
-function getUserChannels($userId)
-{
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("
-            SELECT 
-                cc.id, 
-                cc.created_at,
-                cc.model,
-                cc.persona_name,
-                COALESCE(
-                    (SELECT content FROM chat_messages WHERE chat_channel_id = cc.id AND role = 'user' ORDER BY created_at ASC LIMIT 1),
-                    'Nouveau chat'
-                ) as first_message,
-                (SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = cc.id) as message_count
-            FROM chat_channels cc 
-            WHERE cc.id_user = ? 
-            ORDER BY cc.created_at DESC
-        ");
-        $stmt->execute([$userId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        error_log("Erreur récupération channels: " . $e->getMessage());
-        return [];
-    }
-}
-
-// Fonction améliorée pour supprimer les channels vides
-function cleanupEmptyChannels($userId, $currentChannelId = null)
-{
-    if (!$userId) return;
-
-    $pdo = getDBConnection();
-    try {
-        // Supprimer tous les channels sans messages ET sans modèle défini
-        // En excluant le channel actuel si spécifié
-        $sql = "
-            DELETE cc FROM chat_channels cc 
-            LEFT JOIN chat_messages cm ON cc.id = cm.chat_channel_id 
-            WHERE cc.id_user = ? 
-            AND (cc.model IS NULL OR cc.model = '' OR cc.model = 'null')
-            AND cm.id IS NULL
-        ";
-        $params = [$userId];
-
-        if ($currentChannelId) {
-            $sql .= " AND cc.id != ?";
-            $params[] = $currentChannelId;
-        }
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-
-        $deletedCount = $stmt->rowCount();
-        if ($deletedCount > 0) {
-            error_log("Supprimé $deletedCount channels vides pour l'utilisateur $userId");
-        }
-    } catch (PDOException $e) {
-        error_log("Erreur lors du nettoyage des channels : " . $e->getMessage());
-    }
-}
-
-// Fonction pour vérifier si un channel existe et appartient à l'utilisateur
-function verifyChannelOwnership($channelId, $userId)
-{
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("SELECT id_user FROM chat_channels WHERE id = ?");
-        $stmt->execute([$channelId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result && $result['id_user'] === $userId;
-    } catch (PDOException $e) {
-        error_log("Erreur vérification propriété channel: " . $e->getMessage());
-        return false;
-    }
-}
-
-function buildRedirectUrl($channelId, $model = null, $personaId = null)
-{
-    $params = ['id_channel' => $channelId];
-
-    if ($model) {
-        $params['model'] = $model;
-    }
-
-    if ($personaId) {
-        $params['persona_id'] = $personaId;
-    }
-
-    return '?' . http_build_query($params);
-}
-
-// Variables pour les données du persona - DÉPLACÉES EN HAUT
-$instructions = '';
-$nom = '';
-$tags = '';
-$personaId = null;
-
-// Traitement du persona AVANT tout le reste
-if (isset($_GET['persona_id'])) {
-    $personaId = $_GET['persona_id'];
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("SELECT model, instructions, nom, tags FROM personas WHERE id = ?");
-        $stmt->execute([$personaId]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($result) {
-            $selectedModel = $result['model'];
-            $instructions = $result['instructions'];
-            $nom = $result['nom'];
-            $tags = $result['tags'];
-        }
-    } catch (PDOException $e) {
-        error_log("Erreur récupération persona: " . $e->getMessage());
-    }
-}
-
-// Gestion du modèle sélectionné - APRÈS le persona
-if (!$selectedModel && isset($_GET['model'])) {
-    $selectedModel = $_GET['model'];
-}
-$_SESSION['selected_model'] = $selectedModel;
-
-$channelHistory = [];
+// Logique principale de gestion des channels
 $currentChannelId = null;
+$channelHistory = [];
 
-// Récupérer d'abord les channels existants
-$userChannels = getUserChannels($userId);
-
-if (!isset($_GET['id_channel']) || empty($_GET['id_channel'])) {
-    // Pas de paramètre id_channel => vérifier s'il existe déjà un channel vide
-
-    // Chercher un channel existant sans messages et sans modèle
-    $existingEmptyChannel = null;
-    foreach ($userChannels as $channel) {
-        if ($channel['message_count'] == 0 && (empty($channel['model']) || $channel['model'] === 'null')) {
-            $existingEmptyChannel = $channel['id'];
-            break;
-        }
-    }
-
+if (!$channelId) {
+    // Pas de channel spécifié - chercher un channel vide ou en créer un
+    $existingEmptyChannel = $chatManager->findEmptyChannel();
+    
     if ($existingEmptyChannel) {
+        // Utiliser le channel vide existant
         $currentChannelId = $existingEmptyChannel;
-
-        // Si un persona est sélectionné, mettre à jour le channel
-        if (!empty($nom)) {
-            $pdo = getDBConnection();
-            try {
-                $stmt = $pdo->prepare("UPDATE chat_channels SET persona_name = ?, model = ? WHERE id = ?");
-                $stmt->execute([$nom, $selectedModel ?: '', $existingEmptyChannel]);
-            } catch (PDOException $e) {
-                error_log("Erreur mise à jour persona: " . $e->getMessage());
-            }
+        
+        // Mettre à jour avec les données du persona si nécessaire
+        if ($personaData) {
+            $chatManager->updateChannel(
+                $existingEmptyChannel, 
+                $selectedModel, 
+                $personaData['nom'], 
+                $personaId
+            );
         }
-
-        // CORRECTION : Préserver le persona_id dans la redirection
-        $redirectUrl = buildRedirectUrl($existingEmptyChannel, $selectedModel, $personaId);
-        header("Location: " . $redirectUrl);
-        exit;
+        
+        // Rediriger avec tous les paramètres
+        RedirectManager::redirect(
+            RedirectManager::buildUrl($existingEmptyChannel, $selectedModel, $personaId)
+        );
     } else {
-        // Créer un nouveau channel seulement s'il n'y en a pas de vide
-        $id = uniqid('chat_', true);
-        $createdAt = date('Y-m-d H:i:s');
-        $pdo = getDBConnection();
-
-        try {
-            $stmt = $pdo->prepare("INSERT INTO chat_channels (id, id_user, created_at, model, persona_name) VALUES (:id, :id_user, :created_at, :model, :persona_name)");
-            $stmt->execute([
-                ':id' => $id,
-                ':id_user' => $userId,
-                ':created_at' => $createdAt,
-                ':model' => $selectedModel ?: '',
-                ':persona_name' => $nom ?: ''
-            ]);
-            $_SESSION['id_channel'] = $id;
-
-            // CORRECTION : Préserver le persona_id dans la redirection
-            $redirectUrl = buildRedirectUrl($id, $selectedModel, $personaId);
-            header("Location: " . $redirectUrl);
-            exit;
-        } catch (PDOException $e) {
-            error_log("Erreur création channel: " . $e->getMessage());
-            // En cas d'erreur, afficher la page sans redirection
+        // Créer un nouveau channel
+        $newChannelId = $chatManager->createChannel(
+            $selectedModel ?: '',
+            $personaData['nom'] ?? '',
+            $personaId
+        );
+        
+        if ($newChannelId) {
+            RedirectManager::redirect(
+                RedirectManager::buildUrl($newChannelId, $selectedModel, $personaId)
+            );
+        } else {
+            // Erreur lors de la création
+            error_log("Impossible de créer un nouveau channel");
             $currentChannelId = null;
         }
     }
 } else {
-    $currentChannelId = $_GET['id_channel'];
-
-    // Vérifier si ce channel appartient à l'utilisateur
-    if (!verifyChannelOwnership($currentChannelId, $userId)) {
-        // CORRECTION : Rediriger en préservant les paramètres importants
-        $redirectParams = [];
-        if (isset($_GET['model']) && !empty($_GET['model'])) {
-            $redirectParams['model'] = $_GET['model'];
-        }
-        if (isset($_GET['persona_id']) && !empty($_GET['persona_id'])) {
-            $redirectParams['persona_id'] = $_GET['persona_id'];
-        }
-        
-        $redirectUrl = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        if (!empty($redirectParams)) {
-            $redirectUrl .= '?' . http_build_query($redirectParams);
-        }
-        
-        header("Location: " . $redirectUrl);
-        exit;
+    // Channel spécifié - vérifier l'ownership
+    if (!$chatManager->verifyChannelOwnership($channelId)) {
+        // Channel invalide - rediriger vers la page principale
+        RedirectManager::redirectToMain();
     }
-
-    // Récupérer l'historique
-    $channelHistory = getChannelHistory($currentChannelId);
-
-    // Nettoyer les autres channels vides (pas celui-ci)
-    cleanupEmptyChannels($userId, $currentChannelId);
-}
-// Récupérer la liste des channels APRÈS le traitement
-$userChannels = getUserChannels($userId);
-
-// Gestion de la mise à jour du modèle
-if (isset($_GET['model']) && array_key_exists($_GET['model'], $availableModels)) {
-    $display_chat = "block";
-    if ($currentChannelId !== null) {
-        $pdo = getDBConnection();
-        try {
-            $stmt = $pdo->prepare("UPDATE chat_channels SET model = ? WHERE id = ? AND id_user = ?");
-            $stmt->execute([$_GET['model'], $currentChannelId, $userId]);
-        } catch (PDOException $e) {
-            error_log("Erreur lors de la mise à jour du modèle : " . $e->getMessage());
-        }
+    
+    $currentChannelId = $channelId;
+    $channelHistory = $chatManager->getChannelHistory($channelId);
+    
+    // Mettre à jour le channel si nécessaire
+    if ($selectedModel || $personaData) {
+        $chatManager->updateChannel(
+            $channelId,
+            $selectedModel,
+            $personaData['nom'] ?? null,
+            $personaId
+        );
     }
-} else {
-    $display_chat = "none";
+    
+    // Nettoyer les autres channels vides
+    $chatManager->cleanupEmptyChannels($channelId);
 }
 
-// Fonction pour compter les messages dans un channel
-function countMessagesInChannel($channelId)
-{
-    $pdo = getDBConnection();
-    try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM chat_messages WHERE chat_channel_id = ?");
-        $stmt->execute([$channelId]);
-        return (int) $stmt->fetchColumn();
-    } catch (PDOException $e) {
-        error_log("Erreur lors du comptage des messages : " . $e->getMessage());
-        return 0;
-    }
-}
+// Récupérer la liste des channels mise à jour
+$userChannels = $chatManager->getUserChannels();
 
-$display_list = "block"; // Par défaut, afficher la liste des modèles
+// Gestion de l'affichage
+$display_chat = ($selectedModel && array_key_exists($selectedModel, $availableModels)) ? "block" : "none";
+$display_list = "block";
 
-if ($currentChannelId !== null) {
-    $messageCount = countMessagesInChannel($currentChannelId);
-
+if ($currentChannelId) {
+    $messageCount = $chatManager->countMessagesInChannel($currentChannelId);
     if ($messageCount > 0) {
-        // Si il y a des messages, cacher la liste des modèles
         $display_list = "none";
     }
 }
@@ -430,7 +375,6 @@ if ($currentChannelId !== null) {
 
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -439,7 +383,6 @@ if ($currentChannelId !== null) {
 </head>
 <style>
     /* Styles pour le sélecteur de modèle */
-
     .model-selector {
         display: flex;
         flex-direction: column;
@@ -491,33 +434,6 @@ if ($currentChannelId !== null) {
         font-weight: 500;
     }
 
-    .model-description {
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.8);
-        font-style: italic;
-        text-align: right;
-        margin-top: 0.25rem;
-        min-height: 1rem;
-        transition: all 0.3s ease;
-    }
-
-    /* Animation pour la description */
-    .model-description {
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-5px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
     /* Responsive pour mobile */
     @media (max-width: 768px) {
         .header-content {
@@ -539,10 +455,6 @@ if ($currentChannelId !== null) {
             min-width: 250px;
             max-width: 100%;
         }
-
-        .model-description {
-            text-align: center;
-        }
     }
 
     @media (max-width: 480px) {
@@ -560,14 +472,6 @@ if ($currentChannelId !== null) {
             font-size: 1.3rem;
         }
     }
-
-    /* Effet de glow subtil pour le select */
-    .model-select:focus {
-        box-shadow:
-            0 0 0 3px rgba(255, 255, 255, 0.2),
-            0 0 20px rgba(255, 255, 255, 0.1),
-            0 4px 15px rgba(0, 0, 0, 0.2);
-    }
 </style>
 
 <body>
@@ -578,8 +482,6 @@ if ($currentChannelId !== null) {
     <div class="main-container" id="mainContainer">
         <!-- Panneau historique des chats -->
         <div class="chat-history-panel" id="chatHistoryPanel">
-
-
             <div class="history-header">
                 <button class="close-chat-history" id="toggleHistoryBtnClose" title="Fermer le panneau">
                     &times;
@@ -590,42 +492,24 @@ if ($currentChannelId !== null) {
                 </button>
             </div>
 
-
             <div class="chat-list" id="chatList">
                 <?php foreach ($userChannels as $channel): ?>
                     <?php if ($channel['message_count'] > 0): ?>
-                        <?php
-                        // Récupérer l'ID du persona si il existe
-                        $channelPersonaId = null;
-                        if ($channel['persona_name']) {
-                            $pdo = getDBConnection();
-                            try {
-                                $stmt = $pdo->prepare("SELECT id FROM personas WHERE nom = ?");
-                                $stmt->execute([$channel['persona_name']]);
-                                $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                if ($result) {
-                                    $channelPersonaId = $result['id'];
-                                }
-                            } catch (PDOException $e) {
-                                error_log("Erreur récupération persona: " . $e->getMessage());
-                            }
-                        }
-                        ?>
                         <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
                             data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
                             data-model="<?php echo htmlspecialchars($channel['model']); ?>"
-                            <?php if ($channelPersonaId): ?>
-                                data-persona="<?php echo htmlspecialchars($channelPersonaId); ?>"
+                            <?php if ($channel['persona_id']): ?>
+                                data-persona="<?php echo htmlspecialchars($channel['persona_id']); ?>"
                             <?php endif; ?>>
                             <div class="chat-preview">
                                 <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                             </div>
                             <div class="chat-model">
-                                <?php echo $channel['model']; ?>
+                                <?php echo htmlspecialchars($channel['model']); ?>
                             </div>
                             <?php if ($channel['persona_name']): ?>
                                 <div class="chat-persona">
-                                    <?php echo $channel['persona_name']; ?>
+                                    <?php echo htmlspecialchars($channel['persona_name']); ?>
                                 </div>
                             <?php endif; ?>
                             <div class="chat-time">
@@ -650,7 +534,6 @@ if ($currentChannelId !== null) {
 
             <div class="chat-messages" id="chatMessages">
                 <?php if (empty($channelHistory)): ?>
-                    <!-- Message de bienvenue seulement si pas d'historique -->
                     <div class="message ai">
                         <div class="message-content">
                             Salut ! Je suis votre assistant IA. Choisissez un modèle pour commencer ! 🚀
@@ -671,7 +554,6 @@ if ($currentChannelId !== null) {
 
             <div class="input-container">
                 <div class="input-group">
-                    <!-- Sélecteur de modèle -->
                     <div class="model-selector" style="display: <?php echo $display_list; ?>;">
                         <select id="modelSelect" class="model-select">
                             <option value="" disabled selected>-- Choisir un modèle --</option>
@@ -693,122 +575,89 @@ if ($currentChannelId !== null) {
         </div>
     </div>
 
-</body>
+    <script>
+        // Variables PHP exportées vers JavaScript
+        const chatConfig = {
+            personaId: <?= json_encode($personaId) ?>,
+            selectedModel: <?= json_encode($selectedModel) ?>,
+            personaData: <?= json_encode($personaData) ?>,
+            currentChannelId: <?= json_encode($currentChannelId) ?>,
+            messageHistory: <?= json_encode(array_map(function($msg) {
+                return ['role' => $msg['role'], 'content' => $msg['content']];
+            }, $channelHistory)) ?>,
+            channelHistoryFromDB: <?= json_encode($channelHistory) ?>
+        };
 
-</html>
-<script>
-    <?php if (isset($personaId)) : ?>
-        const personaId = <?= json_encode($personaId) ?>;
-    <?php endif; ?>
-
-    <?php if (isset($selectedModel)) : ?>
-        const selectedModelPersona = <?= json_encode($selectedModel) ?>;
-    <?php endif; ?>
-
-    <?php if (isset($instructions)) : ?>
-        const personaInstructions = <?= json_encode($instructions) ?>;
-    <?php endif; ?>
-
-    <?php if (isset($nom)) : ?>
-        const personaNom = <?= json_encode($nom) ?>;
-    <?php endif; ?>
-
-    <?php if (isset($tags)) : ?>
-        const personaTags = <?= json_encode($tags) ?>;
-    <?php endif; ?>
-    // Historique des messages depuis PHP
-    let messageHistory = <?php echo json_encode(array_map(function ($msg) {
-                                return [
-                                    'role' => $msg['role'],
-                                    'content' => $msg['content']
-                                ];
-                            }, $channelHistory)); ?>;
-
-    // Historique des messages depuis la base de données
-    const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
-
-    // Modèle sélectionné - avec une valeur par défaut si null
-    const selectedModel = '<?php echo $selectedModel ?: ''; ?>';
-
-    console.log('Modèle sélectionné au chargement:', selectedModel);
-
-    // Gestion du changement de modèle
-    document.getElementById('modelSelect').addEventListener('change', function() {
-        const newModel = this.value;
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('model', newModel);
-        window.location.href = currentUrl.toString();
-    });
-
-    // Gestion du nouveau chat - éviter les redirections multiples
-    document.getElementById('newChatBtn').addEventListener('click', function() {
-        // Empêcher les clics multiples rapides
-        if (this.disabled) return;
-        this.disabled = true;
-
-        // Rediriger vers la page sans paramètres pour créer un nouveau chat
-        const currentUrl = new URL(window.location);
-        const modelToUse = selectedModel || 'mistral-large';
-
-        // Construire l'URL proprement
-        window.location.href = currentUrl.pathname + '?model=' + encodeURIComponent(modelToUse);
-    });
-
-// Gestion des clics sur l'historique avec préservation du modèle
-document.querySelectorAll('.chat-item').forEach(item => {
-    item.addEventListener('click', function() {
-        // Empêcher les clics multiples
-        if (this.classList.contains('loading')) return;
-        this.classList.add('loading');
-
-        const channelId = this.dataset.channelId;
-        const channelModel = this.dataset.model;
-        const personaId = this.dataset.persona; // Cette valeur vient du data-persona="5"
-
-        console.log('Clic sur chat item:', {
-            channelId: channelId,
-            channelModel: channelModel,
-            personaId: personaId,
-            selectedModel: selectedModel,
+        // Gestion du changement de modèle
+        document.getElementById('modelSelect').addEventListener('change', function() {
+            const newModel = this.value;
+            if (!newModel) return;
+            
+            const url = new URL(window.location);
+            url.searchParams.set('model', newModel);
+            
+            // Préserver le channel et persona actuels
+            if (chatConfig.currentChannelId) {
+                url.searchParams.set('id_channel', chatConfig.currentChannelId);
+            }
+            if (chatConfig.personaId) {
+                url.searchParams.set('persona_id', chatConfig.personaId);
+            }
+            
+            window.location.href = url.toString();
         });
 
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('id_channel', channelId);
+        // Gestion du nouveau chat
+        document.getElementById('newChatBtn').addEventListener('click', function() {
+            if (this.disabled) return;
+            this.disabled = true;
+            
+            const url = new URL(window.location);
+            url.search = ''; // Nettoyer tous les paramètres
+            
+            // Ajouter seulement le modèle actuel ou par défaut
+            const modelToUse = chatConfig.selectedModel || 'mistral-large-latest';
+            url.searchParams.set('model', modelToUse);
+            
+            window.location.href = url.toString();
+        });
 
-        // Déterminer le modèle à utiliser
-        let modelToUse;
-        
-        if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
-            modelToUse = channelModel;
-            console.log('Utilisation du modèle du channel:', modelToUse);
-        } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
-            modelToUse = selectedModel;
-            console.log('Utilisation du modèle sélectionné:', modelToUse);
-        } else {
-            modelToUse = 'mistral-large';
-            console.log('Utilisation du modèle par défaut:', modelToUse);
-        }
+        // Gestion des clics sur l'historique
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (this.classList.contains('loading')) return;
+                this.classList.add('loading');
 
-        // Toujours définir le modèle
-        currentUrl.searchParams.set('model', modelToUse);
+                const channelId = this.dataset.channelId;
+                const channelModel = this.dataset.model;
+                const personaId = this.dataset.persona;
 
-        // Ajouter le persona_id SEULEMENT s'il existe et n'est pas vide
-        if (personaId && personaId !== '' && personaId !== 'null' && personaId !== 'undefined') {
-            currentUrl.searchParams.set('persona_id', personaId);
-            console.log('→ Persona ID ajouté:', personaId);
-        } else {
-            // Supprimer le paramètre persona_id s'il n'y en a pas
-            currentUrl.searchParams.delete('persona_id');
-            console.log('→ Pas de persona ID');
-        }
+                const url = new URL(window.location);
+                url.searchParams.set('id_channel', channelId);
 
-        const finalUrl = currentUrl.toString();
-        console.log('URL finale:', finalUrl);
+                // Gestion du modèle
+                if (channelModel && channelModel !== '' && channelModel !== 'null') {
+                    url.searchParams.set('model', channelModel);
+                } else if (chatConfig.selectedModel) {
+                    url.searchParams.set('model', chatConfig.selectedModel);
+                } else {
+                    url.searchParams.set('model', 'mistral-large-latest');
+                }
 
-        window.location.href = finalUrl;
-    });
-});
-</script>
-<script type="text/javascript" src="scripts/chat.js"></script>
-<script type="text/javascript" src="scripts/nav.js"></script>
-<script type="text/javascript" src="scripts/account.js"></script>
+                // Gestion du persona
+                if (personaId && personaId !== '' && personaId !== 'null') {
+                    url.searchParams.set('persona_id', personaId);
+                } else {
+                    url.searchParams.delete('persona_id');
+                }
+
+                window.location.href = url.toString();
+            });
+        });
+    </script>
+    
+    <script type="text/javascript" src="scripts/chat.js"></script>
+    <script type="text/javascript" src="scripts/nav.js"></script>
+    <script type="text/javascript" src="scripts/account.js"></script>
+</body>
+</html>
