@@ -18,6 +18,7 @@ if (isset($_SESSION['user_id'])) {
 // Gestion du modèle sélectionné
 $selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
 $_SESSION['selected_model'] = $selectedModel;
+echo $selectedModel;
 
 // Variables pour les données du persona
 $instructions = '';
