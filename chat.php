@@ -574,90 +574,119 @@ if ($currentChannelId) {
             </div>
         </div>
     </div>
+<script>
+    <?php if (isset($personaId)) : ?>
+        const personaId = <?= json_encode($personaId) ?>;
+    <?php endif; ?>
 
-    <script>
-        // Variables PHP exportées vers JavaScript
-        const chatConfig = {
-            personaId: <?= json_encode($personaId) ?>,
-            selectedModel: <?= json_encode($selectedModel) ?>,
-            personaData: <?= json_encode($personaData) ?>,
-            currentChannelId: <?= json_encode($currentChannelId) ?>,
-            messageHistory: <?= json_encode(array_map(function($msg) {
-                return ['role' => $msg['role'], 'content' => $msg['content']];
-            }, $channelHistory)) ?>,
-            channelHistoryFromDB: <?= json_encode($channelHistory) ?>
-        };
+    <?php if (isset($selectedModel)) : ?>
+        const selectedModelPersona = <?= json_encode($selectedModel) ?>;
+    <?php endif; ?>
 
-        // Gestion du changement de modèle
-        document.getElementById('modelSelect').addEventListener('change', function() {
-            const newModel = this.value;
-            if (!newModel) return;
-            
-            const url = new URL(window.location);
-            url.searchParams.set('model', newModel);
-            
-            // Préserver le channel et persona actuels
-            if (chatConfig.currentChannelId) {
-                url.searchParams.set('id_channel', chatConfig.currentChannelId);
-            }
-            if (chatConfig.personaId) {
-                url.searchParams.set('persona_id', chatConfig.personaId);
-            }
-            
-            window.location.href = url.toString();
+    <?php if (isset($instructions)) : ?>
+        const personaInstructions = <?= json_encode($instructions) ?>;
+    <?php endif; ?>
+
+    <?php if (isset($nom)) : ?>
+        const personaNom = <?= json_encode($nom) ?>;
+    <?php endif; ?>
+
+    <?php if (isset($tags)) : ?>
+        const personaTags = <?= json_encode($tags) ?>;
+    <?php endif; ?>
+    // Historique des messages depuis PHP
+    let messageHistory = <?php echo json_encode(array_map(function ($msg) {
+                                return [
+                                    'role' => $msg['role'],
+                                    'content' => $msg['content']
+                                ];
+                            }, $channelHistory)); ?>;
+
+    // Historique des messages depuis la base de données
+    const channelHistoryFromDB = <?php echo json_encode($channelHistory); ?>;
+
+    // Modèle sélectionné - avec une valeur par défaut si null
+    const selectedModel = '<?php echo $selectedModel ?: ''; ?>';
+
+    console.log('Modèle sélectionné au chargement:', selectedModel);
+
+    // Gestion du changement de modèle
+    document.getElementById('modelSelect').addEventListener('change', function() {
+        const newModel = this.value;
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('model', newModel);
+        window.location.href = currentUrl.toString();
+    });
+
+    // Gestion du nouveau chat - éviter les redirections multiples
+    document.getElementById('newChatBtn').addEventListener('click', function() {
+        // Empêcher les clics multiples rapides
+        if (this.disabled) return;
+        this.disabled = true;
+
+        // Rediriger vers la page sans paramètres pour créer un nouveau chat
+        const currentUrl = new URL(window.location);
+        const modelToUse = selectedModel || 'mistral-large';
+
+        // Construire l'URL proprement
+        window.location.href = currentUrl.pathname + '?model=' + encodeURIComponent(modelToUse);
+    });
+
+// Gestion des clics sur l'historique avec préservation du modèle
+document.querySelectorAll('.chat-item').forEach(item => {
+    item.addEventListener('click', function() {
+        // Empêcher les clics multiples
+        if (this.classList.contains('loading')) return;
+        this.classList.add('loading');
+
+        const channelId = this.dataset.channelId;
+        const channelModel = this.dataset.model;
+        const personaId = this.dataset.persona; // Cette valeur vient du data-persona="5"
+
+        console.log('Clic sur chat item:', {
+            channelId: channelId,
+            channelModel: channelModel,
+            personaId: personaId,
+            selectedModel: selectedModel,
         });
 
-        // Gestion du nouveau chat
-        document.getElementById('newChatBtn').addEventListener('click', function() {
-            if (this.disabled) return;
-            this.disabled = true;
-            
-            const url = new URL(window.location);
-            url.search = ''; // Nettoyer tous les paramètres
-            
-            // Ajouter seulement le modèle actuel ou par défaut
-            const modelToUse = chatConfig.selectedModel || 'mistral-large-latest';
-            url.searchParams.set('model', modelToUse);
-            
-            window.location.href = url.toString();
-        });
+        const currentUrl = new URL(window.location);
+        currentUrl.searchParams.set('id_channel', channelId);
 
-        // Gestion des clics sur l'historique
-        document.querySelectorAll('.chat-item').forEach(item => {
-            item.addEventListener('click', function() {
-                if (this.classList.contains('loading')) return;
-                this.classList.add('loading');
+        // Déterminer le modèle à utiliser
+        let modelToUse;
+        
+        if (channelModel && channelModel !== '' && channelModel !== 'null' && channelModel !== 'undefined') {
+            modelToUse = channelModel;
+            console.log('Utilisation du modèle du channel:', modelToUse);
+        } else if (selectedModel && selectedModel !== '' && selectedModel !== 'null') {
+            modelToUse = selectedModel;
+            console.log('Utilisation du modèle sélectionné:', modelToUse);
+        } else {
+            modelToUse = 'mistral-large';
+            console.log('Utilisation du modèle par défaut:', modelToUse);
+        }
 
-                const channelId = this.dataset.channelId;
-                const channelModel = this.dataset.model;
-                const personaId = this.dataset.persona;
+        // Toujours définir le modèle
+        currentUrl.searchParams.set('model', modelToUse);
 
-                const url = new URL(window.location);
-                url.searchParams.set('id_channel', channelId);
+        // Ajouter le persona_id SEULEMENT s'il existe et n'est pas vide
+        if (personaId && personaId !== '' && personaId !== 'null' && personaId !== 'undefined') {
+            currentUrl.searchParams.set('persona_id', personaId);
+            console.log('→ Persona ID ajouté:', personaId);
+        } else {
+            // Supprimer le paramètre persona_id s'il n'y en a pas
+            currentUrl.searchParams.delete('persona_id');
+            console.log('→ Pas de persona ID');
+        }
 
-                // Gestion du modèle
-                if (channelModel && channelModel !== '' && channelModel !== 'null') {
-                    url.searchParams.set('model', channelModel);
-                } else if (chatConfig.selectedModel) {
-                    url.searchParams.set('model', chatConfig.selectedModel);
-                } else {
-                    url.searchParams.set('model', 'mistral-large-latest');
-                }
+        const finalUrl = currentUrl.toString();
+        console.log('URL finale:', finalUrl);
 
-                // Gestion du persona
-                if (personaId && personaId !== '' && personaId !== 'null') {
-                    url.searchParams.set('persona_id', personaId);
-                } else {
-                    url.searchParams.delete('persona_id');
-                }
-
-                window.location.href = url.toString();
-            });
-        });
-    </script>
-    
-    <script type="text/javascript" src="scripts/chat.js"></script>
-    <script type="text/javascript" src="scripts/nav.js"></script>
-    <script type="text/javascript" src="scripts/account.js"></script>
-</body>
-</html>
+        window.location.href = finalUrl;
+    });
+});
+</script>
+<script type="text/javascript" src="scripts/chat.js"></script>
+<script type="text/javascript" src="scripts/nav.js"></script>
+<script type="text/javascript" src="scripts/account.js"></script>
