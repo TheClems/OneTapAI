@@ -6,7 +6,57 @@
 require_once 'config.php';
 
 session_start();  // Toujours démarrer la session en début de script
+error_log("=== DEBUG PARAMETRES ===");
+error_log("GET params: " . print_r($_GET, true));
+error_log("persona_id reçu: " . (isset($_GET['persona_id']) ? $_GET['persona_id'] : 'NON DÉFINI'));
+error_log("model reçu: " . (isset($_GET['model']) ? $_GET['model'] : 'NON DÉFINI'));
+error_log("id_channel reçu: " . (isset($_GET['id_channel']) ? $_GET['id_channel'] : 'NON DÉFINI'));
 
+// Variables pour les données du persona
+$instructions = '';
+$nom = '';
+$tags = '';
+$personaId = null;
+
+// Gestion du modèle sélectionné
+$selectedModel = isset($_GET['model']) ? $_GET['model'] : null;
+$_SESSION['selected_model'] = $selectedModel;
+
+// Traitement du persona - AVANT tout le reste
+if (isset($_GET['persona_id']) && !empty($_GET['persona_id'])) {
+    $personaId = $_GET['persona_id'];
+    error_log("Traitement du persona ID: " . $personaId);
+    
+    $pdo = getDBConnection();
+    try {
+        $stmt = $pdo->prepare("SELECT model, instructions, nom, tags FROM personas WHERE id = ?");
+        $stmt->execute([$personaId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        error_log("Résultat requête persona: " . print_r($result, true));
+        
+        if ($result) {
+            // Ne pas écraser le modèle sélectionné si il existe déjà
+            if (!$selectedModel) {
+                $selectedModel = $result['model'];
+            }
+            $instructions = $result['instructions'];
+            $nom = $result['nom'];
+            $tags = $result['tags'];
+            
+            error_log("Persona chargé - Nom: $nom, Instructions: " . substr($instructions, 0, 50) . "...");
+        } else {
+            error_log("ERREUR: Aucun persona trouvé avec l'ID: " . $personaId);
+        }
+    } catch (PDOException $e) {
+        error_log("Erreur récupération persona: " . $e->getMessage());
+    }
+} else {
+    error_log("Pas de persona_id dans les paramètres");
+}
+
+error_log("Variables finales - selectedModel: $selectedModel, nom: $nom, instructions: " . substr($instructions, 0, 30));
+error_log("=== FIN DEBUG ===");
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
     // Tu peux maintenant utiliser $userId
