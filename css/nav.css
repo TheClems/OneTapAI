@@ -350,7 +350,7 @@ body.light-mode .content-card {
 /* Effet de particules flottantes */
 .floating-particles {
     position: absolute;
-    top: -6;
+    top: -6px;
     left: 0;
     width: 100%;
     height: 100%;
