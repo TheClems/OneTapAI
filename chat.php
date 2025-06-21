@@ -375,6 +375,7 @@ if ($currentChannelId) {
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -383,6 +384,7 @@ if ($currentChannelId) {
 </head>
 <style>
     /* Styles pour le sélecteur de modèle */
+
     .model-selector {
         display: flex;
         flex-direction: column;
@@ -434,6 +436,33 @@ if ($currentChannelId) {
         font-weight: 500;
     }
 
+    .model-description {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        text-align: right;
+        margin-top: 0.25rem;
+        min-height: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    /* Animation pour la description */
+    .model-description {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     /* Responsive pour mobile */
     @media (max-width: 768px) {
         .header-content {
@@ -455,6 +484,10 @@ if ($currentChannelId) {
             min-width: 250px;
             max-width: 100%;
         }
+
+        .model-description {
+            text-align: center;
+        }
     }
 
     @media (max-width: 480px) {
@@ -472,6 +505,14 @@ if ($currentChannelId) {
             font-size: 1.3rem;
         }
     }
+
+    /* Effet de glow subtil pour le select */
+    .model-select:focus {
+        box-shadow:
+            0 0 0 3px rgba(255, 255, 255, 0.2),
+            0 0 20px rgba(255, 255, 255, 0.1),
+            0 4px 15px rgba(0, 0, 0, 0.2);
+    }
 </style>
 
 <body>
@@ -482,6 +523,8 @@ if ($currentChannelId) {
     <div class="main-container" id="mainContainer">
         <!-- Panneau historique des chats -->
         <div class="chat-history-panel" id="chatHistoryPanel">
+
+
             <div class="history-header">
                 <button class="close-chat-history" id="toggleHistoryBtnClose" title="Fermer le panneau">
                     &times;
@@ -492,32 +535,50 @@ if ($currentChannelId) {
                 </button>
             </div>
 
+
             <div class="chat-list" id="chatList">
-                <?php foreach ($userChannels as $channel): ?>
-                    <?php if ($channel['message_count'] > 0): ?>
-                        <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
-                            data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
-                            data-model="<?php echo htmlspecialchars($channel['model']); ?>"
-                            <?php if ($channel['persona_id']): ?>
-                                data-persona="<?php echo htmlspecialchars($channel['persona_id']); ?>"
-                            <?php endif; ?>>
-                            <div class="chat-preview">
-                                <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
-                            </div>
-                            <div class="chat-model">
-                                <?php echo htmlspecialchars($channel['model']); ?>
-                            </div>
-                            <?php if ($channel['persona_name']): ?>
-                                <div class="chat-persona">
-                                    <?php echo htmlspecialchars($channel['persona_name']); ?>
-                                </div>
-                            <?php endif; ?>
-                            <div class="chat-time">
-                                🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
-                            </div>
+            <?php foreach ($userChannels as $channel): ?>
+                <?php if ($channel['message_count'] > 0): ?>
+                    <?php
+                    // Récupérer l'ID du persona si il existe
+                    $channelPersonaId = null;
+                    if ($channel['persona_name']) {
+                        $pdo = getDBConnection();
+                        try {
+                            $stmt = $pdo->prepare("SELECT id FROM personas WHERE nom = ?");
+                            $stmt->execute([$channel['persona_name']]);
+                            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                            if ($result) {
+                                $channelPersonaId = $result['id'];
+                            }
+                        } catch (PDOException $e) {
+                            error_log("Erreur récupération persona: " . $e->getMessage());
+                        }
+                    }
+                    ?>
+                    <div class="chat-item <?php echo ($channel['id'] === $currentChannelId) ? 'active' : ''; ?>"
+                        data-channel-id="<?php echo htmlspecialchars($channel['id']); ?>"
+                        data-model="<?php echo htmlspecialchars($channel['model']); ?>"
+                        <?php if ($channelPersonaId): ?>
+                            data-persona="<?php echo htmlspecialchars($channelPersonaId); ?>"
+                        <?php endif; ?>>
+                        <div class="chat-preview">
+                            <?php echo htmlspecialchars(substr($channel['first_message'], 0, 50)) . (strlen($channel['first_message']) > 50 ? '...' : ''); ?>
                         </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                        <div class="chat-model">
+                            <?php echo $channel['model']; ?>
+                        </div>
+                        <?php if ($channel['persona_name']): ?>
+                            <div class="chat-persona">
+                                <?php echo $channel['persona_name']; ?>
+                            </div>
+                        <?php endif; ?>
+                        <div class="chat-time">
+                            🕒 <?php echo date('d/m H:i', strtotime($channel['created_at'])); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
             </div>
         </div>
 
@@ -534,6 +595,7 @@ if ($currentChannelId) {
 
             <div class="chat-messages" id="chatMessages">
                 <?php if (empty($channelHistory)): ?>
+                    <!-- Message de bienvenue seulement si pas d'historique -->
                     <div class="message ai">
                         <div class="message-content">
                             Salut ! Je suis votre assistant IA. Choisissez un modèle pour commencer ! 🚀
@@ -554,6 +616,7 @@ if ($currentChannelId) {
 
             <div class="input-container">
                 <div class="input-group">
+                    <!-- Sélecteur de modèle -->
                     <div class="model-selector" style="display: <?php echo $display_list; ?>;">
                         <select id="modelSelect" class="model-select">
                             <option value="" disabled selected>-- Choisir un modèle --</option>
@@ -574,6 +637,10 @@ if ($currentChannelId) {
             </div>
         </div>
     </div>
+
+</body>
+
+</html>
 <script>
     <?php if (isset($personaId)) : ?>
         const personaId = <?= json_encode($personaId) ?>;
