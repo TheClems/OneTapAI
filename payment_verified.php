@@ -1,7 +1,8 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(0);
-
+require_once 'config.php';
+$pdo = getDBConnection();
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo "Method Not Allowed";
@@ -14,24 +15,7 @@ require 'vendor/autoload.php';
 
 $endpoint_secret = 'whsec_o6D7bLYjdCP1cOh1vAF0CEqUu9tFgNFP';
 
-// Configuration de la base de données
-$host = 'localhost';
-$dbname = 'votre_base';
-$username = 'votre_username';
-$password = 'votre_password';
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    file_put_contents('webhook_db_errors.txt', 
-        "Erreur DB - " . date('Y-m-d H:i:s') . " - " . $e->getMessage() . "\n", 
-        FILE_APPEND
-    );
-    http_response_code(500);
-    echo "Database error";
-    exit();
-}
 
 $payload = @file_get_contents("php://input");
 $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
