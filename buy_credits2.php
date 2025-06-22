@@ -109,7 +109,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="package">
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                    <button class="btn acheter-btn-no-abonnement" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
                         Buy
                     </button>
                 </div>
@@ -145,13 +145,16 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
+
+
+        
         <div class="packages">
             <?php foreach ($packages as $i => $package): ?>
                 <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits/mois</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                    <button class="btn acheter-btn-abonnement" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
                         Buy
                     </button>
                 </div>
@@ -161,20 +164,40 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
 
-
+    <div id="paypal-button-container-P-5EU09906J11545158NBL6PAY"></div>
+<script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+<script>
+  paypal.Buttons({
+      style: {
+          shape: 'rect',
+          color: 'blue',
+          layout: 'vertical',
+          label: 'subscribe'
+      },
+      createSubscription: function(data, actions) {
+        return actions.subscription.create({
+          /* Creates the subscription */
+          plan_id: 'P-5EU09906J11545158NBL6PAY'
+        });
+      },
+      onApprove: function(data, actions) {
+        alert(data.subscriptionID); // You can add optional success message for the subscriber here
+      }
+  }).render('#paypal-button-container-P-5EU09906J11545158NBL6PAY'); // Renders the PayPal button
+</script>
     <!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
     <div class="paypal-render-area" id="paypal-render-area"></div>
 
     <script>
     const pseudoPHP = <?= json_encode($user['username']) ?>;
-    document.querySelectorAll('.acheter-btn').forEach(function (button) {
+    document.querySelectorAll('.acheter-btn-no-abonnement').forEach(function (button) {
         button.addEventListener('click', function () {
             const nom = this.getAttribute('data-nom');
             const prix = this.getAttribute('data-prix');
             const credits = this.getAttribute('data-credits');
 
             // Réactive tous les boutons et désactive celui cliqué
-            document.querySelectorAll('.acheter-btn').forEach(btn => btn.disabled = false);
+            document.querySelectorAll('.acheter-btn-no-abonnement').forEach(btn => btn.disabled = false);
             this.disabled = true;
 
             // Trouver ou créer le conteneur pour PayPal
