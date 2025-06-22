@@ -16,8 +16,9 @@ $user = getCurrentUser();
     <link rel="stylesheet" href="css/plans.css">
     <link rel="stylesheet" href="css/animations.css">
 </head>
+<?php require_once 'nav.php'; ?>
+
 <body class="body_plans">
-    <?php require_once 'nav.php'; ?>
 
     <div class="animated-bg" id="animatedBg"></div>
 
