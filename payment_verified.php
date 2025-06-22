@@ -1,6 +1,6 @@
 <?php
 require 'vendor/autoload.php'; // Stripe PHP SDK
-\Stripe\Stripe::setApiKey('sk_test_...'); // ta clé secrète
+\Stripe\Stripe::setApiKey('sk_test_51RcoRWRpHQWEgzdpOCZacqLoI6cSuDptFH8kNlj7z9MdjtGeyvOqASjZWGrO2yO0tUFRNmlhgrbffAwiV4Qcosid00SpgNlasL'); // ta clé secrète
 
 // Récupère la charge utile brute du webhook
 $payload = @file_get_contents("php://input");
@@ -31,15 +31,6 @@ if ($event->type === 'checkout.session.completed') {
     $stripe_customer_id = $session->customer;
     $subscription_id = $session->subscription;
     $montant_total = $session->amount_total;
-
-    // 👉 Exemple : mettre à jour la base de données
-    $conn = new mysqli('localhost', 'root', '', 'ma_base');
-
-    if ($conn->connect_error) {
-        die("Erreur de connexion BDD: " . $conn->connect_error);
-    }
-
-    // Exemple : ajouter une ligne dans une table abonnements
 
 }
 
