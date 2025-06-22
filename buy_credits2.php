@@ -30,7 +30,7 @@ $user = getCurrentUser();
 
 // Récupérer les packages d'abonnement
 $pdo = getDBConnection();
-$stmt = $pdo->query("SELECT * FROM paiement WHERE type = 'abonnement' ORDER BY prix ASC");
+$stmt = $pdo->query("SELECT * FROM paiement WHERE type = 'credit' ORDER BY prix ASC");
 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
