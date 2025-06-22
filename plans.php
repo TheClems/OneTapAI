@@ -47,10 +47,12 @@ $user = getCurrentUser();
                 <p>Outils IA essentiels pour un usage quotidien</p>
                 <hr />
                 <ul>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>1 000 messages de chat IA</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>30 générations d'images premium</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>10 générations de musique premium</span></li>
-                    <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>100 000 Crédits</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès aux meilleurs LLM</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>&#126;2 000 messages de chat IA</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>&#126;50 générations d'images </span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès aux Personas</span></li>
+                    <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
                 <a href="#" class="btn">Choisir ce plan</a>
@@ -65,10 +67,12 @@ $user = getCurrentUser();
                 <p>Fonctionnalités avancées pour les passionnés d'IA</p>
                 <hr />
                 <ul>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>5 000 messages de chat IA</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>100 générations d'images premium</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>40 générations de musique premium</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                <li><i class="bi bi-check-circle-fill"></i><span>200 000 Crédits</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès aux meilleurs LLM</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>&#126;4 000 messages de chat IA</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>&#126;100 générations d'images </span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès aux Personas</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
                 <a href="#" class="btn">Choisir ce plan</a>
@@ -83,11 +87,13 @@ $user = getCurrentUser();
                 <p>Potentiel illimité pour les utilisateurs experts</p>
                 <hr />
                 <ul>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>10 000 messages de chat IA</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>300 générations d'images premium</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>100 générations de musique premium</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
-                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
+                <li><i class="bi bi-check-circle-fill"></i><span>400 000 Crédits</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès aux meilleurs LLM</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>&#126;8 000 messages de chat IA</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>&#126;200 générations d'images </span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès aux Personas</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
                 <a href="#" class="btn">Choisir ce plan</a>
             </div>
