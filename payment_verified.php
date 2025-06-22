@@ -195,11 +195,35 @@ switch ($event->type) {
         // Paiements récurrents d'abonnement
         $invoice = $event->data->object;
         $subscription_id = $invoice->subscription;
+        $customer_id = $invoice->customer;
+        
+        // Vérifier que nous avons un subscription_id valide
+        if (!$subscription_id || empty($subscription_id)) {
+            file_put_contents('webhook_errors.txt', 
+                "ERROR paiement récurrent - " . date('Y-m-d H:i:s') . 
+                " - Subscription ID manquant ou vide\n", 
+                FILE_APPEND
+            );
+            break;
+        }
+        
+        // Log des données reçues pour debug
+        file_put_contents('webhook_invoice_debug.txt', 
+            "Invoice data - " . date('Y-m-d H:i:s') . 
+            " - Subscription ID: " . $subscription_id . 
+            " - Customer ID: " . $customer_id . 
+            " - Amount: " . $invoice->amount_paid . "\n", 
+            FILE_APPEND
+        );
         
         // Récupérer l'abonnement pour obtenir les détails
         try {
+            // Vérifier le format de l'ID avant de faire la requête
+            if (!preg_match('/^sub_[A-Za-z0-9]+$/', $subscription_id)) {
+                throw new Exception("Format d'ID d'abonnement invalide: " . $subscription_id);
+            }
+            
             $subscription = \Stripe\Subscription::retrieve($subscription_id);
-            $customer_id = $subscription->customer;
             
             // Trouver l'utilisateur avec cet abonnement
             $stmt = $pdo->prepare("SELECT id FROM users WHERE stripe_subscription_id = ?");
@@ -231,8 +255,42 @@ switch ($event->type) {
                             "Paiement récurrent - " . date('Y-m-d H:i:s') . 
                             " - User: " . $user_id . 
                             " - Subscription: " . $subscription_id . 
+                            " - Produit: " . $nom_produit . 
                             " - Crédits ajoutés: " . $credits_a_ajouter . 
                             " - Montant: " . $invoice->amount_paid . "\n", 
+                            FILE_APPEND
+                        );
+                    } else {
+                        file_put_contents('webhook_errors.txt', 
+                            "WARN paiement récurrent - " . date('Y-m-d H:i:s') . 
+                            " - Produit non trouvé dans table paiement: " . $nom_produit . "\n", 
+                            FILE_APPEND
+                        );
+                    }
+                }
+            } else {
+                // Utilisateur non trouvé avec cet abonnement
+                file_put_contents('webhook_errors.txt', 
+                    "WARN paiement récurrent - " . date('Y-m-d H:i:s') . 
+                    " - Utilisateur non trouvé pour subscription: " . $subscription_id . "\n", 
+                    FILE_APPEND
+                );
+                
+                // Optionnel: Chercher par customer_id si pas trouvé par subscription_id
+                if ($customer_id) {
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE stripe_user_id = ?");
+                    $stmt->execute([$customer_id]);
+                    $user_by_customer = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if ($user_by_customer) {
+                        // Mettre à jour le subscription_id pour la prochaine fois
+                        $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ? WHERE id = ?");
+                        $stmt->execute([$subscription_id, $user_by_customer['id']]);
+                        
+                        file_put_contents('webhook_paiements_recurrents.txt', 
+                            "Subscription ID mis à jour - " . date('Y-m-d H:i:s') . 
+                            " - User: " . $user_by_customer['id'] . 
+                            " - Subscription: " . $subscription_id . "\n", 
                             FILE_APPEND
                         );
                     }
@@ -241,7 +299,9 @@ switch ($event->type) {
         } catch (Exception $e) {
             file_put_contents('webhook_errors.txt', 
                 "ERROR paiement récurrent - " . date('Y-m-d H:i:s') . 
-                " - " . $e->getMessage() . "\n", 
+                " - Subscription ID: " . $subscription_id . 
+                " - Error: " . $e->getMessage() . 
+                " - Trace: " . $e->getTraceAsString() . "\n", 
                 FILE_APPEND
             );
         }
