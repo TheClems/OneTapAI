@@ -12,7 +12,6 @@ $user = getCurrentUser();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account - OneTapAI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
-    <link rel="stylesheet" href="css/tailwind-build.css">
     <link rel="stylesheet" href="css/plans.css">
     <link rel="stylesheet" href="css/animations.css">
 </head>
