@@ -20,7 +20,7 @@ if (isset($_SESSION['error'])) {
 // Récupérer les packages d'abonnement avec gestion d'erreurs
 try {
     $pdo = getDBConnection();
-    $stmt = $pdo->prepare("SELECT id, nom, credits_offerts, prix FROM paiements ORDER BY prix ASC");
+    $stmt = $pdo->prepare("SELECT * FROM paiement WHERE type = 'credit' ORDER BY prix ASC");
     $stmt->execute();
     $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -75,16 +75,11 @@ try {
             <?php foreach ($packages as $index => $package): ?>
                 <div class="package <?php echo $index === 1 ? 'featured' : ''; ?>">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
-                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                    <div class="credits"><?php echo number_format($package['nb_credits']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                    <button class="btn acheter-btn" 
-                            data-id="<?= htmlspecialchars($package['id']) ?>" 
-                            data-nom="<?= htmlspecialchars($package['nom']) ?>" 
-                            data-prix="<?= htmlspecialchars($package['prix']) ?>" 
-                            data-credits="<?= htmlspecialchars($package['credits_offerts']) ?>">
+                    <button class="btn acheter-btn">
                         Buy
                     </button>
-                    <div class="paypal-boutons" id="paypal-boutons-<?= htmlspecialchars($package['id']) ?>"></div>
                 </div>
             <?php endforeach; ?>
         </div>
