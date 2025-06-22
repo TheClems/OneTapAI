@@ -123,7 +123,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="container_abonnement" style="display: <?php echo $container_visibility_abonnement; ?>;">
         <div class="header">
-            <h1>Buy credits</h1>
+            <h1>Buy credits abbonement</h1>
             <p class="subtitle">Boost your creativity with our AI credit packs</p>
         </div>
 
