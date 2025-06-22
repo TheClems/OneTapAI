@@ -159,13 +159,20 @@ switch ($event->type) {
                     // Créer une chaîne avec tous les noms de produits
                     $product_name = implode(', ', $product_names);
                     
+                    $stmt = $pdo->prepare("SELECT nb_credits FROM paiement WHERE nom = ?");
+                    $stmt->execute([$product_name]);
+                    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    $nb_credits = $user['nb_credits'];
+
                     // Requête préparée sécurisée
                     $stmt = $pdo->prepare("
                         UPDATE users 
                         SET stripe_user_id = ?, 
                             stripe_subscription_id = ?, 
                             abonnement = ?, 
-                            abonnement_date = ? 
+                            abonnement_date = ?,
+                            credits = credits  +  ?
                         WHERE id = ?
                     ");
                     
@@ -174,7 +181,8 @@ switch ($event->type) {
                         $subscription_id,
                         $product_name,
                         $timestamp,
-                        $client_reference_id
+                        $client_reference_id,
+                        $nb_credits
                     ]);
                     
                     if ($stmt->rowCount() > 0) {
@@ -252,4 +260,29 @@ http_response_code(200);
 echo "Webhook received";
 exit();
 ?>
+
+
+{
+    "timestamp": "2025-06-22 18:34:39",
+    "event_type": "checkout.session.completed",
+    "client_reference_id": "12",
+    "customer_email": "gateaublabla.gateaublabla@gmail.com",
+    "customer_id": "cus_SXy93YbKcMw5FA",
+    "subscription_id": "sub_1RcsD0RpHQWEgzdpvZ1TNBLi",
+    "montant_total": 2900,
+    "produits_achetes": [
+        {
+            "price_id": "price_1RcopTRpHQWEgzdpPM2GBk4A",
+            "product_id": "prod_SXueUi0jM0ghuH",
+            "product_name": "Professionnal",
+            "product_description": "400 000 cr\u00e9dits par mois, acc\u00e8s aux meilleurs LLM, g\u00e9n\u00e9ration d'image, acc\u00e8s aux personas, customisation des personas et acc\u00e8s en avance aux nouvelles fonctionnalit\u00e9s.",
+            "quantity": 1,
+            "amount_total": 2900,
+            "currency": "eur",
+            "metadata": [],
+            "subscription_item_id": "si_SXy9nHqhWGXvAJ",
+            "subscription_interval": "month"
+        }
+    ]
+}
 
