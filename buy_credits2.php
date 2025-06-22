@@ -16,9 +16,11 @@ if ($_SESSION['user_id']) {
     if ($abonnement_id == null) {
         $container_visibility_no_abonnement = "block";
         $container_visibility_abonnement = "none";
+        $has_subscription = false;
     } else {
         $container_visibility_no_abonnement = "none";
         $container_visibility_abonnement = "block";
+        $has_subscription = true;
     }
 }
 
@@ -63,8 +65,15 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- UN SEUL SDK PayPal avec tous les paramètres nécessaires -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription&currency=EUR"></script>
+    
+    <?php if ($has_subscription): ?>
+        <!-- SDK pour les abonnements -->
+        <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription&currency=EUR"></script>
+    <?php else: ?>
+        <!-- SDK pour les achats ponctuels -->
+        <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&currency=EUR"></script>
+    <?php endif; ?>
+    
     <link rel="stylesheet" href="css/buy_credits.css" />
     <link rel="stylesheet" href="css/animations.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -172,125 +181,129 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         const pseudoPHP = <?= json_encode($user['username']) ?>;
-        let selectedPlanId = null;
+        const hasSubscription = <?= json_encode($has_subscription) ?>;
 
-        // Gestion des abonnements
-        document.querySelectorAll('.acheter-btn-abonnement').forEach(button => {
-            button.addEventListener('click', function() {
-                const planId = this.dataset.plan;
-                const nom = this.dataset.nom;
-                const prix = this.dataset.prix;
+        if (hasSubscription) {
+            // Gestion des abonnements
+            let selectedPlanId = null;
 
-                selectedPlanId = planId;
+            document.querySelectorAll('.acheter-btn-abonnement').forEach(button => {
+                button.addEventListener('click', function() {
+                    const planId = this.dataset.plan;
+                    const nom = this.dataset.nom;
+                    const prix = this.dataset.prix;
 
-                document.getElementById('selected-package-name').innerText = `Abonnement sélectionné : ${nom} (${prix} € / mois)`;
+                    selectedPlanId = planId;
 
-                // Supprimer le bouton précédent s'il existe déjà
-                const container = document.getElementById('paypal-button-container-subscription');
-                container.innerHTML = '';
+                    document.getElementById('selected-package-name').innerText = `Abonnement sélectionné : ${nom} (${prix} € / mois)`;
 
-                // Rendu dynamique du bouton avec le nouveau plan ID
-                paypal.Buttons({
-                    style: {
-                        shape: 'rect',
-                        color: 'blue',
-                        layout: 'vertical',
-                        label: 'subscribe',
-                        center: true
-                    },
-                    createSubscription: function(data, actions) {
-                        return actions.subscription.create({
-                            plan_id: selectedPlanId
-                        });
-                    },
-                    onApprove: function(data, actions) {
-                        alert("Abonnement validé : " + data.subscriptionID);
-                        // Ici vous pouvez ajouter le code pour traiter l'abonnement côté serveur
-                    },
-                    onError: function(err) {
-                        console.error("Erreur PayPal abonnement:", err);
-                        alert("Une erreur est survenue avec l'abonnement PayPal.");
-                    }
-                }).render('#paypal-button-container-subscription');
-            });
-        });
+                    // Supprimer le bouton précédent s'il existe déjà
+                    const container = document.getElementById('paypal-button-container-subscription');
+                    container.innerHTML = '';
 
-        // Gestion des achats individuels
-        document.querySelectorAll('.acheter-btn-no-abonnement').forEach(function(button) {
-            button.addEventListener('click', function() {
-                const nom = this.getAttribute('data-nom');
-                const prix = this.getAttribute('data-prix');
-                const credits = this.getAttribute('data-credits');
-
-                // Réactive tous les boutons et désactive celui cliqué
-                document.querySelectorAll('.acheter-btn-no-abonnement').forEach(btn => btn.disabled = false);
-                this.disabled = true;
-
-                // Trouver ou créer le conteneur pour PayPal
-                let renderArea = document.getElementById('paypal-render-area-individual');
-                renderArea.innerHTML = '<div id="paypal-button-container-individual"></div>';
-
-                // Utiliser createOrder au lieu de createSubscription pour les achats ponctuels
-                paypal.Buttons({
-                    createOrder: function(data, actions) {
-                        return actions.order.create({
-                            purchase_units: [{
-                                description: nom + " - " + credits + " crédits",
-                                custom_id: pseudoPHP + "-" + nom,
-                                invoice_id: "FACTURE-" + pseudoPHP + "-" + nom + "-" + Date.now(),
-                                amount: {
-                                    value: prix,
-                                    currency_code: 'EUR'
-                                }
-                            }],
-                            application_context: {
-                                shipping_preference: "NO_SHIPPING"
-                            }
-                        });
-                    },
-                    onApprove: function(data, actions) {
-                        return actions.order.capture().then(function(details) {
-                            alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
-                            console.log("Détails : ", details);
-
-                            // Appel à la page PHP pour ajouter les crédits
-                            fetch('payment_verified.php', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        credits: credits
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(result => {
-                                    if (result.status === 'success') {
-                                        alert("🎉 Vos crédits ont été ajoutés avec succès !");
-                                        // Recharger la page pour mettre à jour le solde
-                                        window.location.reload();
-                                    } else {
-                                        alert("❌ Une erreur est survenue : " + result.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error("Erreur lors de l'ajout des crédits :", error);
-                                    alert("❌ Erreur lors de l'envoi des crédits.");
-                                });
-                        });
-                    },
-                    onError: function(err) {
-                        console.error("Erreur PayPal:", err);
-                        alert("Une erreur est survenue avec PayPal.");
-                    }
-                }).render('#paypal-button-container-individual');
-
-                // Optionnel : scroll vers le bouton PayPal
-                renderArea.scrollIntoView({
-                    behavior: 'smooth'
+                    // Rendu dynamique du bouton avec le nouveau plan ID
+                    paypal.Buttons({
+                        style: {
+                            shape: 'rect',
+                            color: 'blue',
+                            layout: 'vertical',
+                            label: 'subscribe',
+                            center: true
+                        },
+                        createSubscription: function(data, actions) {
+                            return actions.subscription.create({
+                                plan_id: selectedPlanId
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            alert("Abonnement validé : " + data.subscriptionID);
+                            // Ici vous pouvez ajouter le code pour traiter l'abonnement côté serveur
+                        },
+                        onError: function(err) {
+                            console.error("Erreur PayPal abonnement:", err);
+                            alert("Une erreur est survenue avec l'abonnement PayPal.");
+                        }
+                    }).render('#paypal-button-container-subscription');
                 });
             });
-        });
+        } else {
+            // Gestion des achats individuels
+            document.querySelectorAll('.acheter-btn-no-abonnement').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const nom = this.getAttribute('data-nom');
+                    const prix = this.getAttribute('data-prix');
+                    const credits = this.getAttribute('data-credits');
+
+                    // Réactive tous les boutons et désactive celui cliqué
+                    document.querySelectorAll('.acheter-btn-no-abonnement').forEach(btn => btn.disabled = false);
+                    this.disabled = true;
+
+                    // Trouver ou créer le conteneur pour PayPal
+                    let renderArea = document.getElementById('paypal-render-area-individual');
+                    renderArea.innerHTML = '<div id="paypal-button-container-individual"></div>';
+
+                    // Utiliser createOrder pour les achats ponctuels
+                    paypal.Buttons({
+                        createOrder: function(data, actions) {
+                            return actions.order.create({
+                                purchase_units: [{
+                                    description: nom + " - " + credits + " crédits",
+                                    custom_id: pseudoPHP + "-" + nom,
+                                    invoice_id: "FACTURE-" + pseudoPHP + "-" + nom + "-" + Date.now(),
+                                    amount: {
+                                        value: prix,
+                                        currency_code: 'EUR'
+                                    }
+                                }],
+                                application_context: {
+                                    shipping_preference: "NO_SHIPPING"
+                                }
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            return actions.order.capture().then(function(details) {
+                                alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
+                                console.log("Détails : ", details);
+
+                                // Appel à la page PHP pour ajouter les crédits
+                                fetch('payment_verified.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({
+                                            credits: credits
+                                        })
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.status === 'success') {
+                                            alert("🎉 Vos crédits ont été ajoutés avec succès !");
+                                            // Recharger la page pour mettre à jour le solde
+                                            window.location.reload();
+                                        } else {
+                                            alert("❌ Une erreur est survenue : " + result.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error("Erreur lors de l'ajout des crédits :", error);
+                                        alert("❌ Erreur lors de l'envoi des crédits.");
+                                    });
+                            });
+                        },
+                        onError: function(err) {
+                            console.error("Erreur PayPal:", err);
+                            alert("Une erreur est survenue avec PayPal.");
+                        }
+                    }).render('#paypal-button-container-individual');
+
+                    // Optionnel : scroll vers le bouton PayPal
+                    renderArea.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        }
     </script>
     <script type="text/javascript" src="scripts/nav.js"></script>
     <script src="scripts/animated-bg.js"></script>
