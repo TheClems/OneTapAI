@@ -30,8 +30,12 @@ $user = getCurrentUser();
 
 // Récupérer les packages d'abonnement
 $pdo = getDBConnection();
-$stmt = $pdo->query("SELECT * FROM paiement WHERE type = 'credit' ORDER BY prix ASC");
-$packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt_abonnement = $pdo->query("SELECT * FROM paiement WHERE type = 'abonnement' ORDER BY prix ASC");
+$packages_abonnement = $stmt_abonnement->fetchAll(PDO::FETCH_ASSOC);
+
+
+$stmt_credit = $pdo->query("SELECT * FROM paiement WHERE type = 'credit' ORDER BY prix ASC");
+$packages_credit = $stmt_credit->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -78,7 +82,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
 
         <div class="packages">
-            <?php foreach ($packages as $i => $package): ?>
+            <?php foreach ($packages_credit as $i => $package): ?>
                 <div class="package">
                     <h3><?php echo htmlspecialchars($package['nom']) ?></h3>
                     <div class="credits"><?php echo number_format($package['nb_credits']); ?> crédits</div>
@@ -122,12 +126,12 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
 
         <div class="packages">
-            <?php foreach ($packages as $i => $package): ?>
+            <?php foreach ($packages_abonnement as $i => $package): ?>
                 <div class="package <?= $i === 1 ? 'featured' : '' ?>">
                     <h3><?= htmlspecialchars($package['nom']) ?></h3>
-                    <div class="credits"><?= number_format($package['credits_offerts']) ?> crédits/mois</div>
+                    <div class="credits"><?= number_format($package['nb_credits']) ?> crédits/mois</div>
                     <div class="price"><?= number_format($package['prix'], 2) ?>€</div>
-                    <button class="btn acheter-btn-abonnement">
+                    <button class="btn acheter-btn-abonnement" onclick="window.location.href='<?php echo $package['url_stripe']; ?>'">
                         Buy
                     </button>
                 </div>
