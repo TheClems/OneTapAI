@@ -16,7 +16,7 @@ $user = getCurrentUser();
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/tailwind-build.css">
 </head>
-<body class="body_account">
+<body class="body_plans">
     <?php require_once 'nav.php'; ?>
 
     <div class="animated-bg" id="animatedBg"></div>
