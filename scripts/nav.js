@@ -75,29 +75,29 @@ let isDarkMode = true;
 
 // Fonction pour sauvegarder le thème (avec vérification si currentUserId existe)
 function saveTheme() {
-        const selectedTheme = isDarkMode ? 1 : 0;
+    const selectedTheme = isDarkMode ? 1 : 0;
 
-        fetch('https://onetapai.ctts.fr/theme.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ theme: selectedTheme }) // pas besoin d'envoyer l'id
+    fetch('https://onetapai.ctts.fr/theme.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ theme: selectedTheme }) // pas besoin d'envoyer l'id
+    })
+
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur réseau');
+            return response.json();
         })
-        
-            .then(response => {
-                if (!response.ok) throw new Error('Erreur réseau');
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    console.log('Thème mis à jour en base');
-                } else {
-                    console.error('Erreur serveur:', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Fetch failed:', error);
-            });
-    
+        .then(data => {
+            if (data.success) {
+                console.log('Thème mis à jour en base');
+            } else {
+                console.error('Erreur serveur:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch failed:', error);
+        });
+
 }
 
 // Toggle du thème
@@ -116,7 +116,7 @@ if (isDarkModeFromServer) {
 
     isDarkMode = true;
     console.log('Thème initialisé en mode sombre');
-}else{
+} else {
     body.classList.add('light-mode');
 
 
@@ -261,7 +261,7 @@ setInterval(createParticles, 6000);
 function handleResize() {
     if (sidebar && window.innerWidth <= 768) {
         if (body_buy_credits) body_buy_credits.classList.add('mobile');
-
+        if (body_plans) body_plans.classList.add('mobile');
         if (sidebar) sidebar.classList.add('mobile');
         if (chatContainer) chatContainer.classList.add('mobile');
         if (body_account) body_account.classList.add('mobile');
@@ -270,12 +270,13 @@ function handleResize() {
 
     } else if (sidebar) {
         if (body_buy_credits) body_buy_credits.classList.remove('mobile');
+        if (body_plans) body_plans.classList.remove('mobile');
         if (sidebar) sidebar.classList.remove('mobile');
         if (chatContainer) chatContainer.classList.remove('mobile');
         if (body_account) body_account.classList.remove('mobile');
         if (body_job) body_job.classList.remove('mobile');
         if (chatHistoryPanel2) chatHistoryPanel2.classList.remove('mobile');
-            }
+    }
 }
 
 window.addEventListener('resize', handleResize);
