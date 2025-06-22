@@ -5,7 +5,7 @@ require 'vendor/autoload.php'; // Stripe PHP SDK
 // Récupère la charge utile brute du webhook
 $payload = @file_get_contents("php://input");
 $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-$endpoint_secret = 'whsec_...'; // ton webhook secret
+$endpoint_secret = 'whsec_o6D7bLYjdCP1cOh1vAF0CEqUu9tFgNFP'; // ton webhook secret
 
 try {
     $event = \Stripe\Webhook::constructEvent(
