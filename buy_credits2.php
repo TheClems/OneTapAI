@@ -30,7 +30,7 @@ $user = getCurrentUser();
 
 // Récupérer les packages d'abonnement
 $pdo = getDBConnection();
-$stmt = $pdo->query("SELECT * FROM abonnements ORDER BY prix ASC");
+$stmt = $pdo->query("SELECT * FROM paiement ORDER BY prix ASC WHERE type = 'abonnement'");
 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -80,7 +80,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="packages">
             <?php foreach ($packages as $i => $package): ?>
                 <div class="package">
-                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                    <h3><?php echo htmlspecialchars($package['nom']) ?></h3>
+                    <div class="credits"><?php echo number_format($package['nb_credits']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <button class="btn acheter-btn-no-abonnement" onclick="window.location.href='<?php echo $package['url_stripe']; ?>'">
                         Buy
