@@ -233,7 +233,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         const pseudoPHP = <?= json_encode($user['username']) ?>;
-        document.querySelectorAll('btn.acheter-btn-abonnement').forEach(function(button) {
+        document.querySelectorAll('acheter-btn-abonnement').forEach(function(button) {
             button.addEventListener('click', function() {
                 const nom = this.getAttribute('data-nom');
                 const prix = this.getAttribute('data-prix');
