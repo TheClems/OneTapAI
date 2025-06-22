@@ -1,11 +1,24 @@
 <?php
-require 'vendor/autoload.php'; // Stripe PHP SDK
-\Stripe\Stripe::setApiKey('sk_test_51RcoRWRpHQWEgzdpOCZacqLoI6cSuDptFH8kNlj7z9MdjtGeyvOqASjZWGrO2yO0tUFRNmlhgrbffAwiV4Qcosid00SpgNlasL'); // ta clé secrète
+// Désactive les redirections automatiques
+ini_set('display_errors', 0);
+error_reporting(0);
+
+require 'vendor/autoload.php';
+
+\Stripe\Stripe::setApiKey('sk_test_51RcoRWRpHQWEgzdpOCZacqLoI6cSuDptFH8kNlj7z9MdjtGeyvOqASjZWGrO2yO0tUFRNmlhgrbffAwiV4Qcosid00SpgNlasL');
+
+$endpoint_secret = 'whsec_o6D7bLYjdCP1cOh1vAF0CEqUu9tFgNFP';
 
 // Récupère la charge utile brute du webhook
 $payload = @file_get_contents("php://input");
-$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-$endpoint_secret = 'whsec_o6D7bLYjdCP1cOh1vAF0CEqUu9tFgNFP'; // ton webhook secret
+$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
+
+// Vérifie que les données nécessaires sont présentes
+if (empty($payload) || empty($sig_header)) {
+    http_response_code(400);
+    echo "Bad Request";
+    exit();
+}
 
 try {
     $event = \Stripe\Webhook::constructEvent(
@@ -14,25 +27,54 @@ try {
 } catch (\UnexpectedValueException $e) {
     // Mauvaise charge utile
     http_response_code(400);
+    echo "Invalid payload";
     exit();
 } catch (\Stripe\Exception\SignatureVerificationException $e) {
     // Signature invalide
     http_response_code(400);
+    echo "Invalid signature";
+    exit();
+} catch (Exception $e) {
+    // Autres erreurs
+    http_response_code(500);
+    echo "Webhook error";
     exit();
 }
 
-// Vérifie que l'événement est bien une session de paiement complétée
-if ($event->type === 'checkout.session.completed') {
-    $session = $event->data->object;
-
-    // Extrait les infos importantes
-    $client_reference_id = $session->client_reference_id; // ex: 12
-    $customer_email = $session->customer_details->email;
-    $stripe_customer_id = $session->customer;
-    $subscription_id = $session->subscription;
-    $montant_total = $session->amount_total;
-
+// Traite l'événement
+switch ($event->type) {
+    case 'checkout.session.completed':
+        $session = $event->data->object;
+        
+        // Extrait les infos importantes
+        $client_reference_id = $session->client_reference_id ?? null;
+        $customer_email = $session->customer_details->email ?? null;
+        $stripe_customer_id = $session->customer ?? null;
+        $subscription_id = $session->subscription ?? null;
+        $montant_total = $session->amount_total ?? 0;
+        
+        // Ici tu peux traiter les données (base de données, emails, etc.)
+        // Par exemple :
+        // updateUserSubscription($client_reference_id, $subscription_id);
+        // sendWelcomeEmail($customer_email);
+        
+        break;
+        
+    case 'invoice.payment_succeeded':
+        // Traite les paiements récurrents
+        break;
+        
+    case 'customer.subscription.deleted':
+        // Traite les annulations d'abonnement
+        break;
+        
+    default:
+        // Événement non géré
+        break;
 }
 
-http_response_code(200); // OK
+// Répond toujours avec un 200
+http_response_code(200);
+echo "Webhook received";
+exit();
 ?>
