@@ -27,7 +27,8 @@
   margin-left: 0rem;
 }
 
-.container_abonnement {
+.container_abonnement,
+.container_no_abonnement {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -322,7 +323,8 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .container_abonnement {
+  .container_abonnement,
+  .container_no_abonnement {
     padding: 1rem;
   }
 
