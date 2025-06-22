@@ -81,7 +81,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="container_no_abonnement" style="display: <?php echo $container_visibility_no_abonnement; ?>;">
         <div class="header">
-            <h1>Buy credits</h1>
+            <h1>Add Credits</h1>
             <p class="subtitle">Boost your creativity with our AI credit packs</p>
         </div>
 
@@ -106,8 +106,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <div class="packages">
             <?php foreach ($packages as $i => $package): ?>
-                <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
-                    <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
+                <div class="package">
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
@@ -123,7 +122,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="container_abonnement" style="display: <?php echo $container_visibility_abonnement; ?>;">
         <div class="header">
-            <h1>Buy credits abbonement</h1>
+            <h1>Buy credits subscription</h1>
             <p class="subtitle">Boost your creativity with our AI credit packs</p>
         </div>
 
@@ -150,7 +149,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($packages as $i => $package): ?>
                 <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
-                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits/mois</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
                     <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
                         Buy
