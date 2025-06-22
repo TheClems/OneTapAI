@@ -14,6 +14,7 @@ $user = getCurrentUser();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <link rel="stylesheet" href="css/plans.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/tailwind-build.css">
 </head>
 <body class="body_account">
     <?php require_once 'nav.php'; ?>
