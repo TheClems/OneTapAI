@@ -27,8 +27,7 @@
   margin-left: 0rem;
 }
 
-.container_abonnement,
-.container_no_abonnement {
+.container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -323,8 +322,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .container_abonnement,
-  .container_no_abonnement {
+  .container {
     padding: 1rem;
   }
 
@@ -436,12 +434,3 @@
   }
 }
 
-.paypal-render-area {
-  justify-content: center;
-  margin-top: 2vh;
-  display: flex;
-}
-
-#paypal-button-container {
-  width: 40rem;
-}

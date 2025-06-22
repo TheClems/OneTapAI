@@ -41,7 +41,7 @@ try {
 </head>
 
 <body class="body_buy_credits">
-<?php require_once 'nav.php'; ?>
+    <?php require_once 'nav.php'; ?>
 
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
@@ -93,8 +93,9 @@ try {
             credits: <?= json_encode($user['credits']) ?>
         };
     </script>
-    
+
     <script src="scripts/animated-bg.js"></script>
     <script type="text/javascript" src="scripts/nav.js"></script>
 </body>
+
 </html>
