@@ -52,7 +52,19 @@ switch ($event->type) {
         $stripe_customer_id = $session->customer ?? null;
         $subscription_id = $session->subscription ?? null;
         $montant_total = $session->amount_total ?? 0;
-        $timestamp = date('Y-m-d H:i:s'); // Définir le timestamp
+        $timestamp = date('Y-m-d H:i:s');
+        
+        // LOG de débogage
+        file_put_contents('webhook_debug.log', 
+            "=== DÉBUT TRAITEMENT ===\n" .
+            "Timestamp: $timestamp\n" .
+            "Client Reference ID: $client_reference_id\n" .
+            "Customer Email: $customer_email\n" .
+            "Stripe Customer ID: $stripe_customer_id\n" .
+            "Subscription ID: $subscription_id\n" .
+            "Montant Total: $montant_total\n\n", 
+            FILE_APPEND
+        );
         
         // RÉCUPÉRATION DES PRODUITS ACHETÉS
         try {
@@ -61,7 +73,7 @@ switch ($event->type) {
             ]);
             
             $produits_achetes = [];
-            $product_names = []; // Collecter les noms des produits
+            $product_names = [];
             
             foreach ($line_items->data as $item) {
                 $price_id = $item->price->id;
@@ -69,9 +81,8 @@ switch ($event->type) {
                 $quantity = $item->quantity;
                 $amount_total = $item->amount_total;
                 
-                // Récupère les détails du produit
                 $product = \Stripe\Product::retrieve($product_id);
-                $product_names[] = $product->name; // Collecter le nom
+                $product_names[] = $product->name;
                 
                 $produits_achetes[] = [
                     'price_id' => $price_id,
@@ -152,31 +163,105 @@ switch ($event->type) {
                 }
             }
             
-            // MISE À JOUR BASE DE DONNÉES - CORRIGÉE
+            // MISE À JOUR BASE DE DONNÉES - VERSION CORRIGÉE
             if ($client_reference_id) {
                 $pdo = getDBConnection();
                 try {
                     // Créer une chaîne avec tous les noms de produits
                     $product_name = implode(', ', $product_names);
                     
+                    file_put_contents('webhook_debug.log', 
+                        "Recherche produit: '$product_name'\n", 
+                        FILE_APPEND
+                    );
+                    
+                    // RECHERCHE DES CRÉDITS - AVEC GESTION D'ERREUR
                     $stmt = $pdo->prepare("SELECT nb_credits FROM paiement WHERE nom = ?");
                     $stmt->execute([$product_name]);
                     $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    $nb_credits = $user['nb_credits'];
-
-                    // Requête préparée sécurisée
+                    
+                    $nb_credits = 0; // Valeur par défaut
+                    
+                    if ($user && isset($user['nb_credits'])) {
+                        $nb_credits = $user['nb_credits'];
+                        file_put_contents('webhook_debug.log', 
+                            "Crédits trouvés: $nb_credits\n", 
+                            FILE_APPEND
+                        );
+                    } else {
+                        // LOG si aucun produit trouvé
+                        file_put_contents('webhook_debug.log', 
+                            "ATTENTION: Aucun produit trouvé dans 'paiement' pour: '$product_name'\n", 
+                            FILE_APPEND
+                        );
+                        
+                        // Essaie avec des variantes du nom
+                        $variantes = [
+                            'Professional',
+                            'Professionnal', 
+                            'professional',
+                            'professionnal'
+                        ];
+                        
+                        foreach ($variantes as $variante) {
+                            $stmt = $pdo->prepare("SELECT nb_credits FROM paiement WHERE nom = ?");
+                            $stmt->execute([$variante]);
+                            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                            
+                            if ($user && isset($user['nb_credits'])) {
+                                $nb_credits = $user['nb_credits'];
+                                file_put_contents('webhook_debug.log', 
+                                    "Crédits trouvés avec variante '$variante': $nb_credits\n", 
+                                    FILE_APPEND
+                                );
+                                break;
+                            }
+                        }
+                        
+                        // Si toujours rien, liste tous les produits disponibles
+                        if ($nb_credits == 0) {
+                            $stmt = $pdo->prepare("SELECT nom, nb_credits FROM paiement");
+                            $stmt->execute();
+                            $tous_produits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            file_put_contents('webhook_debug.log', 
+                                "Produits disponibles dans la table 'paiement':\n" . 
+                                json_encode($tous_produits, JSON_PRETTY_PRINT) . "\n", 
+                                FILE_APPEND
+                            );
+                        }
+                    }
+                    
+                    // VÉRIFICATION QUE L'UTILISATEUR EXISTE
+                    $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
+                    $stmt->execute([$client_reference_id]);
+                    $user_exists = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    if (!$user_exists) {
+                        file_put_contents('webhook_debug.log', 
+                            "ERREUR: Utilisateur avec ID $client_reference_id n'existe pas!\n", 
+                            FILE_APPEND
+                        );
+                        throw new Exception("Utilisateur introuvable avec l'ID: $client_reference_id");
+                    }
+                    
+                    file_put_contents('webhook_debug.log', 
+                        "Utilisateur trouvé, mise à jour avec $nb_credits crédits\n", 
+                        FILE_APPEND
+                    );
+                    
+                    // MISE À JOUR - REQUÊTE PRÉPARÉE SÉCURISÉE
                     $stmt = $pdo->prepare("
                         UPDATE users 
                         SET stripe_user_id = ?, 
                             stripe_subscription_id = ?, 
                             abonnement = ?, 
                             abonnement_date = ?,
-                            credits = credits  +  ?
+                            credits = credits + ?
                         WHERE id = ?
                     ");
                     
-                    $stmt->execute([
+                    $result = $stmt->execute([
                         $stripe_customer_id,
                         $subscription_id,
                         $product_name,
@@ -185,28 +270,48 @@ switch ($event->type) {
                         $client_reference_id
                     ]);
                     
-                    if ($stmt->rowCount() > 0) {
+                    if ($result && $stmt->rowCount() > 0) {
+                        file_put_contents('webhook_debug.log', 
+                            "✅ SUCCÈS: Utilisateur $client_reference_id mis à jour avec $nb_credits crédits\n", 
+                            FILE_APPEND
+                        );
+                        
                         file_put_contents('db_updates.log', 
-                            "Utilisateur mis à jour: $client_reference_id - " . $timestamp . "\n", 
+                            "Utilisateur mis à jour: $client_reference_id - $timestamp - Crédits: $nb_credits\n", 
                             FILE_APPEND
                         );
                     } else {
-                        file_put_contents('db_updates.log', 
-                            "Aucun utilisateur trouvé avec l'ID: $client_reference_id - " . $timestamp . "\n", 
+                        file_put_contents('webhook_debug.log', 
+                            "⚠️ ATTENTION: Requête exécutée mais aucune ligne affectée pour l'utilisateur $client_reference_id\n", 
                             FILE_APPEND
                         );
                     }
                     
                 } catch (PDOException $e) {
-                    error_log("Erreur mise à jour utilisateur: " . $e->getMessage());
+                    $error_msg = "Erreur PDO: " . $e->getMessage();
+                    error_log($error_msg);
+                    
+                    file_put_contents('webhook_debug.log', 
+                        "❌ ERREUR DB: $error_msg - $timestamp\n", 
+                        FILE_APPEND
+                    );
+                    
                     file_put_contents('db_errors.log', 
-                        "Erreur DB: " . $e->getMessage() . " - " . $timestamp . "\n", 
+                        "Erreur DB: " . $e->getMessage() . " - $timestamp\n", 
+                        FILE_APPEND
+                    );
+                } catch (Exception $e) {
+                    $error_msg = "Erreur générale: " . $e->getMessage();
+                    error_log($error_msg);
+                    
+                    file_put_contents('webhook_debug.log', 
+                        "❌ ERREUR: $error_msg - $timestamp\n", 
                         FILE_APPEND
                     );
                 }
             } else {
-                file_put_contents('db_updates.log', 
-                    "client_reference_id manquant - impossible de mettre à jour l'utilisateur - " . $timestamp . "\n", 
+                file_put_contents('webhook_debug.log', 
+                    "❌ ERREUR: client_reference_id manquant - impossible de mettre à jour l'utilisateur\n", 
                     FILE_APPEND
                 );
             }
@@ -215,6 +320,11 @@ switch ($event->type) {
             file_put_contents('webhook_errors.txt', 
                 "ERROR récupération produits - " . date('Y-m-d H:i:s') . 
                 " - " . $e->getMessage() . "\n", 
+                FILE_APPEND
+            );
+            
+            file_put_contents('webhook_debug.log', 
+                "❌ ERREUR récupération produits: " . $e->getMessage() . "\n", 
                 FILE_APPEND
             );
         }
@@ -260,5 +370,3 @@ http_response_code(200);
 echo "Webhook received";
 exit();
 ?>
-
-
