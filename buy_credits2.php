@@ -150,7 +150,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <?php
         $pdo = getDBConnection();
-        $abonnements_stmt = $pdo->query("SELECT id, nom, credits_offerts, prix, abonement_id_paypal FROM abonnements");
+        $abonnements_stmt = $pdo->query("SELECT * FROM abonnements");
         $packages = $abonnements_stmt->fetchAll(PDO::FETCH_ASSOC);
         ?>
 
@@ -173,7 +173,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         </div>
 
-        <hr>
         <h3 id="selected-package-name"></h3>
         <div id="paypal-button-container"></div>
 
@@ -201,7 +200,8 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             shape: 'rect',
                             color: 'blue',
                             layout: 'vertical',
-                            label: 'subscribe'
+                            label: 'subscribe',
+                            center: true
                         },
                         createSubscription: function(data, actions) {
                             return actions.subscription.create({
