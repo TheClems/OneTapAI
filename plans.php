@@ -16,9 +16,8 @@ $user = getCurrentUser();
     <link rel="stylesheet" href="css/plans.css">
     <link rel="stylesheet" href="css/animations.css">
 </head>
-<?php require_once 'nav.php'; ?>
-
 <body class="body_plans">
+    <?php require_once 'nav.php'; ?>
 
     <div class="animated-bg" id="animatedBg"></div>
 
@@ -48,9 +47,9 @@ $user = getCurrentUser();
                 <p>Outils IA essentiels pour un usage quotidien</p>
                 <hr />
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i><span>1 000 messages de chat IA</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>30 générations d'images premium</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>10 générations de musique premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>1 000 messages de chat IA</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>30 générations d'images premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>10 générations de musique premium</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
@@ -66,10 +65,10 @@ $user = getCurrentUser();
                 <p>Fonctionnalités avancées pour les passionnés d'IA</p>
                 <hr />
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i><span>5 000 messages de chat IA</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>100 générations d'images premium</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>40 générations de musique premium</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>5 000 messages de chat IA</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>100 générations d'images premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>40 générations de musique premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
                 <a href="#" class="btn">Choisir ce plan</a>
@@ -84,11 +83,11 @@ $user = getCurrentUser();
                 <p>Potentiel illimité pour les utilisateurs experts</p>
                 <hr />
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i><span>10 000 messages de chat IA</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>300 générations d'images premium</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>100 générations de musique premium</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
-                    <li><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>10 000 messages de chat IA</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>300 générations d'images premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>100 générations de musique premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                    <li class="li-plan"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
                 <a href="#" class="btn">Choisir ce plan</a>
             </div>
