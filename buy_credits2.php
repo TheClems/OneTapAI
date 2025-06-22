@@ -7,6 +7,22 @@ $user = getCurrentUser();
 $success = '';
 $error = '';
 
+
+if($_SESSION['user_id']){
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $abonnement_id = $user['abonnement_id'];
+    if($abonnement_id==null){
+        $container_visibility_no_abonnement = "none";
+        $container_visibility_abonnement = "block";
+    }else{
+        $container_visibility_no_abonnement = "block";
+        $container_visibility_abonnement = "none";
+    }
+}
+
 // Traiter l'achat fictif
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['package'])) {
     $package = $_POST['package'];
@@ -63,7 +79,49 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Animated background -->
     <div class="animated-bg" id="animatedBg"></div>
 
-    <div class="container">
+    <div class="container_no_abonnement" style="display: <?php echo $container_visibility_no_abonnement; ?>;">
+        <div class="header">
+            <h1>Buy credits</h1>
+            <p class="subtitle">Boost your creativity with our AI credit packs</p>
+        </div>
+
+        <div class="demo-notice">
+            <strong>⚡ Demo mode</strong> : Purchases are simulated, credits will be added immediately without real payment.
+        </div>
+
+        <div class="current-credits">
+            <div class="current-credits-content">
+                <p>Your current credits</p>
+                <div class="credits-number"><?php echo number_format($user['credits']); ?></div>
+            </div>
+        </div>
+
+        <?php if ($success): ?>
+            <div class="success">✅ <?php echo htmlspecialchars($success); ?></div>
+        <?php endif; ?>
+
+        <?php if ($error): ?>
+            <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+
+        <div class="packages">
+            <?php foreach ($packages as $i => $package): ?>
+                <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
+                    <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
+                    <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
+                    <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
+                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                        Buy
+                    </button>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+
+
+
+    <div class="container_abonnement" style="display: <?php echo $container_visibility_abonnement; ?>;">
         <div class="header">
             <h1>Buy credits</h1>
             <p class="subtitle">Boost your creativity with our AI credit packs</p>
