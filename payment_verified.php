@@ -1,9 +1,6 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(0);
-require_once 'config.php';
-
-
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -208,17 +205,12 @@ function donnerAccesFormation($user_id, $formation_id) {
     );
 }
 
-$pdo = getDBConnection();
-try {
-    $stmt = $pdo->prepare("UPDATE users SET stripe_user_id='$customer_id', stripe_subscription_id = '$subscription_id', abonnement ='$product_name', abonnement_date = '$timestamp' WHERE id = $user_id");
-    $stmt->execute();
-} catch (PDOException $e) {
-    error_log("Erreur mise à jour utilisateur: " . $e->getMessage());
-}
+
 
 
 http_response_code(200);
 echo "Webhook received";
 exit();
 ?>
+
 
