@@ -72,13 +72,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Buy credits - OneTapAI</title>
 
 </head>
-<style>
-#paypal-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-</style>
+
 <body class="body_buy_credits">
     <?php require_once 'nav.php'; ?>
 
@@ -180,7 +174,9 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <h3 id="selected-package-name"></h3>
-        <div id="paypal-button-container"></div>
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+            <div id="paypal-button-container"></div>
+        </div>
 
         <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription"></script>
         <script>
