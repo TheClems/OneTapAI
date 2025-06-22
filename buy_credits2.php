@@ -16,11 +16,11 @@ if ($_SESSION['user_id']) {
     if ($abonnement_id == null) {
         $container_visibility_no_abonnement = "none";
         $container_visibility_abonnement = "block";
-        $has_subscription = false;
+        $has_subscription = true;
     } else {
         $container_visibility_no_abonnement = "block";
         $container_visibility_abonnement = "none";
-        $has_subscription = true;
+        $has_subscription = false;
     }
 }
 
