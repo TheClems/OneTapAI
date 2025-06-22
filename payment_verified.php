@@ -181,8 +181,8 @@ switch ($event->type) {
                         $subscription_id,
                         $product_name,
                         $timestamp,
-                        $client_reference_id,
-                        $nb_credits
+                        $nb_credits,
+                        $client_reference_id
                     ]);
                     
                     if ($stmt->rowCount() > 0) {
