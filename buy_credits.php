@@ -77,7 +77,7 @@ try {
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
                     <div class="credits"><?php echo number_format($package['nb_credits']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                    <button class="btn acheter-btn">
+                    <button class="btn acheter-btn" onclick="window.location.href='<?php echo $package['url_stripe']; ?><?php echo $user['id']; ?>'">
                         Buy
                     </button>
                 </div>
