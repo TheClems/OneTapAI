@@ -165,7 +165,6 @@ if (toggleBtn) {
         if (window.innerWidth > 1024) {
             if (chatContainer) chatContainer.classList.toggle('collapsed');
             if (chatHistoryPanel2) chatHistoryPanel2.classList.toggle('collapsed');
-            if (body_plans) body_plans.classList.toggle('collapsed');
 
 
         }
@@ -173,7 +172,6 @@ if (toggleBtn) {
         if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
         if (body_account) body_account.classList.toggle('collapsed');
         if (toggleBtn2) toggleBtn2.classList.toggle('collapsed');
-        if (body_plans) body_plans.classList.toggle('collapsed');
 
         if (body_job) body_job.classList.toggle('collapsed');
     });
