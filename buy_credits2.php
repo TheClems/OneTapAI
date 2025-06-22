@@ -1,9 +1,9 @@
 <?php
 require_once 'config.php';
 requireLogin();
-
-$user = getCurrentUser();
 session_start(); 
+$user = getCurrentUser();
+echo $user['id'];
 $success = '';
 $error = '';
 
@@ -26,7 +26,6 @@ if ($_SESSION['user_id']) {
 
 
 
-$user = getCurrentUser();
 
 // Récupérer les packages d'abonnement
 $pdo = getDBConnection();
