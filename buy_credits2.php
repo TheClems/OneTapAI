@@ -3,7 +3,7 @@ require_once 'config.php';
 requireLogin();
 
 $user = getCurrentUser();
-
+session_start(); 
 $success = '';
 $error = '';
 
