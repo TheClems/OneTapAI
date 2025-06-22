@@ -2,17 +2,31 @@
 require_once 'config.php';
 requireLogin();
 
-$user = getCurrentUser();
+$user = getCurrentUser(); // Une seule déclaration
 
 $success = '';
 $error = '';
 
-$user = getCurrentUser();
+// Gestion des messages de session si nécessaire
+if (isset($_SESSION['success'])) {
+    $success = $_SESSION['success'];
+    unset($_SESSION['success']);
+}
+if (isset($_SESSION['error'])) {
+    $error = $_SESSION['error'];
+    unset($_SESSION['error']);
+}
 
-// Récupérer les packages d'abonnement
-$pdo = getDBConnection();
-$stmt = $pdo->query("SELECT * FROM paiements ORDER BY prix ASC");
-$packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Récupérer les packages d'abonnement avec gestion d'erreurs
+try {
+    $pdo = getDBConnection();
+    $stmt = $pdo->prepare("SELECT id, nom, credits_offerts, prix FROM paiements ORDER BY prix ASC");
+    $stmt->execute();
+    $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $error = "Erreur lors du chargement des packages.";
+    $packages = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -24,9 +38,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="css/animations.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>Buy credits - OneTapAI</title>
-
 </head>
-
 
 <body class="body_buy_credits">
 <?php require_once 'nav.php'; ?>
@@ -60,23 +72,34 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
 
         <div class="packages">
-            <?php foreach ($packages as $i => $package): ?>
-                <div class="package <?php echo $i === 1 ? 'featured' : ''; ?>">
+            <?php foreach ($packages as $index => $package): ?>
+                <div class="package <?php echo $index === 1 ? 'featured' : ''; ?>">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
                     <div class="credits"><?php echo number_format($package['credits_offerts']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
-                    <button class="btn acheter-btn" data-id="<?= $i ?>" data-nom="<?= htmlspecialchars($package['nom']) ?>" data-prix="<?= $package['prix'] ?>" data-credits="<?= $package['credits_offerts'] ?>">
+                    <button class="btn acheter-btn" 
+                            data-id="<?= htmlspecialchars($package['id']) ?>" 
+                            data-nom="<?= htmlspecialchars($package['nom']) ?>" 
+                            data-prix="<?= htmlspecialchars($package['prix']) ?>" 
+                            data-credits="<?= htmlspecialchars($package['credits_offerts']) ?>">
                         Buy
                     </button>
-                    <div class="paypal-boutons" id="paypal-boutons-<?= $i ?>"></div>
+                    <div class="paypal-boutons" id="paypal-boutons-<?= htmlspecialchars($package['id']) ?>"></div>
                 </div>
             <?php endforeach; ?>
         </div>
 
     </div>
 
-    <?php $pseudo = htmlspecialchars($user['username']); ?>
-
+    <script>
+        // Passer les données utilisateur de manière sécurisée
+        window.userData = {
+            username: <?= json_encode($user['username']) ?>,
+            credits: <?= json_encode($user['credits']) ?>
+        };
+    </script>
+    
     <script src="scripts/animated-bg.js"></script>
     <script type="text/javascript" src="scripts/nav.js"></script>
 </body>
+</html>
