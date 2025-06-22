@@ -1,6 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(0);
+require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -51,15 +52,16 @@ switch ($event->type) {
         $stripe_customer_id = $session->customer ?? null;
         $subscription_id = $session->subscription ?? null;
         $montant_total = $session->amount_total ?? 0;
+        $timestamp = date('Y-m-d H:i:s'); // Définir le timestamp
         
         // RÉCUPÉRATION DES PRODUITS ACHETÉS
         try {
-            // Méthode 1: Via les line_items de la session
             $line_items = \Stripe\Checkout\Session::allLineItems($session->id, [
                 'limit' => 100
             ]);
             
             $produits_achetes = [];
+            $product_names = []; // Collecter les noms des produits
             
             foreach ($line_items->data as $item) {
                 $price_id = $item->price->id;
@@ -69,6 +71,7 @@ switch ($event->type) {
                 
                 // Récupère les détails du produit
                 $product = \Stripe\Product::retrieve($product_id);
+                $product_names[] = $product->name; // Collecter le nom
                 
                 $produits_achetes[] = [
                     'price_id' => $price_id,
@@ -78,12 +81,11 @@ switch ($event->type) {
                     'quantity' => $quantity,
                     'amount_total' => $amount_total,
                     'currency' => $item->currency,
-                    // Métadonnées du produit (utiles pour identifier ton produit)
                     'metadata' => $product->metadata->toArray()
                 ];
             }
             
-            // Méthode 2: Si c'est un abonnement, récupère via la subscription
+            // Si c'est un abonnement, récupère via la subscription
             if ($subscription_id) {
                 $subscription = \Stripe\Subscription::retrieve($subscription_id);
                 
@@ -91,10 +93,8 @@ switch ($event->type) {
                     $price_id = $sub_item->price->id;
                     $product_id = $sub_item->price->product;
                     
-                    // Récupère les détails du produit d'abonnement
                     $product = \Stripe\Product::retrieve($product_id);
                     
-                    // Ajoute les infos d'abonnement si pas déjà présentes
                     $found = false;
                     foreach ($produits_achetes as &$produit) {
                         if ($produit['product_id'] === $product_id) {
@@ -106,6 +106,7 @@ switch ($event->type) {
                     }
                     
                     if (!$found) {
+                        $product_names[] = $product->name;
                         $produits_achetes[] = [
                             'price_id' => $price_id,
                             'product_id' => $product_id,
@@ -121,7 +122,7 @@ switch ($event->type) {
             
             // LOG COMPLET pour debug
             $log_data = [
-                'timestamp' => date('Y-m-d H:i:s'),
+                'timestamp' => $timestamp,
                 'event_type' => 'checkout.session.completed',
                 'client_reference_id' => $client_reference_id,
                 'customer_email' => $customer_email,
@@ -135,24 +136,71 @@ switch ($event->type) {
             
             // TRAITEMENT DE TES DONNÉES
             foreach ($produits_achetes as $produit) {
-                // Exemple : identifier le type de produit via metadata ou nom
                 if (isset($produit['metadata']['type'])) {
                     switch ($produit['metadata']['type']) {
                         case 'premium':
-                            // Activer premium pour l'utilisateur
                             activerPremium($client_reference_id, $subscription_id);
                             break;
                         case 'formation':
-                            // Donner accès à une formation
                             donnerAccesFormation($client_reference_id, $produit['metadata']['formation_id']);
                             break;
                     }
                 } else {
-                    // Ou identifier par nom de produit
                     if (strpos(strtolower($produit['product_name']), 'premium') !== false) {
                         activerPremium($client_reference_id, $subscription_id);
                     }
                 }
+            }
+            
+            // MISE À JOUR BASE DE DONNÉES - CORRIGÉE
+            if ($client_reference_id) {
+                $pdo = getDBConnection();
+                try {
+                    // Créer une chaîne avec tous les noms de produits
+                    $product_name = implode(', ', $product_names);
+                    
+                    // Requête préparée sécurisée
+                    $stmt = $pdo->prepare("
+                        UPDATE users 
+                        SET stripe_user_id = ?, 
+                            stripe_subscription_id = ?, 
+                            abonnement = ?, 
+                            abonnement_date = ? 
+                        WHERE id = ?
+                    ");
+                    
+                    $stmt->execute([
+                        $stripe_customer_id,
+                        $subscription_id,
+                        $product_name,
+                        $timestamp,
+                        $client_reference_id
+                    ]);
+                    
+                    if ($stmt->rowCount() > 0) {
+                        file_put_contents('db_updates.log', 
+                            "Utilisateur mis à jour: $client_reference_id - " . $timestamp . "\n", 
+                            FILE_APPEND
+                        );
+                    } else {
+                        file_put_contents('db_updates.log', 
+                            "Aucun utilisateur trouvé avec l'ID: $client_reference_id - " . $timestamp . "\n", 
+                            FILE_APPEND
+                        );
+                    }
+                    
+                } catch (PDOException $e) {
+                    error_log("Erreur mise à jour utilisateur: " . $e->getMessage());
+                    file_put_contents('db_errors.log', 
+                        "Erreur DB: " . $e->getMessage() . " - " . $timestamp . "\n", 
+                        FILE_APPEND
+                    );
+                }
+            } else {
+                file_put_contents('db_updates.log', 
+                    "client_reference_id manquant - impossible de mettre à jour l'utilisateur - " . $timestamp . "\n", 
+                    FILE_APPEND
+                );
             }
             
         } catch (Exception $e) {
@@ -166,11 +214,9 @@ switch ($event->type) {
         break;
         
     case 'invoice.payment_succeeded':
-        // Paiements récurrents d'abonnement
         $invoice = $event->data->object;
         $subscription_id = $invoice->subscription;
         
-        // Log du paiement récurrent
         file_put_contents('webhook_paiements_recurrents.txt', 
             "Paiement récurrent - " . date('Y-m-d H:i:s') . 
             " - Subscription: " . $subscription_id . 
@@ -185,8 +231,6 @@ switch ($event->type) {
 
 // Fonctions d'exemple pour traiter les produits
 function activerPremium($user_id, $subscription_id) {
-    // Exemple : mise à jour base de données
-    // UPDATE users SET is_premium = 1, stripe_subscription_id = '$subscription_id' WHERE id = $user_id
     file_put_contents('premium_activations.txt', 
         "Premium activé - " . date('Y-m-d H:i:s') . 
         " - User: " . $user_id . 
@@ -196,7 +240,6 @@ function activerPremium($user_id, $subscription_id) {
 }
 
 function donnerAccesFormation($user_id, $formation_id) {
-    // Exemple : donner accès à une formation spécifique
     file_put_contents('formations_acces.txt', 
         "Accès formation - " . date('Y-m-d H:i:s') . 
         " - User: " . $user_id . 
@@ -209,3 +252,4 @@ http_response_code(200);
 echo "Webhook received";
 exit();
 ?>
+
