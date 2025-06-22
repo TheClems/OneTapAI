@@ -173,7 +173,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         </div>
 
-        <h3 id="selected-package-name"></h3>
+        <h3 id="selected-package-name" style="text-align: center; margin-top: 20px;"></h3>
         <div style="display: flex; justify-content: center; margin-top: 20px;">
             <div id="paypal-button-container"></div>
         </div>
