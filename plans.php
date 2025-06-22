@@ -27,60 +27,76 @@ $user = getCurrentUser();
         <p class="subtitle">Choose the right plan for you</p>
 
         <div class="container">
-    <!-- Card 1 -->
-    <div class="card">
-      <h3>
-        <span>$9</span>
-        <span>/mo</span>
-      </h3>
-      <p>Essential AI tools for everyday use</p>
-      <hr />
-      <ul>
-        <li><i class="bi bi-check-circle-fill"></i><span>1,000 AI powered chat messages</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>30 premium image generations</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>10 premium music generation</span></li>
-        <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Access to all premium AI models</span></li>
-        <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Early access to new features</span></li>
-      </ul>
-      <a href="#" class="btn">Choose plan</a>
-    </div>
+        <div class="pricing-header">
+            <h1>Choisissez votre plan AI</h1>
+            <p>Débloquez le potentiel de l'intelligence artificielle</p>
+        </div>
 
-    <!-- Card 2 -->
-    <div class="card highlight">
-      <h3>
-        <span>$17</span>
-        <span>/mo</span>
-      </h3>
-      <p>Advanced features for serious AI enthusiasts.</p>
-      <hr />
-      <ul>
-        <li><i class="bi bi-check-circle-fill"></i><span>5,000 AI powered chat messages</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>100 premium image generations</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>40 premium music generation</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>Access to all premium AI models</span></li>
-        <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Early access to new features</span></li>
-      </ul>
-      <a href="#" class="btn">Choose plan</a>
-    </div>
+        <div id="loading" class="loading" style="display: none;">
+            <i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>
+            Chargement de votre plan actuel...
+        </div>
 
-    <!-- Card 3 -->
-    <div class="card">
-      <h3>
-        <span>$29</span>
-        <span>/mo</span>
-      </h3>
-      <p>Unlimited potential for power users</p>
-      <hr />
-      <ul>
-        <li><i class="bi bi-check-circle-fill"></i><span>10,000 AI powered chat messages</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>300 premium image generations</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>100 premium music generations</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>Access to all premium AI models</span></li>
-        <li><i class="bi bi-check-circle-fill"></i><span>Early access to new features</span></li>
-      </ul>
-      <a href="#" class="btn">Choose plan</a>
+        <div id="error" class="error" style="display: none;">
+            Impossible de charger les informations du plan actuel.
+        </div>
+
+        <div class="cards-container" id="cards-container">
+            <!-- Card 1 - Essential -->
+            <div class="card" data-plan="essential">
+                <h3>
+                    <span>9€</span>
+                    <span>/mois</span>
+                </h3>
+                <p>Outils IA essentiels pour un usage quotidien</p>
+                <hr />
+                <ul>
+                    <li><i class="bi bi-check-circle-fill"></i><span>1 000 messages de chat IA</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>30 générations d'images premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>10 générations de musique premium</span></li>
+                    <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                    <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
+                </ul>
+                <a href="#" class="btn">Choisir ce plan</a>
+            </div>
+
+            <!-- Card 2 - Pro -->
+            <div class="card highlight" data-plan="pro">
+                <h3>
+                    <span>17€</span>
+                    <span>/mois</span>
+                </h3>
+                <p>Fonctionnalités avancées pour les passionnés d'IA</p>
+                <hr />
+                <ul>
+                    <li><i class="bi bi-check-circle-fill"></i><span>5 000 messages de chat IA</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>100 générations d'images premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>40 générations de musique premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                    <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
+                </ul>
+                <a href="#" class="btn">Choisir ce plan</a>
+            </div>
+
+            <!-- Card 3 - Ultimate -->
+            <div class="card" data-plan="ultimate">
+                <h3>
+                    <span>29€</span>
+                    <span>/mois</span>
+                </h3>
+                <p>Potentiel illimité pour les utilisateurs experts</p>
+                <hr />
+                <ul>
+                    <li><i class="bi bi-check-circle-fill"></i><span>10 000 messages de chat IA</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>300 générations d'images premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>100 générations de musique premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès à tous les modèles IA premium</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
+                </ul>
+                <a href="#" class="btn">Choisir ce plan</a>
+            </div>
+        </div>
     </div>
-  </div>
 
     </div>
     <script type="text/javascript" src="scripts/nav.js"></script>
