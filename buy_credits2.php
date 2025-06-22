@@ -7,7 +7,6 @@ $user = getCurrentUser();
 $success = '';
 $error = '';
 
-
 if ($_SESSION['user_id']) {
     $pdo = getDBConnection();
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
@@ -64,13 +63,12 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR"></script>
+    <!-- ONLY ONE PayPal SDK script - load it without intent to handle both cases -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ATNKqjfci0KXJor6txjMz8qIWbAmbhXL1JWgKnmGl108_QSR3K_zKzUFHaNsIroR5D7tudYo4X1yZOaV&currency=EUR&vault=true"></script>
     <link rel="stylesheet" href="css/buy_credits.css" />
     <link rel="stylesheet" href="css/animations.css">
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <title>Buy credits - OneTapAI</title>
-
 </head>
 
 <body class="body_buy_credits">
@@ -117,9 +115,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-
-
-
     <div class="container_abonnement" style="display: <?php echo $container_visibility_abonnement; ?>;">
         <div class="header">
             <h1>Buy credits subscription</h1>
@@ -145,17 +140,14 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="error">❌ <?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-
-
-
         <?php
         $pdo = getDBConnection();
         $abonnements_stmt = $pdo->query("SELECT * FROM abonnements");
-        $packages = $abonnements_stmt->fetchAll(PDO::FETCH_ASSOC);
+        $subscription_packages = $abonnements_stmt->fetchAll(PDO::FETCH_ASSOC);
         ?>
 
         <div class="packages">
-            <?php foreach ($packages as $i => $package): ?>
+            <?php foreach ($subscription_packages as $i => $package): ?>
                 <div class="package <?= $i === 1 ? 'featured' : '' ?>">
                     <h3><?= htmlspecialchars($package['nom']) ?></h3>
                     <div class="credits"><?= number_format($package['credits_offerts']) ?> crédits/mois</div>
@@ -175,75 +167,74 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <h3 id="selected-package-name" style="text-align: center; margin-top: 20px;"></h3>
         <div style="display: flex; justify-content: center; margin-top: 20px;">
-            <div id="paypal-button-container"></div>
+            <div id="paypal-button-container-subscription"></div>
         </div>
-
-        <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription"></script>
-        <script>
-            let selectedPlanId = null;
-
-            document.querySelectorAll('.acheter-btn-abonnement').forEach(button => {
-                button.addEventListener('click', function() {
-                    const planId = this.dataset.plan;
-                    const nom = this.dataset.nom;
-                    const prix = this.dataset.prix;
-
-                    selectedPlanId = planId;
-
-                    document.getElementById('selected-package-name').innerText = `Abonnement sélectionné : ${nom} (${prix} € / mois)`;
-
-                    // Supprimer le bouton précédent s’il existe déjà
-                    const container = document.getElementById('paypal-button-container');
-                    container.innerHTML = '';
-
-                    // Rendu dynamique du bouton avec le nouveau plan ID
-                    paypal.Buttons({
-                        style: {
-                            shape: 'rect',
-                            color: 'blue',
-                            layout: 'vertical',
-                            label: 'subscribe',
-                            center: true
-                        },
-                        createSubscription: function(data, actions) {
-                            return actions.subscription.create({
-                                plan_id: selectedPlanId
-                            });
-                        },
-                        onApprove: function(data, actions) {
-                            alert("Abonnement validé : " + data.subscriptionID);
-                        }
-                    }).render('#paypal-button-container');
-                });
-            });
-        </script>
-
     </div>
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
-
-
-
-
-
-
 
     <!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
     <div class="paypal-render-area" id="paypal-render-area"></div>
 
     <script>
         const pseudoPHP = <?= json_encode($user['username']) ?>;
+        
+        // SUBSCRIPTION BUTTONS (for recurring payments)
+        let selectedPlanId = null;
+
+        document.querySelectorAll('.acheter-btn-abonnement').forEach(button => {
+            button.addEventListener('click', function() {
+                const planId = this.dataset.plan;
+                const nom = this.dataset.nom;
+                const prix = this.dataset.prix;
+
+                selectedPlanId = planId;
+
+                document.getElementById('selected-package-name').innerText = `Abonnement sélectionné : ${nom} (${prix} € / mois)`;
+
+                // Clear previous button
+                const container = document.getElementById('paypal-button-container-subscription');
+                container.innerHTML = '';
+
+                // Render subscription button with createSubscription
+                paypal.Buttons({
+                    style: {
+                        shape: 'rect',
+                        color: 'blue',
+                        layout: 'vertical',
+                        label: 'subscribe',
+                        center: true
+                    },
+                    createSubscription: function(data, actions) {
+                        return actions.subscription.create({
+                            plan_id: selectedPlanId
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        alert("Abonnement validé : " + data.subscriptionID);
+                        // Handle subscription approval here
+                        console.log('Subscription ID:', data.subscriptionID);
+                    },
+                    onError: function(err) {
+                        console.error("Erreur d'abonnement:", err);
+                        alert("Une erreur est survenue avec l'abonnement PayPal.");
+                    }
+                }).render('#paypal-button-container-subscription');
+            });
+        });
+
+        // ONE-TIME PAYMENT BUTTONS (for credit purchases)
         document.querySelectorAll('.acheter-btn-no-abonnement').forEach(function(button) {
             button.addEventListener('click', function() {
                 const nom = this.getAttribute('data-nom');
                 const prix = this.getAttribute('data-prix');
                 const credits = this.getAttribute('data-credits');
 
-                // Réactive tous les boutons et désactive celui cliqué
+                // Disable clicked button and enable others
                 document.querySelectorAll('.acheter-btn-no-abonnement').forEach(btn => btn.disabled = false);
                 this.disabled = true;
 
-                // Trouver ou créer le conteneur pour PayPal
+                // Find or create PayPal container
                 let renderArea = document.getElementById('paypal-render-area');
                 if (!renderArea) {
                     renderArea = document.createElement('div');
@@ -251,8 +242,9 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     document.body.appendChild(renderArea);
                 }
 
-                renderArea.innerHTML = '<div id="paypal-button-container"></div>';
+                renderArea.innerHTML = '<div id="paypal-button-container-onetime"></div>';
 
+                // Render one-time payment button with createOrder
                 paypal.Buttons({
                     createOrder: function(data, actions) {
                         return actions.order.create({
@@ -275,7 +267,7 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             alert("✅ Paiement réussi par " + details.payer.name.given_name + " !");
                             console.log("Détails : ", details);
 
-                            // Appel à la page PHP pour ajouter les crédits
+                            // Call PHP to add credits
                             fetch('payment_verified.php', {
                                     method: 'POST',
                                     headers: {
@@ -289,7 +281,6 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 .then(result => {
                                     if (result.status === 'success') {
                                         alert("🎉 Vos crédits ont été ajoutés avec succès !");
-                                        // Recharger la page pour mettre à jour le solde
                                         window.location.reload();
                                     } else {
                                         alert("❌ Une erreur est survenue : " + result.message);
@@ -305,9 +296,9 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         console.error("Erreur PayPal:", err);
                         alert("Une erreur est survenue avec PayPal.");
                     }
-                }).render('#paypal-button-container');
+                }).render('#paypal-button-container-onetime');
 
-                // Optionnel : scroll vers le bouton PayPal
+                // Scroll to PayPal button
                 renderArea.scrollIntoView({
                     behavior: 'smooth'
                 });
@@ -317,3 +308,4 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script type="text/javascript" src="scripts/nav.js"></script>
     <script src="scripts/animated-bg.js"></script>
 </body>
+</html>
