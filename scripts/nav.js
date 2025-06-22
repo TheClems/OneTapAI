@@ -36,6 +36,7 @@ const historyHeader = document.querySelectorAll('.history-header');
 const chatMessages2 = document.querySelector('.chat-messages');
 const inputContainer = document.querySelector('.input-container');
 const messageAi = document.querySelector('.message-content');
+const body_plans = document.querySelector('.body_plans');
 
 const body_job = document.querySelector('.body_job');
 const elementsToToggle = [
@@ -171,6 +172,7 @@ if (toggleBtn) {
         if (sidebar) sidebar.classList.toggle('collapsed');
         if (body_buy_credits) body_buy_credits.classList.toggle('collapsed');
         if (body_account) body_account.classList.toggle('collapsed');
+        if (body_plans) body_plans.classList.toggle('collapsed');
         if (toggleBtn2) toggleBtn2.classList.toggle('collapsed');
 
         if (body_job) body_job.classList.toggle('collapsed');
