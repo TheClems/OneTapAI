@@ -160,31 +160,47 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             <?php endforeach; ?>
         </div>
+        <?php
+
+            $pdo = getDBConnection();
+            $stmt = $pdo->prepare("SELECT abonement_id_paypal FROM abonnements WHERE id = ?");
+            $stmt->execute([$package['id']]);
+            $abonnement_id_paypal  = $stmt->fetchColumn();
+
+        ?>
+
+        <div id="paypal-button-container-<?= $abonnement_id_paypal ?>"></div>
+        <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+        <script>
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'blue',
+                layout: 'vertical',
+                label: 'subscribe'
+            },
+            createSubscription: function(data, actions) {
+                return actions.subscription.create({
+                /* Creates the subscription */
+                plan_id: '<?= $abonnement_id_paypal ?>'
+                });
+            },
+            onApprove: function(data, actions) {
+                alert(data.subscriptionID); // You can add optional success message for the subscriber here
+            }
+        }).render('#paypal-button-container-<?= $abonnement_id_paypal ?>'); // Renders the PayPal button
+        </script>
+
     </div>
 
     <?php $pseudo = htmlspecialchars($user['username']); ?>
 
-    <div id="paypal-button-container-P-5EU09906J11545158NBL6PAY"></div>
-<script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
-<script>
-  paypal.Buttons({
-      style: {
-          shape: 'rect',
-          color: 'blue',
-          layout: 'vertical',
-          label: 'subscribe'
-      },
-      createSubscription: function(data, actions) {
-        return actions.subscription.create({
-          /* Creates the subscription */
-          plan_id: 'P-5EU09906J11545158NBL6PAY'
-        });
-      },
-      onApprove: function(data, actions) {
-        alert(data.subscriptionID); // You can add optional success message for the subscriber here
-      }
-  }).render('#paypal-button-container-P-5EU09906J11545158NBL6PAY'); // Renders the PayPal button
-</script>
+
+
+
+
+
+
     <!-- Zone pour rendre le bouton PayPal en dehors des cartes -->
     <div class="paypal-render-area" id="paypal-render-area"></div>
 
