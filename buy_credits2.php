@@ -233,14 +233,14 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <script>
         const pseudoPHP = <?= json_encode($user['username']) ?>;
-        document.querySelectorAll('.acheter-btn-abonnement').forEach(function(button) {
+        document.querySelectorAll('.acheter-btn-no-abonnement').forEach(function(button) {
             button.addEventListener('click', function() {
                 const nom = this.getAttribute('data-nom');
                 const prix = this.getAttribute('data-prix');
                 const credits = this.getAttribute('data-credits');
 
                 // Réactive tous les boutons et désactive celui cliqué
-                document.querySelectorAll('.acheter-btn-abonnement').forEach(btn => btn.disabled = false);
+                document.querySelectorAll('.acheter-btn-no-abonnement').forEach(btn => btn.disabled = false);
                 this.disabled = true;
 
                 // Trouver ou créer le conteneur pour PayPal
