@@ -148,54 +148,73 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
+        <?php
+        $pdo = getDBConnection();
+        $abonnements_stmt = $pdo->query("SELECT id, nom, credits_offerts, prix, abonement_id_paypal FROM abonnements");
+        $packages = $abonnements_stmt->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+
         <div class="packages">
             <?php foreach ($packages as $i => $package): ?>
-                <?php
-                    // Récupération sécurisée de l'abonnement PayPal pour ce package
-                    $pdo = getDBConnection();
-                    $stmt = $pdo->prepare("SELECT abonement_id_paypal FROM abonnements WHERE id = ?");
-                    $stmt->execute([$package['id']]);
-                    $abonnement_id_paypal = $stmt->fetchColumn();
-
-                    // Si on n’a pas trouvé d’ID PayPal, on continue au suivant
-                    if (!$abonnement_id_paypal) continue;
-                ?>
                 <div class="package <?= $i === 1 ? 'featured' : '' ?>">
                     <h3><?= htmlspecialchars($package['nom']) ?></h3>
                     <div class="credits"><?= number_format($package['credits_offerts']) ?> crédits/mois</div>
                     <div class="price"><?= number_format($package['prix'], 2) ?>€</div>
-                    <button class="btn acheter-btn-abonnement"
-                            data-id="<?= htmlspecialchars($package['id']) ?>"
-                            data-nom="<?= htmlspecialchars($package['nom']) ?>"
-                            data-prix="<?= htmlspecialchars($package['prix']) ?>"
-                            data-credits="<?= htmlspecialchars($package['credits_offerts']) ?>">
+                    <button
+                        class="btn acheter-btn-abonnement"
+                        data-id="<?= htmlspecialchars($package['id']) ?>"
+                        data-nom="<?= htmlspecialchars($package['nom']) ?>"
+                        data-prix="<?= htmlspecialchars($package['prix']) ?>"
+                        data-credits="<?= htmlspecialchars($package['credits_offerts']) ?>"
+                        data-plan="<?= htmlspecialchars($package['abonement_id_paypal']) ?>">
                         Buy
                     </button>
-
-                    <div id="paypal-button-container-<?= htmlspecialchars($package['id']) ?>"></div>
-
-                    <script>
-                        paypal.Buttons({
-                            style: {
-                                shape: 'rect',
-                                color: 'blue',
-                                layout: 'vertical',
-                                label: 'subscribe'
-                            },
-                            createSubscription: function(data, actions) {
-                                return actions.subscription.create({
-                                    plan_id: '<?= htmlspecialchars($abonnement_id_paypal) ?>'
-                                });
-                            },
-                            onApprove: function(data, actions) {
-                                alert("Abonnement validé : " + data.subscriptionID);
-                                // Tu peux ici appeler ton backend pour enregistrer l’abonnement
-                            }
-                        }).render('#paypal-button-container-<?= htmlspecialchars($package['id']) ?>');
-                    </script>
                 </div>
             <?php endforeach; ?>
         </div>
+
+        <hr>
+        <h3 id="selected-package-name"></h3>
+        <div id="paypal-button-container"></div>
+
+        <script src="https://www.paypal.com/sdk/js?client-id=AXiApajc_-WUvZncYFum72yolTN4aPx3FwMhh4GNCauMG_mMqxpPsZnz2oXQFbqRlri2T_Yl5zFDUgsc&vault=true&intent=subscription"></script>
+        <script>
+            let selectedPlanId = null;
+
+            document.querySelectorAll('.acheter-btn-abonnement').forEach(button => {
+                button.addEventListener('click', function() {
+                    const planId = this.dataset.plan;
+                    const nom = this.dataset.nom;
+                    const prix = this.dataset.prix;
+
+                    selectedPlanId = planId;
+
+                    document.getElementById('selected-package-name').innerText = `Abonnement sélectionné : ${nom} (${prix} € / mois)`;
+
+                    // Supprimer le bouton précédent s’il existe déjà
+                    const container = document.getElementById('paypal-button-container');
+                    container.innerHTML = '';
+
+                    // Rendu dynamique du bouton avec le nouveau plan ID
+                    paypal.Buttons({
+                        style: {
+                            shape: 'rect',
+                            color: 'blue',
+                            layout: 'vertical',
+                            label: 'subscribe'
+                        },
+                        createSubscription: function(data, actions) {
+                            return actions.subscription.create({
+                                plan_id: selectedPlanId
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            alert("Abonnement validé : " + data.subscriptionID);
+                        }
+                    }).render('#paypal-button-container');
+                });
+            });
+        </script>
 
     </div>
 
