@@ -12,6 +12,7 @@ $user = getCurrentUser();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account - OneTapAI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/tailwind-build.css">
     <link rel="stylesheet" href="css/plans.css">
     <link rel="stylesheet" href="css/animations.css">
@@ -27,10 +28,6 @@ $user = getCurrentUser();
         <p class="subtitle">Choose the right plan for you</p>
 
         <div class="container">
-        <div class="pricing-header">
-            <h1>Choisissez votre plan AI</h1>
-            <p>Débloquez le potentiel de l'intelligence artificielle</p>
-        </div>
 
         <div id="loading" class="loading" style="display: none;">
             <i class="bi bi-arrow-clockwise" style="animation: spin 1s linear infinite;"></i>
