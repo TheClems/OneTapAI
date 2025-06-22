@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #0a0a0a;
+    color: #ffffff;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.body_plans {
+    margin-left: 17.5rem;
+}
+
+.body_plans.collapsed {
+    margin-left: 2rem;
+}
+
+.body_plans.mobile {
+    margin-left: 0rem;
+    overflow: visible;
+}
+
+.main-content {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
