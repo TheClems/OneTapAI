@@ -54,7 +54,7 @@ $has_subscription = $abonnement['abonnement'] != null;
             <div class="card" data-plan="starter">
                 <h2><?php echo $packages[0]['nom']; ?></h2>
                 <h3>
-                    <span><?php echo $packages[0]['prix']; ?>€</span>
+                    <span><?php echo rtrim(rtrim($packages[0]['prix'],'0'),'.'); ?>€</span>
                     <span>/mois</span>
                 </h3>
                 <p>Outils IA essentiels pour un usage quotidien</p>
@@ -68,14 +68,14 @@ $has_subscription = $abonnement['abonnement'] != null;
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="<?php echo $packages[0]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
+                <a href="<?php echo $packages[0]['url_stripe']; ?>" class="btn" target="_blank">Choisir ce plan</a>
             </div>
 
             <!-- Card 2 - Premium -->
             <div class="card" data-plan="premium">
                 <h2><?php echo $packages[1]['nom']; ?></h2>
                 <h3>
-                    <span><?php echo $packages[1]['prix']; ?>€</span>
+                    <span><?php echo rtrim(rtrim($packages[1]['prix'],'0'),'.'); ?>€</span>
                     <span>/mois</span>
                 </h3>
                 <p>Fonctionnalités avancées pour les passionnés d'IA</p>
@@ -89,14 +89,14 @@ $has_subscription = $abonnement['abonnement'] != null;
                     <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="<?php echo $packages[1]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
+                <a href="<?php echo $packages[1]['url_stripe']; ?>" class="btn" target="_blank">Choisir ce plan</a>
             </div>
 
             <!-- Card 3 - Professional -->
             <div class="card" data-plan="professional">
                 <h2><?php echo $packages[2]['nom']; ?></h2>
                 <h3>
-                    <span><?php echo $packages[2]['prix']; ?>€</span>
+                    <span><?php echo rtrim(rtrim($packages[2]['prix'],'0'),'.'); ?>€</span>
                     <span>/mois</span>
                 </h3>
                 <p>Potentiel illimité pour les utilisateurs experts</p>
@@ -110,7 +110,7 @@ $has_subscription = $abonnement['abonnement'] != null;
                     <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="<?php echo $packages[2]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
+                <a href="<?php echo $packages[2]['url_stripe']; ?>" class="btn" target="_blank">Choisir ce plan</a>
             </div>
         </div>
         <?php if ($has_subscription): ?>
