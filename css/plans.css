@@ -60,6 +60,17 @@ body {
 }
 
 .card {
+    background: #0d0d0d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    color: #000;
+}
+
+.card.highlight {
     background: white;
     border-radius: 12px;
     padding: 1.5rem;
@@ -67,6 +78,7 @@ body {
     border: 2px solid transparent;
     transition: all 0.3s ease;
     position: relative;
+    color: #000;
 }
 
 .card:hover {
