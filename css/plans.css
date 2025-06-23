@@ -169,7 +169,7 @@ li.disabled i {
     display: block;
     width: 100%;
     padding: 0.8rem 1.5rem;
-    background: #000;
+    background: #222;
     color: white;
     text-decoration: none;
     border-radius: 8px;
@@ -193,15 +193,6 @@ li.disabled i {
 
 .card.current-plan .btn:hover {
     background: rgba(62, 243, 199, 0.8);
-}
-
-.card.highlight .btn {
-    background: rgba(62, 243, 199, 0.9);
-    color: #000;
-}
-
-.card.highlight .btn:hover {
-    background: rgba(62, 243, 199, 1);
 }
 
 @media (max-width: 768px) {
