@@ -3,15 +3,29 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
 require_once 'config.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
-$input = @file_get_contents("php://input");
-$event = json_decode($input, true);
+\Stripe\Stripe::setApiKey($stripeSecretKey); // clé secrète API Stripe
 
-if (!$event) {
+$payload = @file_get_contents("php://input");
+$sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+$event = null;
+
+// Vérification de la signature
+try {
+    $event = \Stripe\Webhook::constructEvent(
+        $payload, $sigHeader, $stripeWebhookSecretCheckout
+    );
+} catch (\UnexpectedValueException $e) {
+    // Mauvais JSON
     http_response_code(400);
-    exit("Webhook invalide");
+    exit('Contenu invalide');
+} catch (\Stripe\Exception\SignatureVerificationException $e) {
+    // Signature invalide
+    http_response_code(400);
+    exit('Signature invalide');
 }
 
 $pdo = getDBConnection();
@@ -20,18 +34,17 @@ function logErreur($message) {
     file_put_contents("stripe_errors.log", "[" . date("Y-m-d H:i:s") . "] $message\n", FILE_APPEND);
 }
 
-if ($event['type'] === 'checkout.session.completed') {
-    $session = $event['data']['object'];
+if ($event->type === 'checkout.session.completed') {
+    $session = $event->data->object;
 
-    if (!empty($session['client_reference_id']) && !empty($session['subscription'])) {
-        $clientId = intval($session['client_reference_id']);
-        $subscriptionId = $session['subscription'];
-        \Stripe\Stripe::setApiKey($stripeSecretKey);
+    if (!empty($session->client_reference_id) && !empty($session->subscription)) {
+        $clientId = intval($session->client_reference_id);
+        $subscriptionId = $session->subscription;
 
-        $productName = null; // <- initialisation
+        $productName = null;
 
         try {
-            // Étape 1 : récupérer le nom de l'abonnement
+            // Récupération des infos d'abonnement
             $subscription = \Stripe\Subscription::retrieve($subscriptionId);
             $priceId = $subscription->items->data[0]->price->id;
             $price = \Stripe\Price::retrieve($priceId);
@@ -40,17 +53,17 @@ if ($event['type'] === 'checkout.session.completed') {
             $productName = $product->name;
             $customerId = $subscription->customer;
         } catch (\Exception $e) {
-            logErreur("Erreur lors de la récupération du nom de l'abonnement : " . $e->getMessage());
-            $productName = "Inconnu"; // valeur de secours
+            logErreur("Erreur récupération abonnement : " . $e->getMessage());
+            $productName = "Inconnu";
         }
 
         try {
-            // Étape 2 : mise à jour en base de données
+            // Mise à jour en base de données
             $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ? WHERE id = ?");
             $stmt->execute([$customerId, $productName, $clientId]);
             http_response_code(200);
         } catch (PDOException $e) {
-            logErreur("DB error (checkout): " . $e->getMessage());
+            logErreur("Erreur DB (checkout) : " . $e->getMessage());
             http_response_code(500);
         }
     } else {

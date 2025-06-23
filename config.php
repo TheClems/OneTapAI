@@ -48,3 +48,6 @@ function getCurrentUser()
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 $stripeSecretKey='sk_test_51RcoRWRpHQWEgzdpOCZacqLoI6cSuDptFH8kNlj7z9MdjtGeyvOqASjZWGrO2yO0tUFRNmlhgrbffAwiV4Qcosid00SpgNlasL';
+
+$stripeWebhookSecretCheckout = 'whsec_o6D7bLYjdCP1cOh1vAF0CEqUu9tFgNFP'; // Clé du webhook 1 (checkout.session.completed)
+$stripeWebhookSecretInvoice = 'whsec_EjTkY4HqfBgOe4sadTZtKXFXXV6yar0t';   // Clé du webhook 2 (invoice.payment_succeeded)
