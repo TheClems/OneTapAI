@@ -343,17 +343,17 @@ async function sendMessage() {
     // Déterminer l'endpoint API à utiliser
     let apiEndpoint;
     switch (selectedModel) {
-        case 'gemini': apiEndpoint = 'chat_api/gemini_api.php'; break;
-        case 'openrouter': apiEndpoint = 'chat_api/openrouter_api.php'; break;
-        case 'mistral-medium-latest': apiEndpoint = 'chat_api/mistral_api_medium_latest.php'; break;
-        case 'mistral-large-latest': apiEndpoint = 'chat_api/mistral_api_large_latest.php'; break;
-        case 'claude-3.5-haiku-latest': apiEndpoint = 'chat_api/claude_api_haiku_latest.php'; break;
-        case 'claude-sonnet-4': apiEndpoint = 'chat_api/claude_api_sonnet_4.php'; break;
-        case 'grok-3-mini': apiEndpoint = 'chat_api/grok_api_3_mini.php'; break;
-        case 'deepseek': apiEndpoint = 'chat_api/deepseek_api.php'; break;
-        case 'gpt': apiEndpoint = 'chat_api/gpt_api.php'; break;
-        case 'image': apiEndpoint = 'chat_api/image_api.php'; break;
-        default: apiEndpoint = 'chat_api/default_api.php'; break;
+        case 'gemini': apiEndpoint = '/chat_api/gemini_api.php'; break;
+        case 'openrouter': apiEndpoint = '/chat_api/openrouter_api.php'; break;
+        case 'mistral-medium-latest': apiEndpoint = '/chat_api/mistral_api_medium_latest.php'; break;
+        case 'mistral-large-latest': apiEndpoint = '/chat_api/mistral_api_large_latest.php'; break;
+        case 'claude-3.5-haiku-latest': apiEndpoint = '/chat_api/claude_api_haiku_latest.php'; break;
+        case 'claude-sonnet-4': apiEndpoint = '/chat_api/claude_api_sonnet_4.php'; break;
+        case 'grok-3-mini': apiEndpoint = '/chat_api/grok_api_3_mini.php'; break;
+        case 'deepseek': apiEndpoint = '/chat_api/deepseek_api.php'; break;
+        case 'gpt': apiEndpoint = '/chat_api/gpt_api.php'; break;
+        case 'image': apiEndpoint = '/chat_api/image_api.php'; break;
+        default: apiEndpoint = '/chat_api/default_api.php'; break;
     }
 
     // Désactiver l'interface pendant l'envoi
