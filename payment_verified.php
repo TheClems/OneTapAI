@@ -82,20 +82,22 @@ if ($event['type'] === 'checkout.session.completed') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-        $stmt = $pdo->prepare("SELECT * FROM paiement WHERE nom = ?");
-        $stmt->execute([$user['abonnement']]);
-        $paiement = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user) {
+            // seulement ici on peut accéder à $user['abonnement']
+            $stmt = $pdo->prepare("SELECT * FROM paiement WHERE nom = ?");
+            $stmt->execute([$user['abonnement']]);
+            $paiement = $stmt->fetch(PDO::FETCH_ASSOC);
+        
             $userId = $user['id'];
-
-            // Mettre à jour les infos
+        
             $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = credits + ? WHERE id = ?");
             $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
-
+        
             http_response_code(200);
         } else {
-            logErreur("Aucun utilisateur avec l'email $customerEmail");
-            http_response_code(404);
+            logErreur("Aucun utilisateur trouvé avec stripe_user_id: $customerId");
+            http_response_code(200); // on évite le 404 pour ne pas que Stripe retente
+            exit();
         }
 
     } catch (PDOException $e) {
