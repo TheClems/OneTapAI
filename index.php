@@ -61,7 +61,7 @@
                 <img
                     src="./assets/logo/logo.png"
                     alt="logo"
-                    class="tw-object-contain tw-h-full tw-w-full dark:tw-invert" />
+                    class="tw-object-contain tw-h-full tw-w-full" />
             </div>
             <span class="tw-text-base tw-font-medium">OneTapAI</span>
         </a>
