@@ -34,6 +34,7 @@ function logErreur($message) {
 
 if ($event->type === 'invoice.payment_succeeded') {
 
+    sleep(3);
     $invoice = $event->data->object;
 
     $customerId = $invoice->customer ?? null;
