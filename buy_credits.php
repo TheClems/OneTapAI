@@ -73,7 +73,7 @@ try {
 
         <div class="packages">
             <?php foreach ($packages as $index => $package): ?>
-                <div class="package <?php echo $index === 1 ? 'featured' : ''; ?>">
+                <div class="package">
                     <h3><?php echo htmlspecialchars($package['nom']); ?></h3>
                     <div class="credits"><?php echo number_format($package['nb_credits']); ?> crédits</div>
                     <div class="price"><?php echo number_format($package['prix'], 2); ?>€</div>
