@@ -12,7 +12,8 @@ const infoCards = document.querySelectorAll('.info-card');
 const profileCard = document.querySelector('.profile-card');
 const infoLabels = document.querySelectorAll('.info-label');
 const h2 = document.querySelectorAll('h2');
-const packages = document.querySelectorAll('.package');
+const packages = document.querySelectorAll('.packages');
+const package = document.querySelectorAll('.package');
 const backLink = document.querySelector('.back-link a');
 const featuredPackage = document.querySelector('.package.featured');
 const currentCredits = document.querySelector('.current-credits');
@@ -50,6 +51,7 @@ const elementsToToggle = [
     ...h2,
     backLink,
     ...packages,
+    ...package,
     featuredPackage,
     currentCredits,
     demoNotice,

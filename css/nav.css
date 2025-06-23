@@ -340,6 +340,10 @@ body.light-mode .content-card {
     animation-delay: 0.3s;
 }
 
+.nav-item:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
 @keyframes slideInUp {
     to {
         opacity: 1;
