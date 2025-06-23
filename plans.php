@@ -10,6 +10,11 @@ $stmt = $pdo->prepare("SELECT * FROM paiement WHERE type = 'abonnement' ORDER BY
 $stmt->execute();
 $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
+$stmt = $pdo->prepare("SELECT abonnement, credits FROM users WHERE id=?");
+$stmt->execute([$_SESSION['user_id']]);
+$abonnement = $stmt->fetch(PDO::FETCH_ASSOC);
+$has_subscription = $abonnement['abonnement'] != null;
 ?>
 
 <!DOCTYPE html>
@@ -108,6 +113,15 @@ $packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <a href="<?php echo $packages[2]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
             </div>
         </div>
+        <?php if ($has_subscription): ?>
+        <h3>Your current plan</h3>
+        <div class="current-plan">
+            <div class="current-plan-content">
+                <p><?php echo $abonnement['abonnement']; ?></p>
+                <div class="credits-number"><?php echo number_format($abonnement['credits']); ?></div>
+            </div>
+        </div>
+    <?php endif; ?>
     </div>
 
     </div>
