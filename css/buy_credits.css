@@ -159,14 +159,7 @@
 
 .package.featured {
   border-color: rgba(100, 255, 218, 0.6);
-  background: linear-gradient(135deg,
-      rgba(100, 255, 218, 0.1),
-      rgba(29, 233, 182, 0.05));
   transform: scale(1.05);
-}
-
-.package.featured.light-mode {
-  border-color: rgba(45, 55, 72, 0.95);
 }
 
 .package.featured::after {
@@ -245,9 +238,6 @@
   transform: translateY(0);
 }
 
-.paypal-boutons {
-  margin-top: 1rem;
-}
 
 .success,
 .error {
