@@ -37,7 +37,7 @@ const chatMessages2 = document.querySelector('.chat-messages');
 const inputContainer = document.querySelector('.input-container');
 const messageAi = document.querySelector('.message-content');
 const body_plans = document.querySelector('.body_plans');
-const cards = document.querySelector('.cards');
+const cards = document.querySelectorAll('.card');
 
 const body_job = document.querySelector('.body_job');
 const elementsToToggle = [
@@ -67,7 +67,8 @@ const elementsToToggle = [
     ...historyHeader,
     chatMessages2,
     inputContainer,
-    messageAi
+    messageAi,
+    ...cards,
 ];
 
 
