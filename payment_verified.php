@@ -38,6 +38,7 @@ if ($event['type'] === 'checkout.session.completed') {
 
 } elseif ($event['type'] === 'invoice.payment_succeeded') {
     $invoice = $event['data']['object'];
+    file_put_contents("stripe_errors.log", print_r($invoice, true), FILE_APPEND);
 
     // Vérifications
     if (!isset($invoice['subscription']) || !isset($invoice['customer']) || !isset($invoice['created'])) {
