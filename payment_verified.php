@@ -82,7 +82,7 @@ if ($event['type'] === 'checkout.session.completed') {
 
     try {
         // Chercher l'utilisateur par stripe_user_id
-        $stmt = $pdo->prepare("SELECT id, abonnement FROM users WHERE stripe_user_id = ?");
+        $stmt = $pdo->prepare("SELECT id, abonnement, credits FROM users WHERE stripe_user_id = ?");
         $stmt->execute([$customerId]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -102,9 +102,9 @@ if ($event['type'] === 'checkout.session.completed') {
             
             // Log pour débugger
             logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['credits']);
-        
-            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = credits + ? WHERE id = ?");
-            $success = $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
+            $totalCredits = $user['credits'] + $paiement['credits'];
+            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = ?, stripe_subscription_id = ? WHERE id = ?");
+            $success = $stmt->execute([$abonnementDate, $totalCredits, $subscriptionId, $userId]);
             
             if ($success) {
                 logErreur("Mise à jour réussie pour l'utilisateur $userId");
