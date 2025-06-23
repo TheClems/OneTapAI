@@ -101,7 +101,7 @@ if ($event['type'] === 'checkout.session.completed') {
             // Log pour débugger
             logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['credits']);
         
-            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = credits + ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = ? WHERE id = ?");
             $success = $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
             
             if ($success) {
