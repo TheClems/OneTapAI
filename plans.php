@@ -3,6 +3,13 @@ require_once 'config.php';
 requireLogin();
 
 $user = getCurrentUser();
+
+$pdo = getDBConnection();
+
+$stmt = $pdo->prepare("SELECT * FROM paiement WHERE type = 'abonnement' ORDER BY prix ASC");
+$stmt->execute();
+$packages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -40,15 +47,15 @@ $user = getCurrentUser();
         <div class="cards-container" id="cards-container">
             <!-- Card 1 - starter -->
             <div class="card" data-plan="starter">
-                <h2>Starter</h2>
+                <h2><?php echo $packages[0]['nom']; ?></h2>
                 <h3>
-                    <span>9€</span>
+                    <span><?php echo $packages[0]['prix']; ?>€</span>
                     <span>/mois</span>
                 </h3>
                 <p>Outils IA essentiels pour un usage quotidien</p>
                 <hr />
                 <ul>
-                    <li><i class="bi bi-check-circle-fill"></i><span>100 000 Crédits par mois</span></li>
+                    <li><i class="bi bi-check-circle-fill"></i><span><?php echo $packages[0]['nb_credits']; ?> Crédits par mois</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>Accès aux meilleurs LLM</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>&#126;2 000 messages de chat IA par mois</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>&#126;50 générations d'images par mois</span></li>
@@ -56,20 +63,20 @@ $user = getCurrentUser();
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="#" class="btn">Choisir ce plan</a>
+                <a href="<?php echo $packages[0]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
             </div>
 
             <!-- Card 2 - Premium -->
             <div class="card" data-plan="premium">
-                <h2>Premium</h2>
+                <h2><?php echo $packages[1]['nom']; ?></h2>
                 <h3>
-                    <span>17€</span>
+                    <span><?php echo $packages[1]['prix']; ?>€</span>
                     <span>/mois</span>
                 </h3>
                 <p>Fonctionnalités avancées pour les passionnés d'IA</p>
                 <hr />
                 <ul>
-                <li><i class="bi bi-check-circle-fill"></i><span>200 000 Crédits par mois</span></li>
+                <li><i class="bi bi-check-circle-fill"></i><span><?php echo $packages[1]['nb_credits']; ?> Crédits par mois</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>Accès aux meilleurs LLM</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>&#126;4 000 messages de chat IA par mois</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>&#126;100 générations d'images par mois</span></li>
@@ -77,20 +84,20 @@ $user = getCurrentUser();
                     <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="#" class="btn">Choisir ce plan</a>
+                <a href="<?php echo $packages[1]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
             </div>
 
             <!-- Card 3 - Professional -->
             <div class="card" data-plan="professional">
-                <h2>Professional</h2>
+                <h2><?php echo $packages[2]['nom']; ?></h2>
                 <h3>
-                    <span>29€</span>
+                    <span><?php echo $packages[2]['prix']; ?>€</span>
                     <span>/mois</span>
                 </h3>
                 <p>Potentiel illimité pour les utilisateurs experts</p>
                 <hr />
                 <ul>
-                <li><i class="bi bi-check-circle-fill"></i><span>400 000 Crédits par mois</span></li>
+                <li><i class="bi bi-check-circle-fill"></i><span><?php echo $packages[2]['nb_credits']; ?> Crédits par mois</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>Accès aux meilleurs LLM</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>&#126;8 000 messages de chat IA par mois</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>&#126;200 générations d'images par mois</span></li>
@@ -98,7 +105,7 @@ $user = getCurrentUser();
                     <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="#" class="btn">Choisir ce plan</a>
+                <a href="<?php echo $packages[2]['url_stripe']; ?>" class="btn">Choisir ce plan</a>
             </div>
         </div>
     </div>
