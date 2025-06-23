@@ -40,7 +40,7 @@
       rgba(255, 193, 7, 0.1),
       rgba(255, 152, 0, 0.1));
   border: 1px solid rgba(255, 193, 7, 0.3);
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
   text-align: center;
@@ -70,7 +70,7 @@
 .current-credits {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
   border: 1px solid #262626;
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 2rem;
   text-align: center;
   margin-bottom: 3rem;
@@ -112,21 +112,25 @@
 }
 
 .package {
-  background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.05),
-      rgba(255, 255, 255, 0.02));
+  background: #0d0d0d;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  padding: 2.5rem 2rem;
   text-align: center;
   position: relative;
   backdrop-filter: blur(20px);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  color: #fff;
 }
 
 .package.light-mode {
-  background: rgba(45, 55, 72, 0.95);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  color: #000;
 }
 
 .package::before {
@@ -149,12 +153,8 @@
 }
 
 .package:hover {
-  transform: translateY(-8px);
-  border-color: rgba(100, 255, 218, 0.4);
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(100, 255, 218, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .package.featured {
@@ -175,7 +175,6 @@
   top: -1px;
   right: 20px;
   background: linear-gradient(135deg, #64ffda, #1de9b6);
-  color: #0f0f23;
   padding: 0.5rem 1rem;
   border-radius: 0 0 12px 12px;
   font-size: 0.75rem;
@@ -187,7 +186,6 @@
   font-size: 2.5rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #ffffff;
 }
 
 .price {
@@ -195,7 +193,6 @@
   font-weight: 700;
   margin-bottom: 2rem;
   line-height: 1;
-  color: #fff;
 }
 
 .credits {
@@ -208,10 +205,10 @@
 .btn {
   width: 100%;
   padding: 1rem 2rem;
-  background: #fff;
-  color: #0f0f23;
+  background: #333;
+  color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
@@ -255,7 +252,7 @@
 .success,
 .error {
   padding: 1.5rem;
-  border-radius: 6px;
+  border-radius: 12px;
   margin-bottom: 2rem;
   text-align: center;
   font-weight: 500;
