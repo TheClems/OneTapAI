@@ -38,6 +38,7 @@ const inputContainer = document.querySelector('.input-container');
 const messageAi = document.querySelector('.message-content');
 const body_plans = document.querySelector('.body_plans');
 const cards = document.querySelectorAll('.card');
+const bgParticle = document.querySelectorAll('.bg-particle');
 
 const body_job = document.querySelector('.body_job');
 const elementsToToggle = [
@@ -69,6 +70,7 @@ const elementsToToggle = [
     inputContainer,
     messageAi,
     ...cards,
+    ...bgParticle,
 ];
 
 
