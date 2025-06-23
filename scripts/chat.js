@@ -61,7 +61,7 @@ function updateLayoutForNavbar() {
     if (nav) {
         const navWidth = nav.offsetWidth;
         const isCollapsed = navWidth < 100; // Supposer que la navbar est collapsée si < 100px
-        
+
         mainContainer.classList.toggle('nav-collapsed', isCollapsed);
     }
 }
@@ -133,23 +133,23 @@ function loadHistoryMessages() {
     if (channelHistoryFromDB && channelHistoryFromDB.length > 0) {
         // Vider le conteneur (enlever le message de bienvenue)
         chatMessages.innerHTML = '';
-        
+
         channelHistoryFromDB.forEach((message, index) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.role === 'user' ? 'user' : 'ai'}`;
-            
+
             const timeString = formatTime(message.created_at);
-            
+
             // Formater le contenu pour les messages de l'IA depuis la DB
-            const formattedContent = message.role === 'user' ? 
-                message.content : 
+            const formattedContent = message.role === 'user' ?
+                message.content :
                 formatMessageContent(message.content);
-            
+
             messageDiv.innerHTML = `
                 <div class="message-content">${formattedContent}</div>
                 <div class="message-time">${timeString}</div>
             `;
-            
+
             // Ajouter un délai pour l'animation
             setTimeout(() => {
                 chatMessages.appendChild(messageDiv);
@@ -189,13 +189,13 @@ function formatMessageContent(content) {
     if (isImageResponse(content)) {
         return `<img src="${content}" alt="Image générée" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" onclick="window.open('${content}', '_blank')">`;
     }
-    
+
     // Vérifier si c'est un marqueur d'image dans l'historique
     if (content.startsWith('[IMAGE:') && content.endsWith(']')) {
         const imagePath = content.slice(8, -1); // Extraire le chemin entre [IMAGE: et ]
         return `<img src="${imagePath}" alt="Image générée" style="max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" onclick="window.open('${imagePath}', '_blank')">`;
     }
-    
+
     // Formatage normal pour le texte
     content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
@@ -205,7 +205,7 @@ function formatMessageContent(content) {
     content = content.replace(/^### (.*$)/gm, '<h3>$1</h3>');
     content = content.replace(/^## (.*$)/gm, '<h2>$1</h2>');
     content = content.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    content = content.replace(/```(\w+)?\n?([\s\S]*?)```/g, function(match, lang, code) {
+    content = content.replace(/```(\w+)?\n?([\s\S]*?)```/g, function (match, lang, code) {
         return `<pre><code>${code.trim()}</code></pre>`;
     });
     content = content.replace(/`([^`]+)`/g, '<code>$1</code>');
@@ -215,7 +215,7 @@ function formatMessageContent(content) {
     content = content.replace(/^\d+\. (.*$)/gm, '<li>$1</li>');
     content = content.replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>');
     content = content.replace(/\n/g, '<br>');
-    
+
     return content;
 }
 // Afficher un message dans le chat (sans affecter l'historique)
@@ -258,12 +258,12 @@ function getSelectedModel() {
     // Méthode 1: Depuis l'URL
     const urlParams = new URLSearchParams(window.location.search);
     let model = urlParams.get('model');
-    
+
     // Méthode 2: Depuis la variable PHP globale (si disponible)
     if (!model && typeof selectedModel !== 'undefined') {
         model = selectedModel;
     }
-    
+
     // Méthode 3: Depuis le select (si visible)
     if (!model) {
         const modelSelect = document.getElementById('modelSelect');
@@ -271,7 +271,7 @@ function getSelectedModel() {
             model = modelSelect.value;
         }
     }
-    
+
     return model || 'mistral-medium-latest'; // Valeur par défaut
 }
 
@@ -343,17 +343,17 @@ async function sendMessage() {
     // Déterminer l'endpoint API à utiliser
     let apiEndpoint;
     switch (selectedModel) {
-        case 'gemini': apiEndpoint = 'gemini_api.php'; break;
-        case 'openrouter': apiEndpoint = 'openrouter_api.php'; break;
-        case 'mistral-medium-latest': apiEndpoint = 'mistral_api_medium_latest.php'; break;
-        case 'mistral-large-latest': apiEndpoint = 'mistral_api_large_latest.php'; break;
-        case 'claude-3.5-haiku-latest': apiEndpoint = 'claude_api_haiku_latest.php'; break;
-        case 'claude-sonnet-4': apiEndpoint = 'claude_api_sonnet_4.php'; break;
-        case 'grok-3-mini': apiEndpoint = 'grok_api_3_mini.php'; break;
-        case 'deepseek': apiEndpoint = 'deepseek_api.php'; break;
-        case 'gpt': apiEndpoint = 'gpt_api.php'; break;
-        case 'image': apiEndpoint = 'image.php'; break; // Utiliser votre nouveau fichier
-        default: apiEndpoint = 'default_api.php'; break;
+        case 'gemini': apiEndpoint = '/chat_api/gemini_api.php'; break;
+        case 'openrouter': apiEndpoint = '/chat_api/openrouter_api.php'; break;
+        case 'mistral-medium-latest': apiEndpoint = '/chat_api/mistral_api_medium_latest.php'; break;
+        case 'mistral-large-latest': apiEndpoint = '/chat_api/mistral_api_large_latest.php'; break;
+        case 'claude-3.5-haiku-latest': apiEndpoint = '/chat_api/claude_api_haiku_latest.php'; break;
+        case 'claude-sonnet-4': apiEndpoint = '/chat_api/claude_api_sonnet_4.php'; break;
+        case 'grok-3-mini': apiEndpoint = '/chat_api/grok_api_3_mini.php'; break;
+        case 'deepseek': apiEndpoint = '/chat_api/deepseek_api.php'; break;
+        case 'gpt': apiEndpoint = '/chat_api/gpt_api.php'; break;
+        case 'image': apiEndpoint = '/chat_api/image_api.php'; break;
+        default: apiEndpoint = '/chat_api/default_api.php'; break;
     }
 
     // Désactiver l'interface pendant l'envoi
@@ -404,7 +404,7 @@ async function sendMessage() {
 
         // Lire le contenu de la réponse
         const responseText = await response.text();
-        
+
         // Vérifier si le contenu est vide
         if (!responseText || responseText.trim() === '') {
             throw new Error('Réponse vide du serveur');
@@ -441,10 +441,10 @@ async function sendMessage() {
 
     } catch (error) {
         console.error('Erreur complète:', error);
-        
+
         // Afficher un message d'erreur plus détaillé
         let errorMessage = 'Désolé, une erreur s\'est produite';
-        
+
         if (error.message.includes('JSON')) {
             errorMessage += ' (erreur de format de réponse)';
         } else if (error.message.includes('HTTP')) {
@@ -452,9 +452,9 @@ async function sendMessage() {
         } else if (error.message.includes('vide')) {
             errorMessage += ' (réponse vide du serveur)';
         }
-        
+
         errorMessage += ` : ${error.message}`;
-        
+
         displayMessage(errorMessage, false);
     } finally {
         messageInput.disabled = false;
@@ -504,9 +504,9 @@ const navObserver = new MutationObserver(() => {
 // Observer la navbar si elle existe
 const nav = document.querySelector('nav') || document.querySelector('.nav') || document.querySelector('#nav');
 if (nav) {
-    navObserver.observe(nav, { 
-        attributes: true, 
-        attributeFilter: ['class', 'style'] 
+    navObserver.observe(nav, {
+        attributes: true,
+        attributeFilter: ['class', 'style']
     });
 }
 
@@ -541,12 +541,12 @@ chatHistoryPanel.addEventListener('touchstart', (e) => {
 
 chatHistoryPanel.addEventListener('touchend', (e) => {
     if (!startY || !startX) return;
-    
+
     const endY = e.changedTouches[0].clientY;
     const endX = e.changedTouches[0].clientX;
     const diffY = startY - endY;
     const diffX = startX - endX;
-    
+
     // Swipe vertical sur mobile
     if (window.innerWidth <= 768 && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 50) {
         if (diffY > 0) {
@@ -559,7 +559,7 @@ chatHistoryPanel.addEventListener('touchend', (e) => {
             toggleHistoryBtn.textContent = '✖️';
         }
     }
-    
+
     startY = 0;
     startX = 0;
 });
