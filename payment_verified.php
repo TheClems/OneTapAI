@@ -95,8 +95,9 @@ if ($event['type'] === 'checkout.session.completed') {
         
             http_response_code(200);
         } else {
-            logErreur("Aucun utilisateur avec le stripe_user_id $customerId");
-            http_response_code(404);
+            logErreur("Aucun utilisateur trouvé avec stripe_user_id: $customerId");
+            http_response_code(200); // on évite le 404 pour ne pas que Stripe retente
+            exit();
         }
 
     } catch (PDOException $e) {
