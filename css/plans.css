@@ -62,8 +62,8 @@ body {
     background: #0d0d0d;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+    border: 2px solid #374050;
     transition: all 0.3s ease;
     position: relative;
     color: #fff;
@@ -74,7 +74,6 @@ body {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border: 2px solid #000;
     transition: all 0.3s ease;
     position: relative;
     color: #000;
@@ -125,7 +124,6 @@ body {
 
 .card>p {
     text-align: center;
-    color: #cbcbcb;
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
     line-height: 1.4;
@@ -171,7 +169,7 @@ li.disabled i {
     display: block;
     width: 100%;
     padding: 0.8rem 1.5rem;
-    background: #000;
+    background: #222;
     color: white;
     text-decoration: none;
     border-radius: 8px;
@@ -195,15 +193,6 @@ li.disabled i {
 
 .card.current-plan .btn:hover {
     background: rgba(62, 243, 199, 0.8);
-}
-
-.card.highlight .btn {
-    background: rgba(62, 243, 199, 0.9);
-    color: #000;
-}
-
-.card.highlight .btn:hover {
-    background: rgba(62, 243, 199, 1);
 }
 
 @media (max-width: 768px) {
