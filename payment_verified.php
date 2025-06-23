@@ -2,7 +2,7 @@
 ini_set('display_errors', 0);
 error_reporting(0);
 require_once 'config.php';
-$pdo = getDBConnection();
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo "Method Not Allowed";
@@ -14,8 +14,6 @@ require 'vendor/autoload.php';
 \Stripe\Stripe::setApiKey('sk_test_51RcoRWRpHQWEgzdpOCZacqLoI6cSuDptFH8kNlj7z9MdjtGeyvOqASjZWGrO2yO0tUFRNmlhgrbffAwiV4Qcosid00SpgNlasL');
 
 $endpoint_secret = 'whsec_o6D7bLYjdCP1cOh1vAF0CEqUu9tFgNFP';
-
-
 
 $payload = @file_get_contents("php://input");
 $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
@@ -54,15 +52,16 @@ switch ($event->type) {
         $stripe_customer_id = $session->customer ?? null;
         $subscription_id = $session->subscription ?? null;
         $montant_total = $session->amount_total ?? 0;
+        $timestamp = date('Y-m-d H:i:s'); // Définir le timestamp
         
         // RÉCUPÉRATION DES PRODUITS ACHETÉS
         try {
-            // Méthode 1: Via les line_items de la session
             $line_items = \Stripe\Checkout\Session::allLineItems($session->id, [
                 'limit' => 100
             ]);
             
             $produits_achetes = [];
+            $product_names = []; // Collecter les noms des produits
             
             foreach ($line_items->data as $item) {
                 $price_id = $item->price->id;
@@ -72,6 +71,7 @@ switch ($event->type) {
                 
                 // Récupère les détails du produit
                 $product = \Stripe\Product::retrieve($product_id);
+                $product_names[] = $product->name; // Collecter le nom
                 
                 $produits_achetes[] = [
                     'price_id' => $price_id,
@@ -81,12 +81,11 @@ switch ($event->type) {
                     'quantity' => $quantity,
                     'amount_total' => $amount_total,
                     'currency' => $item->currency,
-                    // Métadonnées du produit (utiles pour identifier ton produit)
                     'metadata' => $product->metadata->toArray()
                 ];
             }
             
-            // Méthode 2: Si c'est un abonnement, récupère via la subscription
+            // Si c'est un abonnement, récupère via la subscription
             if ($subscription_id) {
                 $subscription = \Stripe\Subscription::retrieve($subscription_id);
                 
@@ -94,10 +93,8 @@ switch ($event->type) {
                     $price_id = $sub_item->price->id;
                     $product_id = $sub_item->price->product;
                     
-                    // Récupère les détails du produit d'abonnement
                     $product = \Stripe\Product::retrieve($product_id);
                     
-                    // Ajoute les infos d'abonnement si pas déjà présentes
                     $found = false;
                     foreach ($produits_achetes as &$produit) {
                         if ($produit['product_id'] === $product_id) {
@@ -109,6 +106,7 @@ switch ($event->type) {
                     }
                     
                     if (!$found) {
+                        $product_names[] = $product->name;
                         $produits_achetes[] = [
                             'price_id' => $price_id,
                             'product_id' => $product_id,
@@ -124,7 +122,7 @@ switch ($event->type) {
             
             // LOG COMPLET pour debug
             $log_data = [
-                'timestamp' => date('Y-m-d H:i:s'),
+                'timestamp' => $timestamp,
                 'event_type' => 'checkout.session.completed',
                 'client_reference_id' => $client_reference_id,
                 'customer_email' => $customer_email,
@@ -136,49 +134,73 @@ switch ($event->type) {
             
             file_put_contents('webhook_produits.json', json_encode($log_data, JSON_PRETTY_PRINT) . "\n\n", FILE_APPEND);
             
-            // TRAITEMENT DE TES DONNÉES - MISE À JOUR BASE DE DONNÉES
+            // TRAITEMENT DE TES DONNÉES
             foreach ($produits_achetes as $produit) {
-                $nom_produit = $produit['product_name'];
-                
-                // Récupérer les infos du produit depuis la table paiement
-                $stmt = $pdo->prepare("SELECT * FROM paiement WHERE nom = ?");
-                $stmt->execute([$nom_produit]);
-                $paiement_info = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                if ($paiement_info) {
-                    $credits_a_ajouter = $paiement_info['nb_credits'];
-                    $type_produit = $paiement_info['type'];
-                    
-                    if ($client_reference_id) {
-                        // Mise à jour des informations utilisateur
-                        if ($type_produit === 'abonnement') {
-                            // C'est un abonnement
-                            mettreAJourAbonnement($pdo, $client_reference_id, $credits_a_ajouter, $stripe_customer_id, $subscription_id, $nom_produit);
-                        } else {
-                            // C'est un achat de crédits
-                            ajouterCredits($pdo, $client_reference_id, $credits_a_ajouter, $stripe_customer_id);
-                        }
-                    }
-                }
-                
-                // Exemple : identifier le type de produit via metadata ou nom
                 if (isset($produit['metadata']['type'])) {
                     switch ($produit['metadata']['type']) {
                         case 'premium':
-                            // Activer premium pour l'utilisateur
                             activerPremium($client_reference_id, $subscription_id);
                             break;
                         case 'formation':
-                            // Donner accès à une formation
                             donnerAccesFormation($client_reference_id, $produit['metadata']['formation_id']);
                             break;
                     }
                 } else {
-                    // Ou identifier par nom de produit
                     if (strpos(strtolower($produit['product_name']), 'premium') !== false) {
                         activerPremium($client_reference_id, $subscription_id);
                     }
                 }
+            }
+            
+            // MISE À JOUR BASE DE DONNÉES - CORRIGÉE
+            if ($client_reference_id) {
+                $pdo = getDBConnection();
+                try {
+                    // Créer une chaîne avec tous les noms de produits
+                    $product_name = implode(', ', $product_names);
+                    
+                    // Requête préparée sécurisée
+                    $stmt = $pdo->prepare("
+                        UPDATE users 
+                        SET stripe_user_id = ?, 
+                            stripe_subscription_id = ?, 
+                            abonnement = ?, 
+                            abonnement_date = ? 
+                        WHERE id = ?
+                    ");
+                    
+                    $stmt->execute([
+                        $stripe_customer_id,
+                        $subscription_id,
+                        $product_name,
+                        $timestamp,
+                        $client_reference_id
+                    ]);
+                    
+                    if ($stmt->rowCount() > 0) {
+                        file_put_contents('db_updates.log', 
+                            "Utilisateur mis à jour: $client_reference_id - " . $timestamp . "\n", 
+                            FILE_APPEND
+                        );
+                    } else {
+                        file_put_contents('db_updates.log', 
+                            "Aucun utilisateur trouvé avec l'ID: $client_reference_id - " . $timestamp . "\n", 
+                            FILE_APPEND
+                        );
+                    }
+                    
+                } catch (PDOException $e) {
+                    error_log("Erreur mise à jour utilisateur: " . $e->getMessage());
+                    file_put_contents('db_errors.log', 
+                        "Erreur DB: " . $e->getMessage() . " - " . $timestamp . "\n", 
+                        FILE_APPEND
+                    );
+                }
+            } else {
+                file_put_contents('db_updates.log', 
+                    "client_reference_id manquant - impossible de mettre à jour l'utilisateur - " . $timestamp . "\n", 
+                    FILE_APPEND
+                );
             }
             
         } catch (Exception $e) {
@@ -192,199 +214,23 @@ switch ($event->type) {
         break;
         
     case 'invoice.payment_succeeded':
-        // Paiements récurrents d'abonnement
         $invoice = $event->data->object;
         $subscription_id = $invoice->subscription;
-        $customer_id = $invoice->customer;
         
-        // Vérifier que nous avons un subscription_id valide
-        if (!$subscription_id || empty($subscription_id)) {
-            file_put_contents('webhook_errors.txt', 
-                "ERROR paiement récurrent - " . date('Y-m-d H:i:s') . 
-                " - Subscription ID manquant ou vide\n", 
-                FILE_APPEND
-            );
-            break;
-        }
-        
-        // Log des données reçues pour debug
-        file_put_contents('webhook_invoice_debug.txt', 
-            "Invoice data - " . date('Y-m-d H:i:s') . 
-            " - Subscription ID: " . $subscription_id . 
-            " - Customer ID: " . $customer_id . 
-            " - Amount: " . $invoice->amount_paid . "\n", 
+        file_put_contents('webhook_paiements_recurrents.txt', 
+            "Paiement récurrent - " . date('Y-m-d H:i:s') . 
+            " - Subscription: " . $subscription_id . 
+            " - Montant: " . $invoice->amount_paid . "\n", 
             FILE_APPEND
         );
-        
-        // Récupérer l'abonnement pour obtenir les détails
-        try {
-            // Vérifier le format de l'ID avant de faire la requête
-            if (!preg_match('/^sub_[A-Za-z0-9]+$/', $subscription_id)) {
-                throw new Exception("Format d'ID d'abonnement invalide: " . $subscription_id);
-            }
-            
-            $subscription = \Stripe\Subscription::retrieve($subscription_id);
-            
-            // Trouver l'utilisateur avec cet abonnement
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE stripe_subscription_id = ?");
-            $stmt->execute([$subscription_id]);
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($user) {
-                $user_id = $user['id'];
-                
-                // Récupérer les détails du produit de l'abonnement
-                foreach ($subscription->items->data as $sub_item) {
-                    $product_id = $sub_item->price->product;
-                    $product = \Stripe\Product::retrieve($product_id);
-                    $nom_produit = $product->name;
-                    
-                    // Récupérer les crédits à ajouter depuis la table paiement
-                    $stmt = $pdo->prepare("SELECT nb_credits FROM paiement WHERE nom = ?");
-                    $stmt->execute([$nom_produit]);
-                    $paiement_info = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
-                    if ($paiement_info) {
-                        $credits_a_ajouter = $paiement_info['nb_credits'];
-                        
-                        // Ajouter les crédits pour le renouvellement
-                        $stmt = $pdo->prepare("UPDATE users SET credits = credits + ? WHERE id = ?");
-                        $stmt->execute([$credits_a_ajouter, $user_id]);
-                        
-                        file_put_contents('webhook_paiements_recurrents.txt', 
-                            "Paiement récurrent - " . date('Y-m-d H:i:s') . 
-                            " - User: " . $user_id . 
-                            " - Subscription: " . $subscription_id . 
-                            " - Produit: " . $nom_produit . 
-                            " - Crédits ajoutés: " . $credits_a_ajouter . 
-                            " - Montant: " . $invoice->amount_paid . "\n", 
-                            FILE_APPEND
-                        );
-                    } else {
-                        file_put_contents('webhook_errors.txt', 
-                            "WARN paiement récurrent - " . date('Y-m-d H:i:s') . 
-                            " - Produit non trouvé dans table paiement: " . $nom_produit . "\n", 
-                            FILE_APPEND
-                        );
-                    }
-                }
-            } else {
-                // Utilisateur non trouvé avec cet abonnement
-                file_put_contents('webhook_errors.txt', 
-                    "WARN paiement récurrent - " . date('Y-m-d H:i:s') . 
-                    " - Utilisateur non trouvé pour subscription: " . $subscription_id . "\n", 
-                    FILE_APPEND
-                );
-                
-                // Optionnel: Chercher par customer_id si pas trouvé par subscription_id
-                if ($customer_id) {
-                    $stmt = $pdo->prepare("SELECT id FROM users WHERE stripe_user_id = ?");
-                    $stmt->execute([$customer_id]);
-                    $user_by_customer = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
-                    if ($user_by_customer) {
-                        // Mettre à jour le subscription_id pour la prochaine fois
-                        $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ? WHERE id = ?");
-                        $stmt->execute([$subscription_id, $user_by_customer['id']]);
-                        
-                        file_put_contents('webhook_paiements_recurrents.txt', 
-                            "Subscription ID mis à jour - " . date('Y-m-d H:i:s') . 
-                            " - User: " . $user_by_customer['id'] . 
-                            " - Subscription: " . $subscription_id . "\n", 
-                            FILE_APPEND
-                        );
-                    }
-                }
-            }
-        } catch (Exception $e) {
-            file_put_contents('webhook_errors.txt', 
-                "ERROR paiement récurrent - " . date('Y-m-d H:i:s') . 
-                " - Subscription ID: " . $subscription_id . 
-                " - Error: " . $e->getMessage() . 
-                " - Trace: " . $e->getTraceAsString() . "\n", 
-                FILE_APPEND
-            );
-        }
-        
         break;
         
     default:
         break;
 }
 
-// Fonction pour mettre à jour l'abonnement
-function mettreAJourAbonnement($pdo, $user_id, $credits, $stripe_customer_id, $subscription_id, $nom_abonnement) {
-    try {
-        $stmt = $pdo->prepare("
-            UPDATE users 
-            SET credits = credits + ?, 
-                stripe_user_id = ?, 
-                stripe_subscription_id = ?, 
-                abonnement = ?, 
-                abonnement_date = NOW() 
-            WHERE id = ?
-        ");
-        
-        $stmt->execute([
-            $credits, 
-            $stripe_customer_id, 
-            $subscription_id, 
-            $nom_abonnement, 
-            $user_id
-        ]);
-        
-        file_put_contents('abonnement_activations.txt', 
-            "Abonnement activé - " . date('Y-m-d H:i:s') . 
-            " - User: " . $user_id . 
-            " - Abonnement: " . $nom_abonnement . 
-            " - Crédits: " . $credits . 
-            " - Subscription: " . $subscription_id . "\n", 
-            FILE_APPEND
-        );
-        
-    } catch (Exception $e) {
-        file_put_contents('webhook_db_errors.txt', 
-            "Erreur mise à jour abonnement - " . date('Y-m-d H:i:s') . 
-            " - User: " . $user_id . 
-            " - Error: " . $e->getMessage() . "\n", 
-            FILE_APPEND
-        );
-    }
-}
-
-// Fonction pour ajouter des crédits
-function ajouterCredits($pdo, $user_id, $credits, $stripe_customer_id) {
-    try {
-        $stmt = $pdo->prepare("
-            UPDATE users 
-            SET credits = credits + ?, 
-                stripe_user_id = ? 
-            WHERE id = ?
-        ");
-        
-        $stmt->execute([$credits, $stripe_customer_id, $user_id]);
-        
-        file_put_contents('credits_ajouts.txt', 
-            "Crédits ajoutés - " . date('Y-m-d H:i:s') . 
-            " - User: " . $user_id . 
-            " - Crédits: " . $credits . "\n", 
-            FILE_APPEND
-        );
-        
-    } catch (Exception $e) {
-        file_put_contents('webhook_db_errors.txt', 
-            "Erreur ajout crédits - " . date('Y-m-d H:i:s') . 
-            " - User: " . $user_id . 
-            " - Error: " . $e->getMessage() . "\n", 
-            FILE_APPEND
-        );
-    }
-}
-
 // Fonctions d'exemple pour traiter les produits
 function activerPremium($user_id, $subscription_id) {
-    // Exemple : mise à jour base de données
-    // UPDATE users SET is_premium = 1, stripe_subscription_id = '$subscription_id' WHERE id = $user_id
     file_put_contents('premium_activations.txt', 
         "Premium activé - " . date('Y-m-d H:i:s') . 
         " - User: " . $user_id . 
@@ -394,7 +240,6 @@ function activerPremium($user_id, $subscription_id) {
 }
 
 function donnerAccesFormation($user_id, $formation_id) {
-    // Exemple : donner accès à une formation spécifique
     file_put_contents('formations_acces.txt', 
         "Accès formation - " . date('Y-m-d H:i:s') . 
         " - User: " . $user_id . 
