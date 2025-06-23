@@ -57,17 +57,19 @@ if ($event['type'] === 'checkout.session.completed') {
         logErreur("Données manquantes dans checkout.session.completed");
         http_response_code(400);
     }
-} elseif ($event['type'] === 'invoice.payment_succeeded') {
+}elseif ($event['type'] === 'invoice.payment_succeeded') {
     $invoice = $event['data']['object'];
 
     $customerId = $invoice['customer'] ?? null;
     $timestamp = $invoice['created'] ?? null;
 
-    // CORRECTION : Chemin correct pour récupérer le subscription_id
-    $subscriptionId = $invoice['subscription'] ?? null;
+    // CORRECTION : Récupération du subscription_id depuis la structure parent
+    $subscriptionId = $invoice['parent']['subscription_details']['subscription'] ?? null;
     
-    // Alternative si subscription n'est pas directement disponible :
-    // $subscriptionId = $invoice['lines']['data'][0]['subscription'] ?? null;
+    // Alternative depuis les lignes d'items :
+    if (!$subscriptionId) {
+        $subscriptionId = $invoice['lines']['data'][0]['parent']['subscription_item_details']['subscription'] ?? null;
+    }
 
     if (!$customerId || !$timestamp || !$subscriptionId) {
         logErreur("invoice.payment_succeeded incomplet - customerId: $customerId, timestamp: $timestamp, subscriptionId: $subscriptionId");
@@ -101,7 +103,7 @@ if ($event['type'] === 'checkout.session.completed') {
             // Log pour débugger
             logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['credits']);
         
-            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = credits + ? WHERE id = ?");
             $success = $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
             
             if ($success) {
@@ -121,4 +123,3 @@ if ($event['type'] === 'checkout.session.completed') {
         http_response_code(500);
     }
 }
-
