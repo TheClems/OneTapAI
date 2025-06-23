@@ -6,10 +6,57 @@ error_reporting(E_ALL);
 require_once 'config.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+
 $input = @file_get_contents("php://input");
+$signature = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
+
+// Vérifier la signature
+function verifyStripeSignature($payload, $signature, $secret) {
+    if (empty($signature)) {
+        return false;
+    }
+    
+    // Extraire timestamp et signature
+    $elements = explode(',', $signature);
+    $timestamp = null;
+    $signatureHash = null;
+    
+    foreach ($elements as $element) {
+        if (strpos($element, 't=') === 0) {
+            $timestamp = substr($element, 2);
+        } elseif (strpos($element, 'v1=') === 0) {
+            $signatureHash = substr($element, 3);
+        }
+    }
+    
+    if (!$timestamp || !$signatureHash) {
+        return false;
+    }
+    
+    // Vérifier que le timestamp n'est pas trop ancien (5 minutes max)
+    if (abs(time() - $timestamp) > 300) {
+        return false;
+    }
+    
+    // Calculer la signature attendue
+    $expectedSignature = hash_hmac('sha256', $timestamp . '.' . $payload, $secret);
+    
+    // Comparer de manière sécurisée
+    return hash_equals($expectedSignature, $signatureHash);
+}
+
+// VÉRIFICATION DE LA SIGNATURE
+if (!verifyStripeSignature($input, $signature, $stripeWebhookSecretInvoice)) {
+    logErreur("Signature webhook invalide ou manquante");
+    http_response_code(401);
+    exit("Unauthorized");
+}
+
+// ====== TRAITEMENT SÉCURISÉ ======
 $event = json_decode($input, true);
 
 if (!$event) {
+    logErreur("JSON webhook invalide");
     http_response_code(400);
     exit("Webhook invalide");
 }
@@ -19,6 +66,9 @@ $pdo = getDBConnection();
 function logErreur($message) {
     file_put_contents("stripe_errors.log", "[" . date("Y-m-d H:i:s") . "] $message\n", FILE_APPEND);
 }
+
+// Log de sécurité
+logErreur("Webhook vérifié avec succès - Type: " . $event['type'] . " - ID: " . ($event['id'] ?? 'unknown'));
 
 if ($event['type'] === 'invoice.payment_succeeded') {
 
@@ -72,8 +122,9 @@ if ($event['type'] === 'invoice.payment_succeeded') {
             $success = $stmt->execute([$abonnementDate, $totalCredits, $subscriptionId, $userId]);
             
             if ($success) {
-                logErreur("Mise à jour réussie pour l'utilisateur $userId");
+                logErreur("Mise à jour réussie pour l'utilisateur $userId - Nouveaux crédits: $totalCredits");
                 http_response_code(200);
+                echo "OK";
             } else {
                 logErreur("Échec de la mise à jour pour l'utilisateur $userId");
                 http_response_code(500);
@@ -87,4 +138,10 @@ if ($event['type'] === 'invoice.payment_succeeded') {
         logErreur("DB error (invoice): " . $e->getMessage());
         http_response_code(500);
     }
+} else {
+    // Événement non géré mais signature valide
+    logErreur("Événement non géré: " . $event['type']);
+    http_response_code(200);
+    echo "Event not handled";
 }
+?>
