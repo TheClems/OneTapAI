@@ -28,7 +28,7 @@
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 90%;
   margin: 0 auto;
   padding: 2rem;
   position: relative;
@@ -433,4 +433,3 @@
     opacity: 0.4;
   }
 }
-
