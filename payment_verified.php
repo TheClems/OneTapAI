@@ -1,7 +1,7 @@
 <?php
-require_once 'config.php'; // contient $conn = new mysqli(...);
+require_once 'config.php'; // Ton fichier avec getDBConnection()
 
-// Lire le corps brut de la requête Stripe
+// Lire le corps brut envoyé par Stripe
 $input = @file_get_contents("php://input");
 $event = json_decode($input, true);
 
@@ -10,78 +10,69 @@ if (!$event) {
     exit("Webhook invalide");
 }
 
-// Cas 1 : Checkout terminé => on récupère le client_reference_id
+$pdo = getDBConnection();
+
 if ($event['type'] === 'checkout.session.completed') {
     $session = $event['data']['object'];
 
     if (!empty($session['client_reference_id']) && !empty($session['subscription'])) {
-        $client_id = intval($session['client_reference_id']);
-        $subscription_id = $session['subscription'];
+        $clientId = intval($session['client_reference_id']);
+        $subscriptionId = $session['subscription'];
 
-        // Enregistrer le lien dans la base (ex. : pour s'en servir plus tard)
-        $stmt = $conn->prepare("UPDATE users SET stripe_subscription_id = ? WHERE id = ?");
-        $stmt->bind_param("si", $subscription_id, $client_id);
-
-        if ($stmt->execute()) {
+        try {
+            $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ? WHERE id = ?");
+            $stmt->execute([$subscriptionId, $clientId]);
             http_response_code(200);
-        } else {
-            error_log("Erreur UPDATE subscription_id: " . $stmt->error);
+        } catch (PDOException $e) {
+            error_log("Erreur DB (checkout) : " . $e->getMessage());
             http_response_code(500);
         }
-
-        $stmt->close();
     } else {
-        error_log("client_reference_id ou subscription manquant");
+        error_log("Données manquantes dans checkout.session.completed");
         http_response_code(400);
     }
-}
 
-// Cas 2 : Paiement réussi de la facture
-elseif ($event['type'] === 'invoice.payment_succeeded') {
+} elseif ($event['type'] === 'invoice.payment_succeeded') {
     $invoice = $event['data']['object'];
 
-    $invoice_id = $invoice['id'];
-    $subscription_id = $invoice['subscription'];
-    $customer_id = $invoice['customer'];
-    $amount_paid = $invoice['amount_paid'];
+    $invoiceId = $invoice['id'];
+    $subscriptionId = $invoice['subscription'];
+    $customerId = $invoice['customer'];
+    $amountPaid = $invoice['amount_paid'];
     $currency = $invoice['currency'];
     $status = $invoice['status'];
-    $invoice_url = $invoice['hosted_invoice_url'];
-    $invoice_pdf = $invoice['invoice_pdf'];
+    $invoiceUrl = $invoice['hosted_invoice_url'];
+    $invoicePdf = $invoice['invoice_pdf'];
     $timestamp = $invoice['created'];
-    $abonnement_date = date('Y-m-d H:i:s', $timestamp);
-    $abonnement = 1; // Exemple : 1 = abonnement actif
+    $abonnementDate = date('Y-m-d H:i:s', $timestamp);
+    $abonnement = 1;
 
-    // Trouver l'utilisateur via subscription_id
-    $stmt = $conn->prepare("SELECT id FROM users WHERE stripe_subscription_id = ?");
-    $stmt->bind_param("s", $subscription_id);
-    $stmt->execute();
-    $stmt->bind_result($user_id);
-    $stmt->fetch();
-    $stmt->close();
+    try {
+        // Trouver l'utilisateur via l'abonnement Stripe
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE stripe_subscription_id = ?");
+        $stmt->execute([$subscriptionId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!empty($user_id)) {
-        // Mise à jour de l'utilisateur
-        $stmt = $conn->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ?, abonnement_date = ? WHERE id = ?");
-        $stmt->bind_param("sisi", $customer_id, $abonnement, $abonnement_date, $user_id);
+        if ($user) {
+            $userId = $user['id'];
 
-        if ($stmt->execute()) {
+            // Mettre à jour les infos dans la base
+            $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ?, abonnement_date = ? WHERE id = ?");
+            $stmt->execute([$customerId, $abonnement, $abonnementDate, $userId]);
+
             http_response_code(200);
         } else {
-            error_log("Erreur UPDATE abonnement: " . $stmt->error);
-            http_response_code(500);
+            error_log("Aucun utilisateur trouvé avec subscription_id: $subscriptionId");
+            http_response_code(404);
         }
 
-        $stmt->close();
-    } else {
-        error_log("Aucun utilisateur avec subscription_id $subscription_id");
-        http_response_code(404);
+    } catch (PDOException $e) {
+        error_log("Erreur DB (invoice) : " . $e->getMessage());
+        http_response_code(500);
     }
-}
 
-else {
-    // Autres types d'événements non gérés
+} else {
+    // Événement non géré
     http_response_code(400);
     echo "Événement non géré : " . $event['type'];
 }
-?>
