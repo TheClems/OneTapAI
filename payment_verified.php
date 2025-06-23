@@ -22,10 +22,27 @@ if ($event['type'] === 'checkout.session.completed') {
     if (!empty($session['client_reference_id']) && !empty($session['subscription'])) {
         $clientId = intval($session['client_reference_id']);
         $subscriptionId = $session['subscription'];
+        \Stripe\Stripe::setApiKey($stripeSecretKey);
+
+        $subscriptionId = $session['subscription'];
+        
+        try {
+            $subscription = \Stripe\Subscription::retrieve($subscriptionId);
+            $priceId = $subscription->items->data[0]->price->id;
+            $price = \Stripe\Price::retrieve($priceId);
+            $productId = $price->product;
+            $product = \Stripe\Product::retrieve($productId);
+            $productName = $product->name;
+        
+            // Tu peux maintenant utiliser $productName comme tu veux
+            // Par exemple, le stocker en base de données
+        } catch (\Exception $e) {
+            logErreur("Erreur lors de la récupération du nom de l'abonnement : " . $e->getMessage());
+        }
 
         try {
-            $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ? WHERE id = ?");
-            $stmt->execute([$subscriptionId, $clientId]);
+            $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ?, abonnement = ? WHERE id = ?");
+            $stmt->execute([$subscriptionId, $productName, $clientId]);
             http_response_code(200);
         } catch (PDOException $e) {
             logErreur("DB error (checkout): " . $e->getMessage());
@@ -53,7 +70,6 @@ if ($event['type'] === 'checkout.session.completed') {
     }
 
     $abonnementDate = date('Y-m-d H:i:s', $timestamp);
-    $abonnement = 1;
 
     try {
         // Chercher l'utilisateur par email
@@ -65,8 +81,8 @@ if ($event['type'] === 'checkout.session.completed') {
             $userId = $user['id'];
 
             // Mettre à jour les infos
-            $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ?, abonnement_date = ? WHERE id = ?");
-            $stmt->execute([$customerId, $abonnement, $abonnementDate, $userId]);
+            $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement_date = ? WHERE id = ?");
+            $stmt->execute([$customerId, $abonnementDate, $userId]);
 
             http_response_code(200);
         } else {
