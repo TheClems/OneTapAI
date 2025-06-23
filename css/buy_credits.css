@@ -158,7 +158,10 @@
 }
 
 .package.featured {
-  border: 3px solid rgba(100, 255, 218, 0.6);
+  border-color: rgba(100, 255, 218, 0.6);
+  background: linear-gradient(135deg,
+      rgba(100, 255, 218, 0.1),
+      rgba(29, 233, 182, 0.05));
   transform: scale(1.05);
 }
 
@@ -171,6 +174,7 @@
   position: absolute;
   top: -1px;
   right: 20px;
+  background: linear-gradient(135deg, #64ffda, #1de9b6);
   padding: 0.5rem 1rem;
   border-radius: 0 0 12px 12px;
   font-size: 0.75rem;
