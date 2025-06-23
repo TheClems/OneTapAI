@@ -38,38 +38,39 @@ if ($event['type'] === 'checkout.session.completed') {
 
 } elseif ($event['type'] === 'invoice.payment_succeeded') {
     $invoice = $event['data']['object'];
-    file_put_contents("stripe_errors.log", print_r($invoice, true), FILE_APPEND);
 
-    // Vérifications
-    if (!isset($invoice['subscription']) || !isset($invoice['customer']) || !isset($invoice['created'])) {
-        logErreur("Champ(s) manquant(s) dans invoice.payment_succeeded");
+    $customerId = $invoice['customer'] ?? null;
+    $customerEmail = $invoice['customer_email'] ?? null;
+    $timestamp = $invoice['created'] ?? null;
+
+    // Nouvelle récupération du subscription_id
+    $subscriptionId = $invoice['lines']['data'][0]['parent']['subscription_item_details']['subscription'] ?? null;
+
+    if (!$customerId || !$timestamp || !$customerEmail || !$subscriptionId) {
+        logErreur("invoice.payment_succeeded incomplet: " . print_r($invoice, true));
         http_response_code(400);
         exit();
     }
 
-    $invoiceId = $invoice['id'];
-    $subscriptionId = $invoice['subscription'];
-    $customerId = $invoice['customer'];
-    $timestamp = $invoice['created'];
     $abonnementDate = date('Y-m-d H:i:s', $timestamp);
     $abonnement = 1;
 
     try {
-        // Trouver l'utilisateur via l'abonnement
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE stripe_subscription_id = ?");
-        $stmt->execute([$subscriptionId]);
+        // Chercher l'utilisateur par email
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$customerEmail]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
             $userId = $user['id'];
 
-            // Mettre à jour
+            // Mettre à jour les infos
             $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ?, abonnement_date = ? WHERE id = ?");
             $stmt->execute([$customerId, $abonnement, $abonnementDate, $userId]);
 
             http_response_code(200);
         } else {
-            logErreur("Aucun utilisateur avec subscription_id $subscriptionId");
+            logErreur("Aucun utilisateur avec l'email $customerEmail");
             http_response_code(404);
         }
 
@@ -77,8 +78,5 @@ if ($event['type'] === 'checkout.session.completed') {
         logErreur("DB error (invoice): " . $e->getMessage());
         http_response_code(500);
     }
-
-} else {
-    http_response_code(400);
-    echo "Événement non géré : " . $event['type'];
 }
+
