@@ -38,8 +38,8 @@ $user = getCurrentUser();
         </div>
 
         <div class="cards-container" id="cards-container">
-            <!-- Card 1 - Essential -->
-            <div class="card" data-plan="essential">
+            <!-- Card 1 - starter -->
+            <div class="card" data-plan="starter">
                 <h3>
                     <span>9€</span>
                     <span>/mois</span>
@@ -58,8 +58,8 @@ $user = getCurrentUser();
                 <a href="#" class="btn">Choisir ce plan</a>
             </div>
 
-            <!-- Card 2 - Pro -->
-            <div class="card highlight" data-plan="pro">
+            <!-- Card 2 - Premium -->
+            <div class="card" data-plan="premium">
                 <h3>
                     <span>17€</span>
                     <span>/mois</span>
@@ -78,8 +78,8 @@ $user = getCurrentUser();
                 <a href="#" class="btn">Choisir ce plan</a>
             </div>
 
-            <!-- Card 3 - Ultimate -->
-            <div class="card" data-plan="ultimate">
+            <!-- Card 3 - Professional -->
+            <div class="card" data-plan="professional">
                 <h3>
                     <span>29€</span>
                     <span>/mois</span>
@@ -173,15 +173,9 @@ $user = getCurrentUser();
             
             // Mapping des noms de plans possibles
             const planMapping = {
-                'essential': 'essential',
-                'basic': 'essential',
-                'starter': 'essential',
-                'pro': 'pro',
-                'premium': 'pro',
-                'advanced': 'pro',
-                'ultimate': 'ultimate',
-                'enterprise': 'ultimate',
-                'unlimited': 'ultimate'
+                'starter': 'starter',
+                'premium': 'premium',
+                'professional': 'professional',
             };
             
             const mappedPlan = planMapping[normalizedPlan] || normalizedPlan;
