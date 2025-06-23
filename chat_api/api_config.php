@@ -7,7 +7,7 @@ ini_set('display_startup_errors', 0);
 error_reporting(0);
 
 // Inclure la configuration de la base de données
-require_once 'config.php';
+require_once '../config.php';
 
 /**
  * Configure les headers pour l'API JSON
