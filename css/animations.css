@@ -29,6 +29,10 @@
     animation: float-particle 8s infinite linear;
 }
 
+.bg-particle.light-mode {
+    background: #000;
+}
+
 @keyframes float-particle {
     0% {
         transform: translateY(100vh) rotate(0deg);
