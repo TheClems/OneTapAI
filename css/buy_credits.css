@@ -157,12 +157,12 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.package.featured {
+.package:nth-child(2) {
   border-color: rgba(100, 255, 218, 0.6);
   transform: scale(1.05);
 }
 
-.package.featured::after {
+.package:nth-child(2)::after {
   content: "POPULAIRE";
   position: absolute;
   top: -1px;
@@ -322,7 +322,7 @@
     padding: 2rem 1.5rem;
   }
 
-  .package.featured {
+  .package:nth-child(2) {
     transform: none;
   }
 
