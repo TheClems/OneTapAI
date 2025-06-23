@@ -40,6 +40,7 @@ $user = getCurrentUser();
         <div class="cards-container" id="cards-container">
             <!-- Card 1 - starter -->
             <div class="card" data-plan="starter">
+                <h2>Starter</h2>
                 <h3>
                     <span>9€</span>
                     <span>/mois</span>
@@ -60,6 +61,7 @@ $user = getCurrentUser();
 
             <!-- Card 2 - Premium -->
             <div class="card" data-plan="premium">
+                <h2>Premium</h2>
                 <h3>
                     <span>17€</span>
                     <span>/mois</span>
@@ -80,6 +82,7 @@ $user = getCurrentUser();
 
             <!-- Card 3 - Professional -->
             <div class="card" data-plan="professional">
+                <h2>Professional</h2>
                 <h3>
                     <span>29€</span>
                     <span>/mois</span>
