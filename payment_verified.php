@@ -58,6 +58,8 @@ if ($event['type'] === 'checkout.session.completed') {
         http_response_code(400);
     }
 }elseif ($event['type'] === 'invoice.payment_succeeded') {
+
+    sleep(3);
     $invoice = $event['data']['object'];
 
     $customerId = $invoice['customer'] ?? null;
@@ -101,7 +103,7 @@ if ($event['type'] === 'checkout.session.completed') {
             $userId = $user['id'];
             
             // Log pour débugger
-            logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['credits']);
+            logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['nb_credits']);
             $totalCredits = $user['credits'] + $paiement['nb_credits'];
             $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = ?, stripe_subscription_id = ? WHERE id = ?");
             $success = $stmt->execute([$abonnementDate, $totalCredits, $subscriptionId, $userId]);
