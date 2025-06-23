@@ -11,7 +11,6 @@ if (!$event) {
 
 $pdo = getDBConnection();
 
-// Pour diagnostiquer
 function logErreur($message) {
     file_put_contents("stripe_errors.log", "[" . date("Y-m-d H:i:s") . "] $message\n", FILE_APPEND);
 }
@@ -24,23 +23,23 @@ if ($event['type'] === 'checkout.session.completed') {
         $subscriptionId = $session['subscription'];
         \Stripe\Stripe::setApiKey($stripeSecretKey);
 
-        $subscriptionId = $session['subscription'];
-        
+        $productName = null; // <- initialisation
+
         try {
+            // Étape 1 : récupérer le nom de l'abonnement
             $subscription = \Stripe\Subscription::retrieve($subscriptionId);
             $priceId = $subscription->items->data[0]->price->id;
             $price = \Stripe\Price::retrieve($priceId);
             $productId = $price->product;
             $product = \Stripe\Product::retrieve($productId);
             $productName = $product->name;
-        
-            // Tu peux maintenant utiliser $productName comme tu veux
-            // Par exemple, le stocker en base de données
         } catch (\Exception $e) {
             logErreur("Erreur lors de la récupération du nom de l'abonnement : " . $e->getMessage());
+            $productName = "Inconnu"; // valeur de secours
         }
 
         try {
+            // Étape 2 : mise à jour en base de données
             $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ?, abonnement = ? WHERE id = ?");
             $stmt->execute([$subscriptionId, $productName, $clientId]);
             http_response_code(200);
@@ -52,7 +51,6 @@ if ($event['type'] === 'checkout.session.completed') {
         logErreur("Données manquantes dans checkout.session.completed");
         http_response_code(400);
     }
-
 } elseif ($event['type'] === 'invoice.payment_succeeded') {
     $invoice = $event['data']['object'];
 
