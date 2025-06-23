@@ -102,7 +102,7 @@ if ($event['type'] === 'checkout.session.completed') {
             
             // Log pour débugger
             logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['credits']);
-            $totalCredits = $user['credits'] + $paiement['credits'];
+            $totalCredits = $user['credits'] + $paiement['nb_credits'];
             $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = ?, stripe_subscription_id = ? WHERE id = ?");
             $success = $stmt->execute([$abonnementDate, $totalCredits, $subscriptionId, $userId]);
             
