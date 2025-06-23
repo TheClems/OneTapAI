@@ -61,14 +61,17 @@ if ($event['type'] === 'checkout.session.completed') {
     $invoice = $event['data']['object'];
 
     $customerId = $invoice['customer'] ?? null;
-    $customerEmail = $invoice['customer_email'] ?? null;
     $timestamp = $invoice['created'] ?? null;
 
-    // Nouvelle récupération du subscription_id
-    $subscriptionId = $invoice['lines']['data'][0]['parent']['subscription_item_details']['subscription'] ?? null;
+    // CORRECTION : Chemin correct pour récupérer le subscription_id
+    $subscriptionId = $invoice['subscription'] ?? null;
+    
+    // Alternative si subscription n'est pas directement disponible :
+    // $subscriptionId = $invoice['lines']['data'][0]['subscription'] ?? null;
 
-    if (!$customerId || !$timestamp || !$customerEmail || !$subscriptionId) {
-        logErreur("invoice.payment_succeeded incomplet: " . print_r($invoice, true));
+    if (!$customerId || !$timestamp || !$subscriptionId) {
+        logErreur("invoice.payment_succeeded incomplet - customerId: $customerId, timestamp: $timestamp, subscriptionId: $subscriptionId");
+        logErreur("Contenu complet de l'invoice: " . print_r($invoice, true));
         http_response_code(400);
         exit();
     }
@@ -76,28 +79,41 @@ if ($event['type'] === 'checkout.session.completed') {
     $abonnementDate = date('Y-m-d H:i:s', $timestamp);
 
     try {
-        // Chercher l'utilisateur par email
+        // Chercher l'utilisateur par stripe_user_id
         $stmt = $pdo->prepare("SELECT id, abonnement FROM users WHERE stripe_user_id = ?");
         $stmt->execute([$customerId]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
         if ($user) {
-            // seulement ici on peut accéder à $user['abonnement']
+            // Vérifier que l'abonnement existe
             $stmt = $pdo->prepare("SELECT * FROM paiement WHERE nom = ?");
             $stmt->execute([$user['abonnement']]);
             $paiement = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$paiement) {
+                logErreur("Aucun plan de paiement trouvé pour l'abonnement: " . $user['abonnement']);
+                http_response_code(404);
+                exit();
+            }
         
             $userId = $user['id'];
+            
+            // Log pour débugger
+            logErreur("Mise à jour utilisateur $userId - Date: $abonnementDate, Crédits: " . $paiement['credits']);
         
             $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = credits + ? WHERE id = ?");
-            $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
-        
-            http_response_code(200);
+            $success = $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
+            
+            if ($success) {
+                logErreur("Mise à jour réussie pour l'utilisateur $userId");
+                http_response_code(200);
+            } else {
+                logErreur("Échec de la mise à jour pour l'utilisateur $userId");
+                http_response_code(500);
+            }
         } else {
-            logErreur("Aucun utilisateur trouvé avec stripe_user_id: $customerId");
-            http_response_code(200); // on évite le 404 pour ne pas que Stripe retente
-            exit();
+            logErreur("Aucun utilisateur avec le stripe_user_id $customerId");
+            http_response_code(404);
         }
 
     } catch (PDOException $e) {
