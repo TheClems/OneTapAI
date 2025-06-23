@@ -38,6 +38,7 @@ if ($event['type'] === 'checkout.session.completed') {
             $productId = $price->product;
             $product = \Stripe\Product::retrieve($productId);
             $productName = $product->name;
+            $customerId = $subscription->customer;
         } catch (\Exception $e) {
             logErreur("Erreur lors de la récupération du nom de l'abonnement : " . $e->getMessage());
             $productName = "Inconnu"; // valeur de secours
@@ -45,8 +46,8 @@ if ($event['type'] === 'checkout.session.completed') {
 
         try {
             // Étape 2 : mise à jour en base de données
-            $stmt = $pdo->prepare("UPDATE users SET stripe_subscription_id = ?, abonnement = ? WHERE id = ?");
-            $stmt->execute([$subscriptionId, $productName, $clientId]);
+            $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ? WHERE id = ?");
+            $stmt->execute([$customerId, $productName, $clientId]);
             http_response_code(200);
         } catch (PDOException $e) {
             logErreur("DB error (checkout): " . $e->getMessage());
@@ -76,16 +77,20 @@ if ($event['type'] === 'checkout.session.completed') {
 
     try {
         // Chercher l'utilisateur par email
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->execute([$customerEmail]);
+        $stmt = $pdo->prepare("SELECT id, abonnement FROM users WHERE stripe_user_id = ?");
+        $stmt->execute([$customerId]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+
+        $stmt = $pdo->prepare("SELECT * FROM paiement WHERE nom = ?");
+        $stmt->execute([$user['abonnement']]);
+        $paiement = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user) {
             $userId = $user['id'];
 
             // Mettre à jour les infos
-            $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement_date = ? WHERE id = ?");
-            $stmt->execute([$customerId, $abonnementDate, $userId]);
+            $stmt = $pdo->prepare("UPDATE users SET abonnement_date = ?, credits = credits + ? WHERE id = ?");
+            $stmt->execute([$abonnementDate, $paiement['credits'], $userId]);
 
             http_response_code(200);
         } else {
