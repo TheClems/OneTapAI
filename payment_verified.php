@@ -39,6 +39,7 @@ if ($event->type === 'checkout.session.completed') {
 
     // Traitement des abonnements (mode subscription)
     if ($session->mode === 'subscription' && !empty($session->client_reference_id) && !empty($session->subscription)) {
+        sleep(3);
         $clientId = intval($session->client_reference_id);
         $subscriptionId = $session->subscription;
 
