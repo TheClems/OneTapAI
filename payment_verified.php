@@ -38,24 +38,17 @@ if ($event->type === 'checkout.session.completed') {
     $session = $event->data->object;
 
     // Traitement des abonnements (mode subscription)
-    if ($session->mode === 'subscription' && !empty($session->client_reference_id)) {
-        $clientId = intval($session->client_reference_id);
-        $subscriptionId = $session->subscription;
-        $customerId = $session->customer; // Récupérer directement depuis la session
+    if ($session->mode === 'subscription' && !empty($session->client_reference_id) && !empty($session->subscription)) {
 
-        $productName = null;
+        $session = $event->data->object;
 
-        try {
-            // Si l'ID d'abonnement n'est pas disponible dans la session, le récupérer via le customer
-            if (empty($subscriptionId)) {
-                $customer = \Stripe\Customer::retrieve($customerId);
-                $subscriptions = \Stripe\Subscription::all(['customer' => $customerId, 'limit' => 1]);
-                if (!empty($subscriptions->data)) {
-                    $subscriptionId = $subscriptions->data[0]->id;
-                }
-            }
-
-            if (!empty($subscriptionId)) {
+        if (!empty($session->client_reference_id) && !empty($session->subscription)) {
+            $clientId = intval($session->client_reference_id);
+            $subscriptionId = $session->subscription;
+    
+            $productName = null;
+    
+            try {
                 // Récupération des infos d'abonnement
                 $subscription = \Stripe\Subscription::retrieve($subscriptionId);
                 $priceId = $subscription->items->data[0]->price->id;
@@ -63,29 +56,24 @@ if ($event->type === 'checkout.session.completed') {
                 $productId = $price->product;
                 $product = \Stripe\Product::retrieve($productId);
                 $productName = $product->name;
-            } else {
-                // Fallback : récupérer via les line items de la session
-                $line_items = \Stripe\Checkout\Session::allLineItems($session->id, ['limit' => 1]);
-                if (!empty($line_items->data)) {
-                    $priceId = $line_items->data[0]->price->id;
-                    $price = \Stripe\Price::retrieve($priceId);
-                    $product = \Stripe\Product::retrieve($price->product);
-                    $productName = $product->name;
-                }
+                $customerId = $subscription->customer;
+            } catch (\Exception $e) {
+                logErreur("Erreur récupération abonnement : " . $e->getMessage());
+                $productName = "Inconnu";
             }
-        } catch (\Exception $e) {
-            logErreur("Erreur récupération abonnement : " . $e->getMessage());
-            $productName = "Inconnu";
-        }
-
-        try {
-            // Mise à jour en base de données
-            $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ? WHERE id = ?");
-            $stmt->execute([$customerId, $productName, $clientId]);
-            http_response_code(200);
-        } catch (PDOException $e) {
-            logErreur("Erreur DB (checkout) : " . $e->getMessage());
-            http_response_code(500);
+    
+            try {
+                // Mise à jour en base de données
+                $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ? WHERE id = ?");
+                $stmt->execute([$customerId, $productName, $clientId]);
+                http_response_code(200);
+            } catch (PDOException $e) {
+                logErreur("Erreur DB (checkout) : " . $e->getMessage());
+                http_response_code(500);
+            }
+        } else {
+            logErreur("Données manquantes dans checkout.session.completed");
+            http_response_code(400);
         }
     } 
     // Traitement des paiements ponctuels (mode payment)
