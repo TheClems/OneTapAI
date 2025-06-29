@@ -39,7 +39,7 @@ if ($event->type === 'checkout.session.completed') {
 
     // Traitement des abonnements (mode subscription)
     if ($session->mode === 'subscription' && !empty($session->client_reference_id) && !empty($session->subscription)) {
-        sleep(3);
+
         $clientId = intval($session->client_reference_id);
         $subscriptionId = $session->subscription;
 
@@ -61,6 +61,7 @@ if ($event->type === 'checkout.session.completed') {
 
         try {
             // Mise à jour en base de données
+
             $stmt = $pdo->prepare("UPDATE users SET stripe_user_id = ?, abonnement = ? WHERE id = ?");
             $stmt->execute([$customerId, $productName, $clientId]);
             http_response_code(200);
