@@ -70,4 +70,74 @@ if ($event->type === 'checkout.session.completed') {
         logErreur("Données manquantes dans checkout.session.completed");
         http_response_code(400);
     }
+}elseif ($event->type === 'checkout.session.completed') {
+    $session = $event->data->object;
+
+    if (!empty($session->client_reference_id)) {
+        $clientId = intval($session->client_reference_id);
+        $productName = null;
+
+        try {
+            // 1. Récupère les line items de la session
+            $line_items = \Stripe\Checkout\Session::allLineItems($session->id, ['limit' => 1]);
+
+            if (!empty($line_items->data)) {
+                $priceId = $line_items->data[0]->price->id;
+                
+                // 2. Récupère l'objet Price
+                $price = \Stripe\Price::retrieve($priceId);
+
+                // 3. Récupère le produit lié au Price
+                $product = \Stripe\Product::retrieve($price->product);
+                $productName = $product->name;
+            } else {
+                $productName = "Aucun produit";
+            }
+
+        } catch (\Exception $e) {
+            logErreur("Erreur récupération du produit : " . $e->getMessage());
+            $productName = "Inconnu";
+        }
+
+        try {
+            $stmt = $pdo->prepare("SELECT id, abonnement, credits FROM users WHERE stripe_user_id = ?");
+            $stmt->execute([$clientId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($user) {
+                // Vérifier que l'abonnement existe
+                $stmt = $pdo->prepare("SELECT * FROM paiement WHERE nom = ?");
+                $stmt->execute([$productName]);
+                $paiement = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$paiement) {
+                    logErreur("Aucun plan de paiement trouvé pour l'abonnement: " . $productName);
+                    http_response_code(404);
+                    exit();
+                }
+            
+                $userId = $user['id'];
+                
+                // Log pour débugger
+                $totalCredits = $user['credits'] + $paiement['nb_credits'];
+                $stmt = $pdo->prepare("UPDATE users SET credits = ? WHERE id = ?");
+                $success = $stmt->execute([$totalCredits, $userId]);
+                
+                if ($success) {
+                    http_response_code(200);
+                    echo "OK";
+                } else {
+                    http_response_code(500);
+                }
+            } else {
+                http_response_code(404);
+            }
+        } catch (PDOException $e) {
+            http_response_code(500);
+        }
+
+    } else {
+        logErreur("Données manquantes dans checkout.session.completed");
+        http_response_code(400);
+    }
 }
