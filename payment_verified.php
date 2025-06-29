@@ -37,7 +37,8 @@ function logErreur($message) {
 if ($event->type === 'checkout.session.completed') {
     $session = $event->data->object;
 
-    if (!empty($session->client_reference_id) && !empty($session->subscription)) {
+    // Traitement des abonnements (mode subscription)
+    if ($session->mode === 'subscription' && !empty($session->client_reference_id) && !empty($session->subscription)) {
         $clientId = intval($session->client_reference_id);
         $subscriptionId = $session->subscription;
 
@@ -66,14 +67,9 @@ if ($event->type === 'checkout.session.completed') {
             logErreur("Erreur DB (checkout) : " . $e->getMessage());
             http_response_code(500);
         }
-    } else {
-        logErreur("Données manquantes dans checkout.session.completed");
-        http_response_code(400);
-    }
-}elseif ($event->type === 'checkout.session.completed') {
-    $session = $event->data->object;
-
-    if (!empty($session->client_reference_id)) {
+    } 
+    // Traitement des paiements ponctuels (mode payment)
+    elseif ($session->mode === 'payment' && !empty($session->client_reference_id)) {
         $clientId = intval($session->client_reference_id);
         $productName = null;
 
@@ -100,7 +96,8 @@ if ($event->type === 'checkout.session.completed') {
         }
 
         try {
-            $stmt = $pdo->prepare("SELECT id, abonnement, credits FROM users WHERE stripe_user_id = ?");
+            // Utilisation de l'id utilisateur (client_reference_id) et non stripe_user_id
+            $stmt = $pdo->prepare("SELECT id, abonnement, credits FROM users WHERE id = ?");
             $stmt->execute([$clientId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
@@ -130,14 +127,16 @@ if ($event->type === 'checkout.session.completed') {
                     http_response_code(500);
                 }
             } else {
+                logErreur("Utilisateur non trouvé avec l'ID: " . $clientId);
                 http_response_code(404);
             }
         } catch (PDOException $e) {
+            logErreur("Erreur DB (payment) : " . $e->getMessage());
             http_response_code(500);
         }
 
     } else {
-        logErreur("Données manquantes dans checkout.session.completed");
+        logErreur("Mode de session non pris en charge ou données manquantes. Mode: " . $session->mode);
         http_response_code(400);
     }
 }
