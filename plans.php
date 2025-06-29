@@ -68,7 +68,7 @@ $has_subscription = $abonnement['abonnement'] != null;
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="<?php echo $packages[0]['url_stripe']; ?>" class="btn" target="_blank">Choisir ce plan</a>
+                <a href="<?php echo $packages[0]['url_stripe']; ?><?php echo $_SESSION['user_id']; ?>" class="btn" target="_blank">Choisir ce plan</a>
             </div>
 
             <!-- Card 2 - Premium -->
@@ -89,7 +89,7 @@ $has_subscription = $abonnement['abonnement'] != null;
                     <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li class="disabled"><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="<?php echo $packages[1]['url_stripe']; ?>" class="btn" target="_blank">Choisir ce plan</a>
+                <a href="<?php echo $packages[1]['url_stripe']; ?><?php echo $_SESSION['user_id']; ?>" class="btn" target="_blank">Choisir ce plan</a>
             </div>
 
             <!-- Card 3 - Professional -->
@@ -110,7 +110,7 @@ $has_subscription = $abonnement['abonnement'] != null;
                     <li><i class="bi bi-check-circle-fill"></i><span>Personalisation de Personas</span></li>
                     <li><i class="bi bi-check-circle-fill"></i><span>Accès anticipé aux nouvelles fonctionnalités</span></li>
                 </ul>
-                <a href="<?php echo $packages[2]['url_stripe']; ?>" class="btn" target="_blank">Choisir ce plan</a>
+                <a href="<?php echo $packages[2]['url_stripe']; ?><?php echo $_SESSION['user_id']; ?>" class="btn" target="_blank">Choisir ce plan</a>
             </div>
         </div>
         <?php if ($has_subscription): ?>
